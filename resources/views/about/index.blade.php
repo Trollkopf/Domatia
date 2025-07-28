@@ -10,7 +10,7 @@
     <section class="hero-image"
         style="background: url('/images/our-company.jpg') no-repeat center center; background-size: cover; height: 60vh;">
         <div class="container d-flex align-items-center h-100">
-            <h1 class="text-white fw-light">Conócenos</h1>
+            <h1 class="text-white fw-light">Conócenos </h1>
         </div>
     </section>
 
