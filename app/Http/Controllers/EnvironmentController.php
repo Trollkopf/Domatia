@@ -10,21 +10,19 @@ class EnvironmentController extends Controller
 {
     public function index()
     {
-        $zonas = Zona::select('nombre', 'imagen_principal')->get();
+        $zonas = Zona::select('nombre', 'imagen_principal', 'slug')->get();
 
         return view('environment.index', compact('zonas'));
     }
 
     public function show($slug)
-{
-    $zona = Zona::all()->first(fn($zona) => Str::slug($zona->nombre) === $slug);
-
-    abort_unless($zona, 404);
-
-    $zona->load('secciones');
+    {
+        $zona = Zona::whereRaw('LOWER(slug) = ?', [Str::slug($slug)])
+        ->with(['secciones', 'properties'])
+        ->firstOrFail();
 
     return view('environment.show', compact('zona'));
-}
+    }
 
 
 }

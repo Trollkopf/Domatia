@@ -146,3 +146,7 @@ select.form-select:focus {
 .testimonial .text-muted {
     color: #888;
 }
+
+.heroSwiper .swiper-slide {
+    position: relative;
+}

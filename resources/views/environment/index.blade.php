@@ -38,7 +38,7 @@
                             {{ $zona->nombre }}
                         </h4>
                     </div>
-                    <a href="{{ route('zonas.show', ['slug' => Str::slug($zona->nombre)]) }}" class="stretched-link"></a>
+                    <a href="{{ route('zonas.show', ['slug' => $zona->slug]) }}" class="stretched-link"></a>
                 </div>
             </div>
         @endforeach
