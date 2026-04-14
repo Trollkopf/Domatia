@@ -24,6 +24,17 @@
     </div>
 
     <div class="mb-3 col-md-6">
+        <label class="form-label">Estado</label>
+        <select name="status" class="form-select">
+            <option value="draft" {{ old('status', $property->status ?? 'draft') === 'draft' ? 'selected' : '' }}>Borrador</option>
+            <option value="published" {{ old('status', $property->status ?? 'draft') === 'published' ? 'selected' : '' }}>Publicada</option>
+            <option value="reserved" {{ old('status', $property->status ?? 'draft') === 'reserved' ? 'selected' : '' }}>Reservada</option>
+            <option value="sold" {{ old('status', $property->status ?? 'draft') === 'sold' ? 'selected' : '' }}>Vendida</option>
+            <option value="hidden" {{ old('status', $property->status ?? 'draft') === 'hidden' ? 'selected' : '' }}>Oculta</option>
+        </select>
+    </div>
+
+    <div class="mb-3 col-md-6">
         <label class="form-label">Zona</label>
         <select name="zona_id" class="form-select">
             <option value="">-- Selecciona una zona --</option>

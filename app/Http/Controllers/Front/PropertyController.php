@@ -12,41 +12,49 @@ class PropertyController extends Controller
     {
         $properties = Property::query();
 
-        // Filtro: tipo
-        if ($request->filled('tipo')) {
-            $properties->whereIn('tipo', $request->input('tipo'));
+        $tipos = array_filter((array) $request->input('tipo', $request->input('types', [])));
+        if ($tipos !== []) {
+            $properties->whereIn('tipo', $tipos);
         }
 
-        // Filtro: zona
-        if ($request->filled('zona')) {
-            $properties->whereIn('zona_id', $request->input('zona'));
+        $zonas = array_filter((array) $request->input('zona', []));
+        if ($zonas !== []) {
+            $properties->whereIn('zona_id', $zonas);
         }
 
-        // Filtro: precio mínimo y máximo
-        if ($request->filled('precio_min')) {
-            $properties->where('price', '>=', $request->input('precio_min'));
+        $locations = array_filter((array) $request->input('location', []));
+        if ($locations !== []) {
+            $properties->whereIn('location', $locations);
         }
 
-        if ($request->filled('precio_max')) {
-            $properties->where('price', '<=', $request->input('precio_max'));
+        $precioMin = $request->input('precio_min', $request->input('min_price'));
+        if (filled($precioMin)) {
+            $properties->where('price', '>=', $precioMin);
         }
 
-        // Filtro: habitaciones mínimas
-        if ($request->filled('habitaciones')) {
-            $properties->where('habitaciones', '>=', $request->input('habitaciones'));
+        $precioMax = $request->input('precio_max', $request->input('max_price'));
+        if (filled($precioMax)) {
+            $properties->where('price', '<=', $precioMax);
         }
 
-        // Filtro: baños mínimos
-        if ($request->filled('banos')) {
-            $properties->where('banos', '>=', $request->input('banos'));
+        $habitaciones = $request->input('habitaciones', $request->input('bedrooms'));
+        if (filled($habitaciones)) {
+            $properties->where('bedrooms', '>=', $habitaciones);
         }
 
-        // Filtro: superficie construida mínima
-        if ($request->filled('metros')) {
-            $properties->where('metros', '>=', $request->input('metros'));
+        $banos = $request->input('banos', $request->input('bathrooms'));
+        if (filled($banos)) {
+            $properties->where('bathrooms', '>=', $banos);
         }
 
-        // Filtro: solar, patio, piscina
+        $metros = $request->input('metros');
+        if (is_array($metros)) {
+            $metros = min(array_map('floatval', array_filter($metros)));
+        }
+        if (filled($metros)) {
+            $properties->where('area', '>=', $metros);
+        }
+
         if ($request->boolean('tiene_solar')) {
             $properties->where('tiene_solar', true);
         }
@@ -59,7 +67,14 @@ class PropertyController extends Controller
             $properties->where('tiene_piscina', true);
         }
 
-        // Paginación
+        $features = array_filter((array) $request->input('features', []));
+        if (in_array('piscina', $features, true)) {
+            $properties->where('tiene_piscina', true);
+        }
+        if (in_array('jardin', $features, true) || in_array('terraza', $features, true)) {
+            $properties->where('tiene_patio', true);
+        }
+
         $properties = $properties->with('zona')->paginate(12)->withQueryString();
 
         return view('properties.index', compact('properties'));
@@ -68,6 +83,7 @@ class PropertyController extends Controller
     public function show($slug)
     {
         $property = Property::where('slug', $slug)->with('images')->firstOrFail();
+
         return view('properties.show', compact('property'));
     }
 }

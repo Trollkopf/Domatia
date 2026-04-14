@@ -3,21 +3,20 @@
 @section('title', $zona->nombre)
 
 @section('content')
-    <!-- Hero con imagen principal -->
-    <section class="hero-image position-relative" style="height: 400px; overflow: hidden;">
-        <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->nombre }}" class="w-100 h-100"
-            style="object-fit: cover;">
-        <div class="position-absolute top-50 start-50 translate-middle text-white text-center">
-            <h1 class="display-4 fw-semibold text-shadow bg-dark bg-opacity-50 px-4 py-2 rounded">
-                {{ $zona->nombre }}
-            </h1>
+    <section class="page-hero" style="min-height: 400px;">
+        <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->nombre }}" class="page-hero-media">
+        <div class="page-hero-overlay"></div>
+        <div class="container page-hero-content">
+            <div class="page-hero-copy text-center mx-auto">
+                <h1 class="display-4 fw-semibold">{{ $zona->nombre }}</h1>
+            </div>
         </div>
     </section>
 
-    <!-- Secciones dentro de la zona -->
     @php
         $bgClasses = ['bg-light', 'bg-white'];
     @endphp
+
     <section class="container py-5">
         @foreach ($zona->secciones as $index => $seccion)
             <div class="row align-items-center mb-5 py-4 px-3 rounded {{ $bgClasses[$index % count($bgClasses)] }} {{ $index % 2 === 0 ? '' : 'flex-row-reverse' }}"
@@ -36,7 +35,6 @@
         @endforeach
     </section>
 
-    <!-- Propiedades dentro de la zona -->
     @if ($zona->properties->count())
         <section class="container py-5">
             <h2 class="mb-4">Propiedades en {{ $zona->nombre }}</h2>
@@ -49,7 +47,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ $property->title }}</h5>
                                 <p class="card-text">{{ Str::limit($property->description, 100) }}</p>
-                                <a href="{{ route('guest.property.show', $property->slug) }}" class="btn btn-dark">Ver más</a>
+                                <a href="{{ route('guest.property.show', $property->slug) }}" class="btn btn-dark">Ver mas</a>
                             </div>
                         </div>
                     </div>

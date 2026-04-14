@@ -16,8 +16,9 @@ class SearchController extends Controller
             $properties->where('location', 'like', '%' . $request->location . '%');
         }
 
-        if ($request->filled('type')) {
-            $properties->where('type', $request->type); // Aún no hemos creado el campo 'type', se puede adaptar
+        $type = $request->input('type', $request->input('tipo'));
+        if (filled($type)) {
+            $properties->where('tipo', $type);
         }
 
         if ($request->filled('min_price')) {

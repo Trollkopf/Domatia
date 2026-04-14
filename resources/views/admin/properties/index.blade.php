@@ -8,101 +8,93 @@
         .table td {
             vertical-align: middle;
         }
-
-        .table th {
-            font-weight: 600;
-        }
-
-        .property-index-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: calc(100vh - 100px);
-        }
-
-        .property-table-scrollable {
-            flex-grow: 1;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .property-table-scrollable table {
-            width: 100% !important;
-            table-layout: fixed;
-        }
-
-        .property-table-scrollable td {
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .property-table-scrollable thead th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            background-color: #1d1d1f;
-            color: white;
-        }
-
-        .property-table-scrollable thead th::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -1px;
-            height: 4px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
-        }
     </style>
 @endsection
 
 @section('content')
-    <div class="property-index-wrapper d-flex flex-column">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Propiedades</h1>
-            <a href="{{ route('admin.properties.create') }}" class="btn btn-main">+ Nueva Propiedad</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">Propiedades</h1>
+            <p class="text-muted mb-0">Filtra y gestiona el catálogo desde un solo sitio.</p>
         </div>
+        <a href="{{ route('admin.properties.create') }}" class="btn btn-main">+ Nueva Propiedad</a>
+    </div>
 
-        <div class="search-bar mb-3">
-            <form id="property-search-form" method="GET" class="d-flex flex-wrap align-items-center gap-2">
-                <input type="text" name="search" id="search-input" class="form-control"
-                    placeholder="Buscar por título, ubicación o referencia..." style="max-width: 100%;">
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('admin.properties.index') }}" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Título, ubicación o referencia">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Zona</label>
+                    <select name="zona_id" class="form-select">
+                        <option value="">Todas</option>
+                        @foreach ($zonas as $zona)
+                            <option value="{{ $zona->id }}" @selected((string) request('zona_id') === (string) $zona->id)>{{ $zona->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach ($tipos as $tipo)
+                            <option value="{{ $tipo }}" @selected(request('tipo') === $tipo)>{{ ucfirst($tipo) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select name="status" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach ($statuses as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Destacada</label>
+                    <select name="featured" class="form-select">
+                        <option value="">Todas</option>
+                        <option value="1" @selected(request('featured') === '1')>Sí</option>
+                        <option value="0" @selected(request('featured') === '0')>No</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">Desde</label>
+                    <input type="number" name="price_min" class="form-control" value="{{ request('price_min') }}">
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">Hasta</label>
+                    <input type="number" name="price_max" class="form-control" value="{{ request('price_max') }}">
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mt-4 pt-2">
+                        <input type="checkbox" class="form-check-input" id="missing_thumbnail" name="missing_thumbnail" value="1" @checked(request()->boolean('missing_thumbnail'))>
+                        <label class="form-check-label" for="missing_thumbnail">Solo sin imagen principal</label>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-main w-100">Aplicar filtros</button>
+                    <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-secondary w-100">Limpiar</a>
+                </div>
             </form>
         </div>
+    </div>
 
-        <div id="property-table" class="property-table-scrollable">
-            @include('admin.properties._table', ['properties' => $properties])
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @include('admin.properties._table', ['properties' => $properties, 'statuses' => $statuses])
         </div>
     </div>
+
     <div class="d-flex justify-content-center mt-3">
         {{ $properties->links('pagination::bootstrap-5') }}
     </div>
-@endsection
-
-@section('scripts')
-    document.addEventListener("DOMContentLoaded", function () {
-    const input = document.getElementById('search-input');
-    const tableWrapper = document.getElementById('property-table');
-
-    let typingTimer;
-    const delay = 400;
-
-    input.addEventListener('input', function () {
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-    const query = input.value;
-    fetch(`?search=${encodeURIComponent(query)}`, {
-    headers: {
-    'X-Requested-With': 'XMLHttpRequest'
-    }
-    })
-    .then(response => response.text())
-    .then(html => {
-    tableWrapper.innerHTML = html;
-    });
-    }, delay);
-    });
-
-
 @endsection

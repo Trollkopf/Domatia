@@ -24,10 +24,13 @@ class PropertyFactory extends Factory
             'description' => $this->faker->paragraph(),
             'location' => $this->faker->city(),
             'price' => $this->faker->numberBetween(100000, 2500000),
+            'tipo' => $this->faker->randomElement(['piso', 'casa', 'villa']),
             'bedrooms' => rand(1, 6),
             'bathrooms' => rand(1, 4),
             'area' => rand(50, 500),
             'is_featured' => $this->faker->boolean(60),
+            'status' => 'published',
+            'thumbnail' => null,
             'image' => 'https://placehold.co/600x400?text=Propiedad',
         ];
     }

@@ -9,7 +9,22 @@ class Contacto extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'email', 'telefono', 'mensaje', 'property_id'];
+    protected $fillable = [
+        'nombre',
+        'email',
+        'telefono',
+        'mensaje',
+        'status',
+        'last_contacted_at',
+        'next_action_at',
+        'internal_notes',
+        'property_id',
+    ];
+
+    protected $casts = [
+        'last_contacted_at' => 'datetime',
+        'next_action_at' => 'date',
+    ];
 
     public function property()
     {

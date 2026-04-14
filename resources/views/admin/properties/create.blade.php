@@ -44,6 +44,7 @@
             <form action="{{ route('admin.properties.store') }}" method="POST" enctype="multipart/form-data">
                 @include('admin.properties._form')
             </form>
+        </div>
     </div>
 @endsection
 

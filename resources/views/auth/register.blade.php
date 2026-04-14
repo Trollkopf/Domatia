@@ -7,9 +7,13 @@
 @endsection
 
 @section('content')
-    <section class="hero-image" style="background: url('/images/register-hero.jpg') no-repeat center center; background-size: cover; height: 60vh;">
-        <div class="container d-flex align-items-center h-100">
-            <h1 class="text-white fw-light">Crear cuenta</h1>
+    <section class="page-hero page-hero-lg">
+        <div class="page-hero-media" style="background: url('/images/register-hero.jpg') no-repeat center center / cover;"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="container page-hero-content">
+            <div class="page-hero-copy">
+                <h1 class="fw-light">Crear cuenta</h1>
+            </div>
         </div>
     </section>
 
@@ -18,7 +22,7 @@
             <div class="col-md-6">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-5">
-                        <h3 class="text-center mb-4">Regístrate</h3>
+                        <h3 class="text-center mb-4">Registrate</h3>
 
                         @if(session('error'))
                             <div class="alert alert-danger">{{ session('error') }}</div>
@@ -32,21 +36,20 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo electrónico</label>
+                                <label for="email" class="form-label">Correo electronico</label>
                                 <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
+                                <label for="password" class="form-label">Contrasena</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="password_confirmation" class="form-label">Confirmar contraseña</label>
+                                <label for="password_confirmation" class="form-label">Confirmar contrasena</label>
                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                             </div>
 
-                            <!-- Campo para seleccionar el rol (solo si el usuario es admin) -->
                             @if(Auth::user() && Auth::user()->role == 'admin')
                                 <div class="mb-3">
                                     <label for="role" class="form-label">Rol</label>
@@ -61,7 +64,7 @@
                         </form>
 
                         <div class="text-center mt-4">
-                            <p>¿Ya tienes una cuenta? <a href="{{ route('login') }}" class="text-muted">Iniciar sesión</a></p>
+                            <p>Ya tienes una cuenta? <a href="{{ route('login') }}" class="text-muted">Iniciar sesion</a></p>
                         </div>
                     </div>
                 </div>

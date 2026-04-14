@@ -25,6 +25,7 @@ foreach ($properties as $property) {
         PropertyImage::create([
             'property_id' => $property->id,
             'url' => 'https://placehold.co/600x400?text=Img+' . $i,
+            'path' => 'properties/seed-image-' . $i . '.jpg',
         ]);
     }
 }

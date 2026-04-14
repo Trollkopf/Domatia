@@ -9,13 +9,15 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();  // Puedes agregar paginación aquí
+        $users = User::orderBy('name')->paginate(15);
+
         return view('admin.users.index', compact('users'));
     }
 
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         return view('admin.users.edit', compact('user'));
     }
 
@@ -25,11 +27,12 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'role' => 'required|string',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'role' => 'required|in:user,admin',
         ]);
 
-        $user->update($request->all());
+        $user->update($request->only('name', 'email', 'role'));
+
         return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado exitosamente.');
     }
 
@@ -37,6 +40,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+
         return redirect()->route('admin.users.index')->with('success', 'Usuario eliminado exitosamente.');
     }
 }

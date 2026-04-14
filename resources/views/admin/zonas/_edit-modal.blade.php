@@ -17,7 +17,7 @@
                     <label class="form-label">Imagen principal</label>
                     @if ($zona->imagen_principal)
                         <div class="mb-2">
-                            <img src="{{ asset('storage/' . $zona->imagen) }}" class="img-thumbnail" style="max-width: 200px;">
+                            <img src="{{ asset('storage/' . $zona->imagen_principal) }}" class="img-thumbnail" style="max-width: 200px;">
                         </div>
                     @endif
                     <input type="file" name="imagen_principal" class="form-control">

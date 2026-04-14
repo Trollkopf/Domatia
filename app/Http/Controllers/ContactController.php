@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contacto;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
     public function store(Request $request)
     {
-        // Validación de los campos
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'message' => 'required|string|max:500',
+            'phone' => 'nullable|string|max:50',
+            'message' => 'required|string|max:1000',
+            'property_id' => 'nullable|exists:properties,id',
+            'accept_terms' => 'sometimes|accepted',
         ]);
 
-        // Aquí puedes enviar un correo o guardar en la base de datos
-        // Mail::to('correo@empresa.com')->send(new ContactMail($request));
+        Contacto::create([
+            'nombre' => $request->name,
+            'email' => $request->email,
+            'telefono' => $request->phone,
+            'mensaje' => $request->message,
+            'property_id' => $request->property_id,
+        ]);
 
-        // Retorno de mensaje de éxito
         return redirect()->back()->with('success', 'Gracias por tu mensaje. Nos pondremos en contacto pronto.');
     }
 }

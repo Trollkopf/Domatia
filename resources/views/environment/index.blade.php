@@ -3,28 +3,29 @@
 @section('title', 'Entorno de la propiedad')
 
 @section('style')
-    <link href="{{ asset(path: 'css/environment.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/environment.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
     @php use Illuminate\Support\Str; @endphp
 
-    <section class="hero-image"
-        style="background: url('/images/environment-hero.jpg') no-repeat center center; background-size: cover; height: 60vh;">
-        <div class="container d-flex align-items-center h-100">
-            <h1 class="text-white fw-light">Conoce el entorno</h1>
+    <section class="page-hero page-hero-lg">
+        <div class="page-hero-media" style="background: url('/images/images.jpg') no-repeat center center / cover;"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="container page-hero-content">
+            <div class="page-hero-copy">
+                <h1 class="fw-light">Conoce el entorno</h1>
+            </div>
         </div>
     </section>
 
     <section class="container py-5">
         <p class="text-center mb-5">
-            La Costa Blanca Norte, desde Dénia hasta Altea, es conocida como una de las zonas más hermosas del mundo para
-            vivir, disfrutar y descansar. Cada zona es única y ofrece una experiencia especial para aquellos que buscan
+            La Costa Blanca Norte, desde Denia hasta Altea, es conocida como una de las zonas mas hermosas del mundo para
+            vivir, disfrutar y descansar. Cada zona es unica y ofrece una experiencia especial para aquellos que buscan
             calidad de vida en un entorno incomparable.
         </p>
     </section>
-
-    {{-- Ubicaciones --}}
 
     <div class="row row-cols-1 row-cols-md-3 g-4 mx-4 justify-content-center">
         @foreach ($zonas as $zona)
@@ -44,10 +45,9 @@
         @endforeach
     </div>
 
-    {{-- Mapa interactivo --}}
     <section class="container py-5">
         <h2 class="text-center mb-4">Mapa interactivo</h2>
-        <div id="map" style="height: 400px;"></div> <!-- Mapa se insertará aquí -->
+        <div id="map" style="height: 400px;"></div>
     </section>
 
 @endsection

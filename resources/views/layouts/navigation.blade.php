@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
     <div class="container">
         <a class="navbar-brand fw-bold text-uppercase" href="{{ url('/') }}">
-            Domatia
+            {{ $siteSettings['company_name'] }}
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

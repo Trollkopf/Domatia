@@ -1,5 +1,6 @@
 import './bootstrap';
 import 'bootstrap';
+import './swiper';
 
 import Alpine from 'alpinejs';
 import GLightbox from 'glightbox';
@@ -22,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    const mapElement = document.getElementById('map');
+
+    if (!mapElement) {
+        return;
+    }
+
     var map = L.map('map').setView([40.4168, -3.7038], 13); // Coordenadas de ejemplo (Madrid)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
