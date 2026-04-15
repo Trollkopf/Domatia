@@ -10,11 +10,11 @@
     @php use Illuminate\Support\Str; @endphp
 
     <section class="page-hero page-hero-lg">
-        <div class="page-hero-media" style="background: url('/images/images.jpg') no-repeat center center / cover;"></div>
+        <div class="page-hero-media" style="background: url('{{ $siteSettings['environment_header_image'] }}') no-repeat center center / cover;"></div>
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy">
-                <h1 class="fw-light">Conoce el entorno</h1>
+                <h1 class="fw-light">{{ $siteSettings['environment_header_title'] }}</h1>
             </div>
         </div>
     </section>

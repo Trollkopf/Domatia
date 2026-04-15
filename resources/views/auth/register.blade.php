@@ -8,11 +8,11 @@
 
 @section('content')
     <section class="page-hero page-hero-lg">
-        <div class="page-hero-media" style="background: url('/images/register-hero.jpg') no-repeat center center / cover;"></div>
+        <div class="page-hero-media" style="background: url('{{ $siteSettings['register_header_image'] }}') no-repeat center center / cover;"></div>
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy">
-                <h1 class="fw-light">Crear cuenta</h1>
+                <h1 class="fw-light">{{ $siteSettings['register_header_title'] }}</h1>
             </div>
         </div>
     </section>

@@ -33,7 +33,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/buscar', [SearchController::class, 'index'])->name('search');
 
 Route::get('/propiedad/{slug}', [PropertyController::class, 'show'])->name('guest.property.show');
+Route::post('/propiedad/{slug}/favorito', [PropertyController::class, 'toggleFavorite'])->name('guest.property.favorite');
 Route::get('/propiedades', [PropertyController::class, 'index'])->name('guest.properties.index');
+Route::get('/favoritos', [PropertyController::class, 'favorites'])->name('guest.properties.favorites');
 
 Route::get('/nosotros', fn() => view('about.index'))->name('about');
 

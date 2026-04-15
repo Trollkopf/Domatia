@@ -107,18 +107,20 @@
 
 @section('content')
     @php
+        $heroCount = max(1, min(3, (int) ($siteSettings['home_hero_count'] ?? 3)));
+
         $heroImages = collect([
             $siteSettings['home_hero_image_1'],
             $siteSettings['home_hero_image_2'],
             $siteSettings['home_hero_image_3'],
-        ])->filter()->values();
+        ])->filter()->take($heroCount)->values();
 
         if ($heroImages->isEmpty()) {
             $heroImages = collect([
-                '/images/hero1.jpg',
-                '/images/hero2.jpg',
                 '/images/our-company.jpg',
-            ]);
+                '/images/images.jpg',
+                '/images/our-company.jpg',
+            ])->take($heroCount);
         }
 
         $valueProps = collect([

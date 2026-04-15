@@ -7,72 +7,83 @@ use App\Models\Property;
 use App\Models\PropertyImage;
 use App\Models\Zona;
 use App\Models\ZonaSection;
+use Database\Seeders\Concerns\SeedsMediaAssets;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 
 class ReportsPlaygroundSeeder extends Seeder
 {
+    use SeedsMediaAssets;
+
     public function run()
     {
-        $zones = $this->seedZones();
-        $properties = $this->seedProperties($zones);
+        $defaultPropertyImages = $this->mergeSeedImagePools(
+            $this->existingPublicAssets('properties'),
+            $this->existingPublicAssets('propiedad/storage/properties'),
+            $this->publishSeedAssets('properties/defaults', 'properties/defaults')
+        );
+        $playgroundPropertyImages = $this->mergeSeedImagePools(
+            $this->existingPublicAssets('properties/playground'),
+            $this->publishSeedAssets('properties/playground', 'properties/playground'),
+            $defaultPropertyImages
+        );
+        $zoneHeaderImages = $this->existingPublicAssets('zonas');
+        $zoneSectionImages = $this->existingPublicAssets('zonas/secciones');
+        $zones = $this->seedZones($zoneHeaderImages, $zoneSectionImages);
+        $properties = $this->seedProperties($zones, $defaultPropertyImages, $playgroundPropertyImages);
 
         $this->seedContacts($properties);
     }
 
-    protected function seedZones(): array
+    protected function seedZones(array $zoneHeaderImages, array $zoneSectionImages): array
     {
         $definitions = [
             [
                 'nombre' => 'Centro',
-                'imagen_principal' => 'zonas/centro.jpg',
                 'sections' => [
-                    ['titulo' => 'Vida urbana', 'imagen' => 'zonas/centro-1.jpg', 'descripcion' => 'Servicios, restauracion y vida a pie de calle.'],
-                    ['titulo' => 'Conexion', 'imagen' => 'zonas/centro-2.jpg', 'descripcion' => 'Buena movilidad para clientes que priorizan ubicacion.'],
+                    ['titulo' => 'Vida urbana', 'descripcion' => 'Servicios, restauracion y vida a pie de calle.'],
+                    ['titulo' => 'Conexion', 'descripcion' => 'Buena movilidad para clientes que priorizan ubicacion.'],
                 ],
             ],
             [
                 'nombre' => 'Costa',
-                'imagen_principal' => 'zonas/costa.jpg',
                 'sections' => [
-                    ['titulo' => 'Frente al mar', 'imagen' => 'zonas/costa-1.jpg', 'descripcion' => 'Producto vacacional y segunda residencia de ticket alto.'],
-                    ['titulo' => 'Estilo de vida', 'imagen' => 'zonas/costa-2.jpg', 'descripcion' => 'Piscina, terraza y demanda internacional.'],
+                    ['titulo' => 'Frente al mar', 'descripcion' => 'Producto vacacional y segunda residencia de ticket alto.'],
+                    ['titulo' => 'Estilo de vida', 'descripcion' => 'Piscina, terraza y demanda internacional.'],
                 ],
             ],
             [
                 'nombre' => 'Residencial Norte',
-                'imagen_principal' => 'zonas/residencial-norte.jpg',
                 'sections' => [
-                    ['titulo' => 'Familiar', 'imagen' => 'zonas/norte-1.jpg', 'descripcion' => 'Chalets, adosados y demanda de primera vivienda.'],
-                    ['titulo' => 'Crecimiento', 'imagen' => 'zonas/norte-2.jpg', 'descripcion' => 'Zona util para captar familias y compradores estables.'],
+                    ['titulo' => 'Familiar', 'descripcion' => 'Chalets, adosados y demanda de primera vivienda.'],
+                    ['titulo' => 'Crecimiento', 'descripcion' => 'Zona util para captar familias y compradores estables.'],
                 ],
             ],
             [
                 'nombre' => 'Campo',
-                'imagen_principal' => null,
                 'sections' => [
-                    ['titulo' => 'Privacidad', 'imagen' => 'zonas/campo-1.jpg', 'descripcion' => 'Fincas y villas con terreno.'],
+                    ['titulo' => 'Privacidad', 'descripcion' => 'Fincas y villas con terreno.'],
                 ],
             ],
         ];
 
         $zones = [];
 
-        foreach ($definitions as $definition) {
+        foreach ($definitions as $zoneIndex => $definition) {
             $zone = Zona::updateOrCreate(
                 ['nombre' => $definition['nombre']],
-                ['imagen_principal' => $definition['imagen_principal']]
+                ['imagen_principal' => $this->cycleSeedImage($zoneHeaderImages, $zoneIndex)]
             );
 
-            foreach ($definition['sections'] as $section) {
+            foreach ($definition['sections'] as $sectionIndex => $section) {
                 ZonaSection::updateOrCreate(
                     [
                         'zona_id' => $zone->id,
                         'titulo' => $section['titulo'],
                     ],
                     [
-                        'imagen' => $section['imagen'],
+                        'imagen' => $this->cycleSeedImage($zoneSectionImages, ($zoneIndex * 3) + $sectionIndex),
                         'descripcion' => $section['descripcion'],
                     ]
                 );
@@ -84,7 +95,7 @@ class ReportsPlaygroundSeeder extends Seeder
         return $zones;
     }
 
-    protected function seedProperties(array $zones): array
+    protected function seedProperties(array $zones, array $defaultPropertyImages, array $playgroundPropertyImages): array
     {
         $definitions = [
             [
@@ -212,6 +223,12 @@ class ReportsPlaygroundSeeder extends Seeder
         $properties = [];
 
         foreach ($definitions as $definition) {
+            $galleryPool = $playgroundPropertyImages !== [] ? $playgroundPropertyImages : $defaultPropertyImages;
+            $fallbackImage = $this->cycleSeedImage($galleryPool, count($properties));
+            $preferredThumbnail = in_array($definition['thumbnail'], $playgroundPropertyImages, true)
+                ? $definition['thumbnail']
+                : $fallbackImage;
+
             $property = Property::updateOrCreate(
                 ['title' => $definition['title']],
                 [
@@ -222,7 +239,7 @@ class ReportsPlaygroundSeeder extends Seeder
                     'tipo' => $definition['tipo'],
                     'status' => $definition['status'],
                     'is_featured' => $definition['is_featured'],
-                    'thumbnail' => $definition['thumbnail'] ?: null,
+                    'thumbnail' => $preferredThumbnail,
                     'description' => 'Propiedad de playground para explotar informes, filtros y cuadros comerciales.',
                     'zona_id' => $zones[$definition['zona']]->id,
                     'bedrooms' => $definition['bedrooms'],
@@ -239,13 +256,19 @@ class ReportsPlaygroundSeeder extends Seeder
 
             if (Schema::hasTable('property_images')) {
                 for ($imageIndex = 1; $imageIndex <= $definition['images']; $imageIndex++) {
+                    $galleryImage = $this->cycleSeedImage($galleryPool, count($properties) + $imageIndex - 1);
+
+                    if (! $galleryImage) {
+                        continue;
+                    }
+
                     PropertyImage::updateOrCreate(
                         [
                             'property_id' => $property->id,
-                            'path' => 'properties/playground/' . strtolower($definition['ref']) . '-' . $imageIndex . '.jpg',
+                            'path' => $galleryImage,
                         ],
                         [
-                            'url' => 'https://placehold.co/900x600?text=' . rawurlencode($definition['ref'] . ' ' . $imageIndex),
+                            'url' => '',
                         ]
                     );
                 }

@@ -2,6 +2,297 @@
 
 @section('title', 'Configuracion')
 
+@section('styles')
+    <style>
+        .settings-image-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            background: #fff;
+            padding: 1rem;
+        }
+
+        .settings-current-preview-frame,
+        .settings-cropper-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px dashed #cbd5e1;
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.08)),
+                #f8fafc;
+            aspect-ratio: 20 / 9;
+        }
+
+        .settings-current-preview-frame img,
+        .settings-cropper-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .settings-cropper-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: auto;
+            max-width: none;
+            touch-action: none;
+            user-select: none;
+            cursor: grab;
+        }
+
+        .settings-cropper-image.is-dragging {
+            cursor: grabbing;
+        }
+
+        .settings-current-preview-empty,
+        .settings-cropper-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .settings-cropper-guides {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        }
+
+        .settings-cropper-guides::before,
+        .settings-cropper-guides::after {
+            content: "";
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .settings-cropper-guides::before {
+            top: 0;
+            bottom: 0;
+            left: 33.333%;
+            width: 1px;
+            box-shadow: calc(33.333% + 1px) 0 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .settings-cropper-guides::after {
+            left: 0;
+            right: 0;
+            top: 33.333%;
+            height: 1px;
+            box-shadow: 0 calc(33.333% + 1px) 0 rgba(255, 255, 255, 0.3);
+        }
+    </style>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+            document.querySelectorAll('[data-image-field]').forEach(function (field) {
+                const select = field.querySelector('[data-image-select]');
+                const selectedPreview = field.querySelector('[data-selected-preview]');
+                const selectedEmpty = field.querySelector('[data-selected-empty]');
+                const fileInput = field.querySelector('[data-image-upload]');
+                const frame = field.querySelector('[data-image-frame]');
+                const preview = field.querySelector('[data-image-preview]');
+                const empty = field.querySelector('[data-image-empty]');
+                const guides = field.querySelector('[data-image-guides]');
+                const zoomInput = field.querySelector('[data-image-zoom]');
+                const resetButton = field.querySelector('[data-image-reset]');
+                const cropInput = field.querySelector('[data-image-crop-input]');
+                const targetWidth = Number(field.dataset.targetWidth || 1600);
+                const targetHeight = Number(field.dataset.targetHeight || 720);
+
+                const state = {
+                    imageWidth: 0,
+                    imageHeight: 0,
+                    zoom: 1,
+                    offsetX: 0,
+                    offsetY: 0,
+                    dragging: false,
+                    active: false,
+                    pointerId: null,
+                    startX: 0,
+                    startY: 0,
+                    startOffsetX: 0,
+                    startOffsetY: 0,
+                };
+
+                function updateSelectedPreview() {
+                    if (select.value) {
+                        selectedPreview.src = select.value;
+                        selectedPreview.classList.remove('d-none');
+                        selectedEmpty.classList.add('d-none');
+                    } else {
+                        selectedPreview.src = '';
+                        selectedPreview.classList.add('d-none');
+                        selectedEmpty.classList.remove('d-none');
+                    }
+                }
+
+                function getBounds() {
+                    return frame.getBoundingClientRect();
+                }
+
+                function syncCropPayload() {
+                    if (!state.active) {
+                        cropInput.value = '';
+                        return;
+                    }
+
+                    const bounds = getBounds();
+                    cropInput.value = JSON.stringify({
+                        zoom: Number(state.zoom.toFixed(4)),
+                        offsetX: Number((state.offsetX * (targetWidth / bounds.width)).toFixed(2)),
+                        offsetY: Number((state.offsetY * (targetHeight / bounds.height)).toFixed(2)),
+                    });
+                }
+
+                function render() {
+                    if (!state.active) {
+                        return;
+                    }
+
+                    const bounds = getBounds();
+                    const baseScale = Math.max(bounds.width / state.imageWidth, bounds.height / state.imageHeight);
+                    const renderedWidth = state.imageWidth * baseScale * state.zoom;
+                    const renderedHeight = state.imageHeight * baseScale * state.zoom;
+                    const maxOffsetX = Math.max(0, (renderedWidth - bounds.width) / 2);
+                    const maxOffsetY = Math.max(0, (renderedHeight - bounds.height) / 2);
+
+                    state.offsetX = clamp(state.offsetX, -maxOffsetX, maxOffsetX);
+                    state.offsetY = clamp(state.offsetY, -maxOffsetY, maxOffsetY);
+
+                    preview.style.width = `${renderedWidth}px`;
+                    preview.style.height = `${renderedHeight}px`;
+                    preview.style.left = `${(bounds.width - renderedWidth) / 2 + state.offsetX}px`;
+                    preview.style.top = `${(bounds.height - renderedHeight) / 2 + state.offsetY}px`;
+
+                    syncCropPayload();
+                }
+
+                function clearUpload() {
+                    state.active = false;
+                    state.dragging = false;
+                    state.pointerId = null;
+                    state.zoom = 1;
+                    state.offsetX = 0;
+                    state.offsetY = 0;
+                    preview.src = '';
+                    preview.classList.add('d-none');
+                    preview.classList.remove('is-dragging');
+                    empty.classList.remove('d-none');
+                    guides.classList.add('d-none');
+                    zoomInput.value = '1';
+                    zoomInput.disabled = true;
+                    resetButton.disabled = true;
+                    cropInput.value = '';
+                    fileInput.value = '';
+                }
+
+                function loadImage(dataUrl) {
+                    preview.onload = function () {
+                        state.imageWidth = preview.naturalWidth;
+                        state.imageHeight = preview.naturalHeight;
+                        state.zoom = 1;
+                        state.offsetX = 0;
+                        state.offsetY = 0;
+                        state.active = true;
+                        preview.classList.remove('d-none');
+                        empty.classList.add('d-none');
+                        guides.classList.remove('d-none');
+                        zoomInput.disabled = false;
+                        resetButton.disabled = false;
+                        zoomInput.value = '1';
+                        render();
+                    };
+
+                    preview.src = dataUrl;
+                }
+
+                select.addEventListener('change', updateSelectedPreview);
+                updateSelectedPreview();
+
+                fileInput.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+
+                    if (!file) {
+                        clearUpload();
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (loadEvent) {
+                        loadImage(loadEvent.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                zoomInput.addEventListener('input', function () {
+                    state.zoom = Number(zoomInput.value);
+                    render();
+                });
+
+                resetButton.addEventListener('click', function () {
+                    clearUpload();
+                });
+
+                preview.addEventListener('pointerdown', function (event) {
+                    if (!state.active) {
+                        return;
+                    }
+
+                    state.dragging = true;
+                    state.pointerId = event.pointerId;
+                    state.startX = event.clientX;
+                    state.startY = event.clientY;
+                    state.startOffsetX = state.offsetX;
+                    state.startOffsetY = state.offsetY;
+                    preview.classList.add('is-dragging');
+                    preview.setPointerCapture(event.pointerId);
+                });
+
+                preview.addEventListener('pointermove', function (event) {
+                    if (!state.dragging || state.pointerId !== event.pointerId) {
+                        return;
+                    }
+
+                    state.offsetX = state.startOffsetX + (event.clientX - state.startX);
+                    state.offsetY = state.startOffsetY + (event.clientY - state.startY);
+                    render();
+                });
+
+                function stopDragging(event) {
+                    if (state.pointerId !== event.pointerId) {
+                        return;
+                    }
+
+                    state.dragging = false;
+                    state.pointerId = null;
+                    preview.classList.remove('is-dragging');
+                }
+
+                preview.addEventListener('pointerup', stopDragging);
+                preview.addEventListener('pointercancel', stopDragging);
+
+                window.addEventListener('resize', function () {
+                    if (state.active) {
+                        render();
+                    }
+                });
+            });
+        });
+    </script>
+@endsection
+
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -16,7 +307,7 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-body">
-            <form action="{{ route('admin.settings.update') }}" method="POST">
+            <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -57,19 +348,43 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Imagen hero 1</label>
-                        <input type="text" name="home_hero_image_1" class="form-control" value="{{ old('home_hero_image_1', $settings['home_hero_image_1']) }}" placeholder="/images/hero1.jpg">
+                        <label class="form-label">Cantidad de heroes en la home</label>
+                        <select name="home_hero_count" class="form-select">
+                            <option value="1" @selected(old('home_hero_count', $settings['home_hero_count']) == '1')>1 hero</option>
+                            <option value="2" @selected(old('home_hero_count', $settings['home_hero_count']) == '2')>2 heroes</option>
+                            <option value="3" @selected(old('home_hero_count', $settings['home_hero_count']) == '3')>3 heroes</option>
+                        </select>
+                        <div class="form-text">Se mostraran las primeras imagenes configuradas en este bloque.</div>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Imagen hero 2</label>
-                        <input type="text" name="home_hero_image_2" class="form-control" value="{{ old('home_hero_image_2', $settings['home_hero_image_2']) }}" placeholder="/images/hero2.jpg">
-                    </div>
+                    <div class="col-12"></div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Imagen hero 3</label>
-                        <input type="text" name="home_hero_image_3" class="form-control" value="{{ old('home_hero_image_3', $settings['home_hero_image_3']) }}" placeholder="/images/our-company.jpg">
-                    </div>
+                    @include('admin.settings._image-field', [
+                        'name' => 'home_hero_image_1',
+                        'label' => 'Imagen hero 1',
+                        'value' => $settings['home_hero_image_1'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'home_hero_image_2',
+                        'label' => 'Imagen hero 2',
+                        'value' => $settings['home_hero_image_2'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'home_hero_image_3',
+                        'label' => 'Imagen hero 3',
+                        'value' => $settings['home_hero_image_3'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
 
                     <div class="col-md-6">
                         <label class="form-label">Etiqueta superior hero</label>
@@ -165,6 +480,67 @@
                         <label class="form-label">Texto principal "Sobre nosotros"</label>
                         <textarea name="about_body" class="form-control" rows="6">{{ old('about_body', $settings['about_body']) }}</textarea>
                     </div>
+
+                    <div class="col-12 pt-3">
+                        <h2 class="h5 mb-1">Headers de secciones</h2>
+                        <p class="text-muted small mb-0">Controla el titulo y la imagen principal de cada portada publica.</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo header "Sobre nosotros"</label>
+                        <input type="text" name="about_header_title" class="form-control" value="{{ old('about_header_title', $settings['about_header_title']) }}">
+                    </div>
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'about_header_image',
+                        'label' => 'Imagen header "Sobre nosotros"',
+                        'value' => $settings['about_header_image'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
+
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo header "Contacto"</label>
+                        <input type="text" name="contact_header_title" class="form-control" value="{{ old('contact_header_title', $settings['contact_header_title']) }}">
+                    </div>
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'contact_header_image',
+                        'label' => 'Imagen header "Contacto"',
+                        'value' => $settings['contact_header_image'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
+
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo header "Entorno"</label>
+                        <input type="text" name="environment_header_title" class="form-control" value="{{ old('environment_header_title', $settings['environment_header_title']) }}">
+                    </div>
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'environment_header_image',
+                        'label' => 'Imagen header "Entorno"',
+                        'value' => $settings['environment_header_image'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
+
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo header "Registro"</label>
+                        <input type="text" name="register_header_title" class="form-control" value="{{ old('register_header_title', $settings['register_header_title']) }}">
+                    </div>
+
+                    @include('admin.settings._image-field', [
+                        'name' => 'register_header_image',
+                        'label' => 'Imagen header "Registro"',
+                        'value' => $settings['register_header_image'],
+                        'options' => $headerImageOptions,
+                        'recommendedWidth' => $headerTargetWidth,
+                        'recommendedHeight' => $headerTargetHeight,
+                    ])
                 </div>
 
                 <div class="text-end mt-4">

@@ -223,7 +223,7 @@
             </div>
 
             <div class="sidebar-footer">
-                <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted">
+                <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
                     <i class="fas fa-arrow-up-right-from-square"></i>
                     <span>Ver web publica</span>
                 </a>

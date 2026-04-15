@@ -4,6 +4,85 @@
 
 @section('style')
 <link href="{{ asset('css/properties.css') }}" rel="stylesheet">
+<style>
+    .properties-index-shell {
+        background:
+            radial-gradient(circle at top left, rgba(212, 165, 45, 0.08), transparent 25%),
+            linear-gradient(180deg, #f8fafc 0%, #ffffff 40%);
+    }
+
+    .property-list-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .property-teaser-card {
+        overflow: hidden;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
+    }
+
+    .property-teaser-media {
+        display: block;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+    }
+
+    .property-teaser-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .property-teaser-favorite {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .property-teaser-favorite .btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+    }
+
+    .property-teaser-body {
+        padding: 1.25rem;
+    }
+
+    .property-teaser-location {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .property-teaser-price {
+        white-space: nowrap;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .property-teaser-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+        color: #475569;
+        font-size: 0.92rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .property-list-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 @endsection
 
 @section('content')
@@ -23,18 +102,18 @@
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Área mínima
+                        Area minima
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
-                        <li><label><input type="radio" name="metros" value="50" class="form-check-input me-2"> 50 m²</label></li>
-                        <li><label><input type="radio" name="metros" value="100" class="form-check-input me-2"> 100 m²</label></li>
-                        <li><label><input type="radio" name="metros" value="200" class="form-check-input me-2"> 200 m²</label></li>
+                        <li><label><input type="radio" name="metros" value="50" class="form-check-input me-2"> 50 m2</label></li>
+                        <li><label><input type="radio" name="metros" value="100" class="form-check-input me-2"> 100 m2</label></li>
+                        <li><label><input type="radio" name="metros" value="200" class="form-check-input me-2"> 200 m2</label></li>
                     </ul>
                 </div>
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Población
+                        Poblacion
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
                         <li><label><input type="checkbox" name="location[]" value="Madrid" class="form-check-input me-2"> Madrid</label></li>
@@ -45,18 +124,18 @@
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Precio máximo
+                        Precio maximo
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
-                        <li><label><input type="radio" name="precio_max" value="500000" class="form-check-input me-2"> Hasta 500.000 €</label></li>
-                        <li><label><input type="radio" name="precio_max" value="1000000" class="form-check-input me-2"> Hasta 1.000.000 €</label></li>
-                        <li><label><input type="radio" name="precio_max" value="1500000" class="form-check-input me-2"> Hasta 1.500.000 €</label></li>
+                        <li><label><input type="radio" name="precio_max" value="500000" class="form-check-input me-2"> Hasta 500.000 EUR</label></li>
+                        <li><label><input type="radio" name="precio_max" value="1000000" class="form-check-input me-2"> Hasta 1.000.000 EUR</label></li>
+                        <li><label><input type="radio" name="precio_max" value="1500000" class="form-check-input me-2"> Hasta 1.500.000 EUR</label></li>
                     </ul>
                 </div>
 
                 <div class="col-md-2 d-flex gap-2">
                     <button type="button" class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#filtersModal">
-                        <i class="bi bi-sliders"></i> Más filtros
+                        <i class="bi bi-sliders"></i> Mas filtros
                     </button>
                     <button type="submit" class="btn btn-main w-100 d-flex justify-content-center align-items-center">
                         <i class="bi bi-search me-2"></i> Mostrar
@@ -68,13 +147,13 @@
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content rounded-4">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="filtersModalLabel">Más filtros</h5>
+                            <h5 class="modal-title" id="filtersModalLabel">Mas filtros</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Características</h6>
+                                    <h6 class="mb-3">Caracteristicas</h6>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="features[]" value="piscina" id="piscina">
                                         <label class="form-check-label" for="piscina">Piscina</label>
@@ -85,7 +164,7 @@
                                     </div>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="features[]" value="jardin" id="jardin">
-                                        <label class="form-check-label" for="jardin">Jardín</label>
+                                        <label class="form-check-label" for="jardin">Jardin</label>
                                     </div>
                                 </div>
 
@@ -102,7 +181,7 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bano" class="form-label">Baños</label>
+                                        <label for="bano" class="form-label">Banos</label>
                                         <select class="form-select" id="bano" name="banos">
                                             <option value="">Seleccionar</option>
                                             <option value="1">1+</option>
@@ -123,50 +202,30 @@
         </form>
     </div>
 
-    <section class="pt-5">
+    <section class="properties-index-shell pt-5 pb-5">
         <div class="container">
-            <h1 class="mb-4 fw-light text-center">Propiedades en venta</h1>
+            <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+                <div>
+                    <h1 class="mb-2 fw-light">Propiedades en venta</h1>
+                    <p class="text-muted mb-0">Explora el catalogo y guarda tus favoritas con un clic.</p>
+                </div>
 
-            <div class="row gx-0 gy-4">
+                <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-dark">
+                    Ver favoritos
+                    @if (($favoritePropertiesCount ?? 0) > 0)
+                        <span class="badge rounded-pill text-bg-dark ms-2">{{ $favoritePropertiesCount }}</span>
+                    @endif
+                </a>
+            </div>
+
+            @if (session('success'))
+                <div class="alert alert-success rounded-4 border-0 shadow-sm mb-4">{{ session('success') }}</div>
+            @endif
+
+            <div class="property-list-grid">
                 @forelse($properties as $property)
-                    <div class="card mb-4 border-0 shadow-sm overflow-hidden">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <a href="{{ route('guest.property.show', $property->slug) }}">
-                                    <img
-                                        src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}"
-                                        alt="{{ $property->title }}"
-                                        class="w-100 h-100"
-                                        style="object-fit: cover; aspect-ratio: 4/3;"
-                                    >
-                                </a>
-                            </div>
-
-                            <div class="col-md-8 d-flex flex-column justify-content-between p-3">
-                                <div>
-                                    <p class="text-muted small mb-1">{{ $property->location ?? 'Ubicación desconocida' }}</p>
-                                    <h5 class="mb-2">
-                                        <a href="{{ route('guest.property.show', $property->slug) }}" class="text-decoration-none text-dark">
-                                            {{ $property->title }}
-                                        </a>
-                                    </h5>
-
-                                    <p class="text-muted small">{{ Str::limit($property->description, 200) }}</p>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-end">
-                                    <div class="text-muted small d-flex gap-3">
-                                        <span><i class="bi bi-house-door me-1"></i>{{ $property->area }} m²</span>
-                                        <span><i class="bi bi-door-open me-1"></i>{{ $property->bedrooms }} hab</span>
-                                        <span><i class="bi bi-bucket me-1"></i>{{ $property->bathrooms }} baños</span>
-                                    </div>
-
-                                    <div class="text-primary fw-semibold fs-5">
-                                        €{{ number_format($property->price, 0, ',', '.') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        @include('properties._property-card', ['property' => $property])
                     </div>
                 @empty
                     <div class="text-center py-5">
@@ -175,7 +234,7 @@
                 @endforelse
             </div>
 
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center mt-4">
                 {{ $properties->links('pagination::bootstrap-5') }}
             </div>
         </div>

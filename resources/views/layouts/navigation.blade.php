@@ -26,7 +26,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('contact') }}">Contacto</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link d-inline-flex align-items-center gap-2" href="{{ route('guest.properties.favorites') }}" data-favorites-link>
+                        <span>Favoritos</span>
+                        <span class="badge rounded-pill text-bg-dark {{ ($favoritePropertiesCount ?? 0) > 0 ? '' : 'd-none' }}" data-favorites-count>
+                            {{ $favoritePropertiesCount ?? 0 }}
+                        </span>
+                    </a>
+                </li>
 
             </ul>
         </div>

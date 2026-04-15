@@ -2,13 +2,13 @@
 
 <div class="row">
     <div class="mb-3 col-md-6">
-        <label class="form-label">Título</label>
+        <label class="form-label">Titulo</label>
         <input type="text" name="title" class="form-control" value="{{ old('title', $property->title ?? '') }}"
             required>
     </div>
 
     <div class="mb-3 col-md-6">
-        <label class="form-label">Ubicación</label>
+        <label class="form-label">Ubicacion</label>
         <input type="text" name="location" class="form-control"
             value="{{ old('location', $property->location ?? '') }}">
     </div>
@@ -69,7 +69,7 @@
     </div>
 
     <div class="mb-3 col-md-4">
-        <label class="form-label">Baños</label>
+        <label class="form-label">Banos</label>
         <input type="number" name="banos" class="form-control"
             value="{{ old('banos', $property->bathrooms ?? '') }}">
     </div>
@@ -95,7 +95,6 @@
             <label class="form-label">Metros del solar</label>
             <input type="number" step="0.01" name="metros_solar" class="form-control"
                 value="{{ old('metros_solar', $property->metros_solar ?? '') }}">
-
         </div>
     </div>
 
@@ -124,38 +123,68 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Descripción (ES)</label>
+    <label class="form-label">Descripcion (ES)</label>
     <textarea name="description" class="form-control">{{ old('description', $property->description ?? '') }}</textarea>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-2">Resumen rapido</h5>
+        <p class="text-muted small mb-3">
+            Si dejas estos campos vacios, la ficha publica generara frases automaticas segun las caracteristicas de la vivienda.
+        </p>
+
+        <div class="row">
+            <div class="mb-3 col-md-4">
+                <label class="form-label">Resumen 1</label>
+                <input type="text" name="quick_summary_1" class="form-control"
+                    value="{{ old('quick_summary_1', $property->quick_summary_1 ?? '') }}"
+                    placeholder="Ej. Chalet con piscina y 4 dormitorios">
+            </div>
+            <div class="mb-3 col-md-4">
+                <label class="form-label">Resumen 2</label>
+                <input type="text" name="quick_summary_2" class="form-control"
+                    value="{{ old('quick_summary_2', $property->quick_summary_2 ?? '') }}"
+                    placeholder="Ej. 240 m2 construidos y parcela de 800 m2">
+            </div>
+            <div class="mb-3 col-md-4">
+                <label class="form-label">Resumen 3</label>
+                <input type="text" name="quick_summary_3" class="form-control"
+                    value="{{ old('quick_summary_3', $property->quick_summary_3 ?? '') }}"
+                    placeholder="Ej. Lista para visita con referencia R-123">
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripción (EN)</label>
+        <label class="form-label">Descripcion (EN)</label>
         <textarea name="description_en" class="form-control">{{ old('description_en', $property->description_en ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripción (FR)</label>
+        <label class="form-label">Descripcion (FR)</label>
         <textarea name="description_fr" class="form-control">{{ old('description_fr', $property->description_fr ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripción (DE)</label>
+        <label class="form-label">Descripcion (DE)</label>
         <textarea name="description_de" class="form-control">{{ old('description_de', $property->description_de ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripción (RU)</label>
+        <label class="form-label">Descripcion (RU)</label>
         <textarea name="description_ru" class="form-control">{{ old('description_ru', $property->description_ru ?? '') }}</textarea>
     </div>
 </div>
 
-{{-- Solo en create: zona de imágenes --}}
+{{-- Solo en create: zona de imagenes --}}
 @if (!isset($property))
     <div class="mb-4">
-        <label class="form-label">Imágenes de la propiedad</label>
+        <label class="form-label">Imagenes de la propiedad</label>
         <div class="dropzone" id="dropzone">
-            Arrastra las imágenes aquí o haz clic para seleccionar
+            Arrastra las imagenes aqui o haz clic para seleccionar
             <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
         </div>
-        <div class="form-text mt-2">La primera imagen se usará como miniatura principal (thumbnail).</div>
+        <div class="form-text mt-2">La primera imagen se usara como miniatura principal (thumbnail).</div>
     </div>
 @endif
 

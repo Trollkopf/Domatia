@@ -22,6 +22,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
+            $rawFavoriteCookie = (string) request()->cookie('favorite_properties', '');
+            $decodedFavorites = json_decode($rawFavoriteCookie, true);
+            $favoritePropertySlugs = collect(is_array($decodedFavorites)
+                ? $decodedFavorites
+                : ($rawFavoriteCookie === '' ? [] : explode(',', $rawFavoriteCookie)))
+                ->filter(fn ($slug) => is_string($slug) && $slug !== '')
+                ->unique()
+                ->values()
+                ->all();
+
             $view->with('siteSettings', [
                 'company_name' => Setting::getValue('company_name', 'Domatia'),
                 'company_phone' => Setting::getValue('company_phone', ''),
@@ -31,8 +41,9 @@ class AppServiceProvider extends ServiceProvider
                 'contact_intro' => Setting::getValue('contact_intro', 'Estamos aqui para ayudarte a encontrar la propiedad adecuada y resolver cualquier duda.'),
                 'about_heading' => Setting::getValue('about_heading', 'Nuestra filosofia'),
                 'about_body' => Setting::getValue('about_body', 'En Domatia nos dedicamos a ofrecer propiedades exclusivas con un enfoque cercano, claro y personalizado para cada cliente.'),
-                'home_hero_image_1' => Setting::getValue('home_hero_image_1', '/images/hero1.jpg'),
-                'home_hero_image_2' => Setting::getValue('home_hero_image_2', '/images/hero2.jpg'),
+                'home_hero_count' => Setting::getValue('home_hero_count', '3'),
+                'home_hero_image_1' => Setting::getValue('home_hero_image_1', '/images/our-company.jpg'),
+                'home_hero_image_2' => Setting::getValue('home_hero_image_2', '/images/images.jpg'),
                 'home_hero_image_3' => Setting::getValue('home_hero_image_3', '/images/our-company.jpg'),
                 'home_hero_badge' => Setting::getValue('home_hero_badge', 'Seleccion inmobiliaria de confianza'),
                 'home_hero_title' => Setting::getValue('home_hero_title', 'Descubre propiedades exclusivas'),
@@ -49,7 +60,17 @@ class AppServiceProvider extends ServiceProvider
                 'home_cta_primary_url' => Setting::getValue('home_cta_primary_url', route('guest.properties.index')),
                 'home_cta_secondary_text' => Setting::getValue('home_cta_secondary_text', 'Contactar'),
                 'home_cta_secondary_url' => Setting::getValue('home_cta_secondary_url', route('contact')),
+                'about_header_title' => Setting::getValue('about_header_title', 'Conocenos'),
+                'about_header_image' => Setting::getValue('about_header_image', '/images/our-company.jpg'),
+                'contact_header_title' => Setting::getValue('contact_header_title', 'Contactanos'),
+                'contact_header_image' => Setting::getValue('contact_header_image', '/images/our-company.jpg'),
+                'environment_header_title' => Setting::getValue('environment_header_title', 'Conoce el entorno'),
+                'environment_header_image' => Setting::getValue('environment_header_image', '/images/images.jpg'),
+                'register_header_title' => Setting::getValue('register_header_title', 'Crear cuenta'),
+                'register_header_image' => Setting::getValue('register_header_image', '/images/our-company.jpg'),
             ]);
+            $view->with('favoritePropertySlugs', $favoritePropertySlugs);
+            $view->with('favoritePropertiesCount', count($favoritePropertySlugs));
         });
     }
 }

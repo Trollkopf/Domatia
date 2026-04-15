@@ -104,6 +104,9 @@ class PropertyController extends Controller
             'destacada' => 'nullable|boolean',
             'tiene_piscina' => 'nullable|boolean',
             'status' => 'nullable|in:draft,published,reserved,sold,hidden',
+            'quick_summary_1' => 'nullable|string|max:255',
+            'quick_summary_2' => 'nullable|string|max:255',
+            'quick_summary_3' => 'nullable|string|max:255',
             'images.*' => 'nullable|image|max:5120',
         ]);
 
@@ -128,6 +131,9 @@ class PropertyController extends Controller
             'is_featured' => $request->has('destacada'),
             'tiene_piscina' => $request->has('tiene_piscina'),
             'status' => $request->input('status', 'draft'),
+            'quick_summary_1' => $request->quick_summary_1,
+            'quick_summary_2' => $request->quick_summary_2,
+            'quick_summary_3' => $request->quick_summary_3,
         ]);
 
         $baseSlug = Str::slug($request->title);
@@ -195,6 +201,9 @@ class PropertyController extends Controller
             'tiene_piscina' => 'nullable|boolean',
             'destacada' => 'nullable|boolean',
             'status' => 'nullable|in:draft,published,reserved,sold,hidden',
+            'quick_summary_1' => 'nullable|string|max:255',
+            'quick_summary_2' => 'nullable|string|max:255',
+            'quick_summary_3' => 'nullable|string|max:255',
             'images.*' => 'nullable|image|max:5120',
         ]);
 
@@ -219,6 +228,9 @@ class PropertyController extends Controller
             'is_featured' => $request->has('destacada'),
             'tiene_piscina' => $request->has('tiene_piscina'),
             'status' => $request->input('status', $property->status ?? 'draft'),
+            'quick_summary_1' => $request->quick_summary_1,
+            'quick_summary_2' => $request->quick_summary_2,
+            'quick_summary_3' => $request->quick_summary_3,
         ]);
 
         if ($request->hasFile('images')) {
