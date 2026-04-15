@@ -25,7 +25,7 @@
 
         .sticky-footer {
             position: sticky;
-            bottom: -0;
+            bottom: 0;
             background: #fff;
             padding: 12px 20px;
             border-top: 1px solid #ddd;
@@ -48,57 +48,64 @@
     </div>
 @endsection
 
-@section('scripts')
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('images');
-    const previewContainer = document.createElement('div');
-    previewContainer.classList.add('row', 'mt-3');
-    dropzone.after(previewContainer);
+@push('scripts')
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('images');
 
-    // 👇 Manejo de selección manual
-    fileInput.addEventListener('change', function () {
-    showPreviews(this.files);
-    });
+        if (dropzone && fileInput) {
+            const previewContainer = document.createElement('div');
+            previewContainer.classList.add('row', 'mt-3');
+            dropzone.after(previewContainer);
 
-    // 👇 Drag & drop
-    dropzone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', function () {
+                showPreviews(this.files);
+            });
 
-    dropzone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropzone.classList.add('dragover');
-    });
+            dropzone.addEventListener('click', () => fileInput.click());
 
-    dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('dragover');
-    });
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
 
-    dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    fileInput.files = e.dataTransfer.files;
-    showPreviews(e.dataTransfer.files);
-    });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
 
-    function showPreviews(files) {
-    previewContainer.innerHTML = '';
-    Array.from(files).forEach(file => {
-    if (!file.type.startsWith('image/')) return;
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                fileInput.files = e.dataTransfer.files;
+                showPreviews(e.dataTransfer.files);
+            });
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-    const col = document.createElement('div');
-    col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 mb-2';
+            function showPreviews(files) {
+                previewContainer.innerHTML = '';
 
-    const img = document.createElement('img');
-    img.src = e.target.result;
-    img.className = 'img-fluid rounded shadow-sm';
-    img.style.height = '100px';
-    img.style.objectFit = 'cover';
+                Array.from(files).forEach(file => {
+                    if (!file.type.startsWith('image/')) {
+                        return;
+                    }
 
-    col.appendChild(img);
-    previewContainer.appendChild(col);
-    };
-    reader.readAsDataURL(file);
-    });
-    }
-@endsection
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 mb-2';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-fluid rounded shadow-sm';
+                        img.style.height = '100px';
+                        img.style.objectFit = 'cover';
+
+                        col.appendChild(img);
+                        previewContainer.appendChild(col);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    </script>
+@endpush

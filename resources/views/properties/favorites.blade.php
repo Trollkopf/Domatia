@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Favoritos')
+@section('title', __('ui.properties.favorites_title'))
 
 @section('style')
     <style>
@@ -21,9 +21,9 @@
         <div class="container">
             <div class="row align-items-end g-3">
                 <div class="col-lg-8">
-                    <h1 class="display-6 mb-2">Tus propiedades favoritas</h1>
+                    <h1 class="display-6 mb-2">{{ __('ui.properties.favorites_title') }}</h1>
                     <p class="text-muted mb-0">
-                        Aqui puedes volver rapido a las propiedades que has ido guardando durante tu visita.
+                        {{ __('ui.properties.favorites_intro') }}
                     </p>
                 </div>
                 <div class="col-lg-4 text-lg-end">
@@ -51,11 +51,11 @@
                 </div>
             @else
                 <div class="rounded-4 border bg-white p-5 text-center shadow-sm">
-                    <h2 class="h4 mb-3">Todavia no has guardado propiedades</h2>
+                    <h2 class="h4 mb-3">{{ __('ui.properties.favorites_empty_title') }}</h2>
                     <p class="text-muted mb-4">
-                        Cuando marques una ficha como favorita, aparecera aqui para recuperarla facilmente.
+                        {{ __('ui.properties.favorites_empty_body') }}
                     </p>
-                    <a href="{{ route('guest.properties.index') }}" class="btn btn-dark">Explorar propiedades</a>
+                    <a href="{{ route('guest.properties.index') }}" class="btn btn-dark">{{ __('ui.common.explore_properties') }}</a>
                 </div>
             @endif
         </div>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class Zona extends Model
@@ -12,6 +13,10 @@ class Zona extends Model
 
     protected $fillable = [
         'nombre',
+        'nombre_en',
+        'nombre_fr',
+        'nombre_de',
+        'nombre_ru',
         'imagen_principal',
         'slug',
     ];
@@ -24,6 +29,21 @@ class Zona extends Model
     public function secciones()
     {
         return $this->hasMany(ZonaSection::class);
+    }
+
+    public function translatedName(?string $locale = null): string
+    {
+        $locale = $locale ?: App::currentLocale();
+
+        $localizedValue = match ($locale) {
+            'en' => $this->nombre_en,
+            'fr' => $this->nombre_fr,
+            'de' => $this->nombre_de,
+            'ru' => $this->nombre_ru,
+            default => $this->nombre,
+        };
+
+        return filled($localizedValue) ? $localizedValue : (string) $this->nombre;
     }
 
     protected static function boot()

@@ -91,7 +91,7 @@
     </style>
 @endsection
 
-@section('scripts')
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -291,9 +291,35 @@
             });
         });
     </script>
-@endsection
+@endpush
 
 @section('content')
+    @php
+        $localizedTextFields = [
+            'home_hero_badge' => ['label' => 'Etiqueta superior hero', 'type' => 'text'],
+            'home_hero_title' => ['label' => 'Titulo hero', 'type' => 'text'],
+            'home_hero_subtitle' => ['label' => 'Subtitulo hero', 'type' => 'text'],
+            'home_search_button_text' => ['label' => 'Texto boton buscador', 'type' => 'text'],
+            'home_value_1' => ['label' => 'Argumento 1', 'type' => 'text'],
+            'home_value_2' => ['label' => 'Argumento 2', 'type' => 'text'],
+            'home_value_3' => ['label' => 'Argumento 3', 'type' => 'text'],
+            'home_featured_heading' => ['label' => 'Titulo destacadas', 'type' => 'text'],
+            'home_featured_subtitle' => ['label' => 'Subtitulo destacadas', 'type' => 'text'],
+            'home_cta_heading' => ['label' => 'Titulo bloque final', 'type' => 'text'],
+            'home_cta_body' => ['label' => 'Texto bloque final', 'type' => 'textarea', 'rows' => 4],
+            'home_cta_primary_text' => ['label' => 'Texto CTA principal', 'type' => 'text'],
+            'home_cta_secondary_text' => ['label' => 'Texto CTA secundario', 'type' => 'text'],
+            'contact_intro' => ['label' => 'Texto de introduccion en contacto', 'type' => 'textarea', 'rows' => 3],
+            'about_heading' => ['label' => 'Titulo seccion Sobre nosotros', 'type' => 'text'],
+            'about_body' => ['label' => 'Texto principal Sobre nosotros', 'type' => 'textarea', 'rows' => 6],
+            'about_header_title' => ['label' => 'Titulo header Sobre nosotros', 'type' => 'text'],
+            'contact_header_title' => ['label' => 'Titulo header Contacto', 'type' => 'text'],
+            'environment_header_title' => ['label' => 'Titulo header Entorno', 'type' => 'text'],
+            'register_header_title' => ['label' => 'Titulo header Registro', 'type' => 'text'],
+            'footer_text' => ['label' => 'Texto de footer', 'type' => 'text'],
+        ];
+    @endphp
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="mb-1">Configuracion</h1>
@@ -541,6 +567,79 @@
                         'recommendedWidth' => $headerTargetWidth,
                         'recommendedHeight' => $headerTargetHeight,
                     ])
+
+                    @if (! empty($settingsLocales))
+                        <div class="col-12 pt-4">
+                            <hr class="my-0">
+                        </div>
+
+                        <div class="col-12 pt-3">
+                            <h2 class="h5 mb-1">Textos por idioma</h2>
+                            <p class="text-muted small mb-0">
+                                El castellano se sigue editando en los bloques superiores. Aqui puedes cargar overrides para cada idioma y, si dejas un campo vacio, se usara el texto por defecto.
+                            </p>
+                        </div>
+
+                        <div class="col-12">
+                            <ul class="nav nav-pills gap-2 mb-3" id="settingsLocaleTabs" role="tablist">
+                                @foreach ($settingsLocales as $localeCode => $localeLabel)
+                                    <li class="nav-item" role="presentation">
+                                        <button
+                                            class="nav-link {{ $loop->first ? 'active' : '' }}"
+                                            id="settings-tab-{{ $localeCode }}"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#settings-pane-{{ $localeCode }}"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="settings-pane-{{ $localeCode }}"
+                                            aria-selected="{{ $loop->first ? 'true' : 'false' }}"
+                                        >
+                                            {{ $localeLabel }}
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+                            <div class="tab-content border rounded-4 p-3 p-lg-4 bg-light-subtle">
+                                @foreach ($settingsLocales as $localeCode => $localeLabel)
+                                    <div
+                                        class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                                        id="settings-pane-{{ $localeCode }}"
+                                        role="tabpanel"
+                                        aria-labelledby="settings-tab-{{ $localeCode }}"
+                                    >
+                                        <div class="mb-3">
+                                            <h3 class="h6 mb-1">{{ $localeLabel }}</h3>
+                                            <p class="text-muted small mb-0">Overrides de contenido para la interfaz publica en {{ $localeLabel }}.</p>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            @foreach ($localizedTextFields as $fieldKey => $fieldConfig)
+                                                <div class="col-12 {{ ($fieldConfig['type'] ?? 'text') === 'textarea' ? '' : 'col-md-6' }}">
+                                                    <label class="form-label">{{ $fieldConfig['label'] }}</label>
+
+                                                    @if (($fieldConfig['type'] ?? 'text') === 'textarea')
+                                                        <textarea
+                                                            name="{{ $fieldKey }}_{{ $localeCode }}"
+                                                            class="form-control"
+                                                            rows="{{ $fieldConfig['rows'] ?? 4 }}"
+                                                        >{{ old($fieldKey . '_' . $localeCode, $localizedSettings[$localeCode][$fieldKey] ?? '') }}</textarea>
+                                                    @else
+                                                        <input
+                                                            type="text"
+                                                            name="{{ $fieldKey }}_{{ $localeCode }}"
+                                                            class="form-control"
+                                                            value="{{ old($fieldKey . '_' . $localeCode, $localizedSettings[$localeCode][$fieldKey] ?? '') }}"
+                                                        >
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="text-end mt-4">

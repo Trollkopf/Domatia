@@ -2,13 +2,13 @@
 
 <div class="row">
     <div class="mb-3 col-md-6">
-        <label class="form-label">Titulo</label>
+        <label class="form-label">Titulo base (ES)</label>
         <input type="text" name="title" class="form-control" value="{{ old('title', $property->title ?? '') }}"
             required>
     </div>
 
     <div class="mb-3 col-md-6">
-        <label class="form-label">Ubicacion</label>
+        <label class="form-label">Ubicacion base (ES)</label>
         <input type="text" name="location" class="form-control"
             value="{{ old('location', $property->location ?? '') }}">
     </div>
@@ -45,6 +45,48 @@
                 </option>
             @endforeach
         </select>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Titulos y ubicaciones por idioma</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo EN</label>
+                        <input type="text" name="title_en" class="form-control" value="{{ old('title_en', $property->title_en ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ubicacion EN</label>
+                        <input type="text" name="location_en" class="form-control" value="{{ old('location_en', $property->location_en ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo FR</label>
+                        <input type="text" name="title_fr" class="form-control" value="{{ old('title_fr', $property->title_fr ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ubicacion FR</label>
+                        <input type="text" name="location_fr" class="form-control" value="{{ old('location_fr', $property->location_fr ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo DE</label>
+                        <input type="text" name="title_de" class="form-control" value="{{ old('title_de', $property->title_de ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ubicacion DE</label>
+                        <input type="text" name="location_de" class="form-control" value="{{ old('location_de', $property->location_de ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo RU</label>
+                        <input type="text" name="title_ru" class="form-control" value="{{ old('title_ru', $property->title_ru ?? '') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ubicacion RU</label>
+                        <input type="text" name="location_ru" class="form-control" value="{{ old('location_ru', $property->location_ru ?? '') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mb-3 col-md-6">
@@ -134,24 +176,85 @@
             Si dejas estos campos vacios, la ficha publica generara frases automaticas segun las caracteristicas de la vivienda.
         </p>
 
-        <div class="row">
-            <div class="mb-3 col-md-4">
-                <label class="form-label">Resumen 1</label>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Resumen 1 (ES)</label>
                 <input type="text" name="quick_summary_1" class="form-control"
-                    value="{{ old('quick_summary_1', $property->quick_summary_1 ?? '') }}"
-                    placeholder="Ej. Chalet con piscina y 4 dormitorios">
+                    value="{{ old('quick_summary_1', $property->quick_summary_1 ?? '') }}">
             </div>
-            <div class="mb-3 col-md-4">
-                <label class="form-label">Resumen 2</label>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 2 (ES)</label>
                 <input type="text" name="quick_summary_2" class="form-control"
-                    value="{{ old('quick_summary_2', $property->quick_summary_2 ?? '') }}"
-                    placeholder="Ej. 240 m2 construidos y parcela de 800 m2">
+                    value="{{ old('quick_summary_2', $property->quick_summary_2 ?? '') }}">
             </div>
-            <div class="mb-3 col-md-4">
-                <label class="form-label">Resumen 3</label>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 3 (ES)</label>
                 <input type="text" name="quick_summary_3" class="form-control"
-                    value="{{ old('quick_summary_3', $property->quick_summary_3 ?? '') }}"
-                    placeholder="Ej. Lista para visita con referencia R-123">
+                    value="{{ old('quick_summary_3', $property->quick_summary_3 ?? '') }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Resumen 1 EN</label>
+                <input type="text" name="quick_summary_1_en" class="form-control"
+                    value="{{ old('quick_summary_1_en', $property->quick_summary_1_en ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 2 EN</label>
+                <input type="text" name="quick_summary_2_en" class="form-control"
+                    value="{{ old('quick_summary_2_en', $property->quick_summary_2_en ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 3 EN</label>
+                <input type="text" name="quick_summary_3_en" class="form-control"
+                    value="{{ old('quick_summary_3_en', $property->quick_summary_3_en ?? '') }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Resumen 1 FR</label>
+                <input type="text" name="quick_summary_1_fr" class="form-control"
+                    value="{{ old('quick_summary_1_fr', $property->quick_summary_1_fr ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 2 FR</label>
+                <input type="text" name="quick_summary_2_fr" class="form-control"
+                    value="{{ old('quick_summary_2_fr', $property->quick_summary_2_fr ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 3 FR</label>
+                <input type="text" name="quick_summary_3_fr" class="form-control"
+                    value="{{ old('quick_summary_3_fr', $property->quick_summary_3_fr ?? '') }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Resumen 1 DE</label>
+                <input type="text" name="quick_summary_1_de" class="form-control"
+                    value="{{ old('quick_summary_1_de', $property->quick_summary_1_de ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 2 DE</label>
+                <input type="text" name="quick_summary_2_de" class="form-control"
+                    value="{{ old('quick_summary_2_de', $property->quick_summary_2_de ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 3 DE</label>
+                <input type="text" name="quick_summary_3_de" class="form-control"
+                    value="{{ old('quick_summary_3_de', $property->quick_summary_3_de ?? '') }}">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Resumen 1 RU</label>
+                <input type="text" name="quick_summary_1_ru" class="form-control"
+                    value="{{ old('quick_summary_1_ru', $property->quick_summary_1_ru ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 2 RU</label>
+                <input type="text" name="quick_summary_2_ru" class="form-control"
+                    value="{{ old('quick_summary_2_ru', $property->quick_summary_2_ru ?? '') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Resumen 3 RU</label>
+                <input type="text" name="quick_summary_3_ru" class="form-control"
+                    value="{{ old('quick_summary_3_ru', $property->quick_summary_3_ru ?? '') }}">
             </div>
         </div>
     </div>

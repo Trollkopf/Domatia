@@ -46,7 +46,7 @@
                 @endif
 
                 @if ($property->images->count() > 0)
-                    <h5 class="mt-4">Imágenes actuales</h5>
+                    <h5 class="mt-4">Imagenes actuales</h5>
                     <div class="row g-2">
                         @foreach ($property->images as $image)
                             <div class="col-3 position-relative">
@@ -65,87 +65,98 @@
                 @endif
 
                 <div class="mb-4">
-                    <label class="form-label">Añadir nuevas imágenes</label>
+                    <label class="form-label">Anadir nuevas imagenes</label>
                     <div class="dropzone" id="dropzone">
-                        Arrastra las imágenes aquí o haz clic para seleccionar
+                        Arrastra las imagenes aqui o haz clic para seleccionar
                         <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
                     </div>
-                    <div class="form-text mt-2">Las nuevas imágenes se añadirán al final.</div>
+                    <div class="form-text mt-2">Las nuevas imagenes se anadiran al final.</div>
                 </div>
             </form>
         </div>
     </div>
 @endsection
 
-@section('scripts')
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('images');
-    const previewContainer = document.createElement('div');
-    previewContainer.classList.add('row', 'mt-3');
-    dropzone.after(previewContainer);
+@push('scripts')
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('images');
 
-    fileInput.addEventListener('change', function () {
-    showPreviews(this.files);
-    });
+        if (dropzone && fileInput) {
+            const previewContainer = document.createElement('div');
+            previewContainer.classList.add('row', 'mt-3');
+            dropzone.after(previewContainer);
 
-    dropzone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', function () {
+                showPreviews(this.files);
+            });
 
-    dropzone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropzone.classList.add('dragover');
-    });
+            dropzone.addEventListener('click', () => fileInput.click());
 
-    dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('dragover');
-    });
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
 
-    dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    fileInput.files = e.dataTransfer.files;
-    showPreviews(e.dataTransfer.files);
-    });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
 
-    function showPreviews(files) {
-    previewContainer.innerHTML = '';
-    Array.from(files).forEach(file => {
-    if (!file.type.startsWith('image/')) return;
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                fileInput.files = e.dataTransfer.files;
+                showPreviews(e.dataTransfer.files);
+            });
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-    const col = document.createElement('div');
-    col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 mb-2';
+            function showPreviews(files) {
+                previewContainer.innerHTML = '';
 
-    const img = document.createElement('img');
-    img.src = e.target.result;
-    img.className = 'img-fluid rounded shadow-sm';
-    img.style.height = '100px';
-    img.style.objectFit = 'cover';
+                Array.from(files).forEach(file => {
+                    if (!file.type.startsWith('image/')) {
+                        return;
+                    }
 
-    col.appendChild(img);
-    previewContainer.appendChild(col);
-    };
-    reader.readAsDataURL(file);
-    });
-    }
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 mb-2';
 
-    function deleteImage(id) {
-    if (!confirm("¿Seguro que quieres eliminar esta imagen?")) return;
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-fluid rounded shadow-sm';
+                        img.style.height = '100px';
+                        img.style.objectFit = 'cover';
 
-    fetch("{{ url('/admin/properties/images') }}/" + id, {
-    method: 'DELETE',
-    headers: {
-    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-    'Accept': 'application/json',
-    }
-    })
-    .then(res => res.json())
-    .then(data => {
-    if (data.success) {
-    location.reload();
-    } else {
-    alert('No se pudo eliminar la imagen');
-    }
-    });
-    }
-@endsection
+                        col.appendChild(img);
+                        previewContainer.appendChild(col);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function deleteImage(id) {
+            if (!confirm('Seguro que quieres eliminar esta imagen?')) {
+                return;
+            }
+
+            fetch("{{ url('/admin/properties/images') }}/" + id, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('No se pudo eliminar la imagen');
+                    }
+                });
+        }
+    </script>
+@endpush

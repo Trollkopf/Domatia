@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Propiedades en venta')
+@section('title', __('ui.properties.page_title'))
 
 @section('style')
 <link href="{{ asset('css/properties.css') }}" rel="stylesheet">
@@ -91,18 +91,18 @@
             <div class="row g-2 align-items-center justify-content-center">
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Tipo de propiedad
+                        {{ __('ui.properties.filters.type') }}
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
-                        <li><label><input type="checkbox" name="tipo[]" value="piso" class="form-check-input me-2"> Piso</label></li>
-                        <li><label><input type="checkbox" name="tipo[]" value="casa" class="form-check-input me-2"> Casa</label></li>
-                        <li><label><input type="checkbox" name="tipo[]" value="villa" class="form-check-input me-2"> Villa</label></li>
+                        <li><label><input type="checkbox" name="tipo[]" value="piso" class="form-check-input me-2"> {{ __('ui.property_types.piso') }}</label></li>
+                        <li><label><input type="checkbox" name="tipo[]" value="casa" class="form-check-input me-2"> {{ __('ui.property_types.casa') }}</label></li>
+                        <li><label><input type="checkbox" name="tipo[]" value="villa" class="form-check-input me-2"> {{ __('ui.property_types.villa') }}</label></li>
                     </ul>
                 </div>
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Area minima
+                        {{ __('ui.properties.filters.minimum_area') }}
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
                         <li><label><input type="radio" name="metros" value="50" class="form-check-input me-2"> 50 m2</label></li>
@@ -113,7 +113,7 @@
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Poblacion
+                        {{ __('ui.properties.filters.town') }}
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
                         <li><label><input type="checkbox" name="location[]" value="Madrid" class="form-check-input me-2"> Madrid</label></li>
@@ -124,21 +124,21 @@
 
                 <div class="col-md-2 dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
-                        Precio maximo
+                        {{ __('ui.properties.filters.max_price') }}
                     </button>
                     <ul class="dropdown-menu p-2" style="width: 100%;">
-                        <li><label><input type="radio" name="precio_max" value="500000" class="form-check-input me-2"> Hasta 500.000 EUR</label></li>
-                        <li><label><input type="radio" name="precio_max" value="1000000" class="form-check-input me-2"> Hasta 1.000.000 EUR</label></li>
-                        <li><label><input type="radio" name="precio_max" value="1500000" class="form-check-input me-2"> Hasta 1.500.000 EUR</label></li>
+                        <li><label><input type="radio" name="precio_max" value="500000" class="form-check-input me-2"> {{ __('ui.properties.filters.up_to', ['price' => '500.000']) }}</label></li>
+                        <li><label><input type="radio" name="precio_max" value="1000000" class="form-check-input me-2"> {{ __('ui.properties.filters.up_to', ['price' => '1.000.000']) }}</label></li>
+                        <li><label><input type="radio" name="precio_max" value="1500000" class="form-check-input me-2"> {{ __('ui.properties.filters.up_to', ['price' => '1.500.000']) }}</label></li>
                     </ul>
                 </div>
 
                 <div class="col-md-2 d-flex gap-2">
                     <button type="button" class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#filtersModal">
-                        <i class="bi bi-sliders"></i> Mas filtros
+                        <i class="bi bi-sliders"></i> {{ __('ui.common.more_filters') }}
                     </button>
                     <button type="submit" class="btn btn-main w-100 d-flex justify-content-center align-items-center">
-                        <i class="bi bi-search me-2"></i> Mostrar
+                        <i class="bi bi-search me-2"></i> {{ __('ui.common.show') }}
                     </button>
                 </div>
             </div>
@@ -147,33 +147,33 @@
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content rounded-4">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="filtersModalLabel">Mas filtros</h5>
+                            <h5 class="modal-title" id="filtersModalLabel">{{ __('ui.common.more_filters') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Caracteristicas</h6>
+                                    <h6 class="mb-3">{{ __('ui.properties.filters.features') }}</h6>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="features[]" value="piscina" id="piscina">
-                                        <label class="form-check-label" for="piscina">Piscina</label>
+                                        <label class="form-check-label" for="piscina">{{ __('ui.properties.filters.pool') }}</label>
                                     </div>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="features[]" value="terraza" id="terraza">
-                                        <label class="form-check-label" for="terraza">Terraza</label>
+                                        <label class="form-check-label" for="terraza">{{ __('ui.properties.filters.terrace') }}</label>
                                     </div>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="features[]" value="jardin" id="jardin">
-                                        <label class="form-check-label" for="jardin">Jardin</label>
+                                        <label class="form-check-label" for="jardin">{{ __('ui.properties.filters.garden') }}</label>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Otros</h6>
+                                    <h6 class="mb-3">{{ __('ui.properties.filters.others') }}</h6>
                                     <div class="mb-3">
-                                        <label for="habitaciones" class="form-label">Habitaciones</label>
+                                        <label for="habitaciones" class="form-label">{{ __('ui.properties.filters.bedrooms') }}</label>
                                         <select class="form-select" id="habitaciones" name="habitaciones">
-                                            <option value="">Seleccionar</option>
+                                            <option value="">{{ __('ui.properties.filters.select') }}</option>
                                             <option value="1">1+</option>
                                             <option value="2">2+</option>
                                             <option value="3">3+</option>
@@ -181,9 +181,9 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bano" class="form-label">Banos</label>
+                                        <label for="bano" class="form-label">{{ __('ui.properties.filters.bathrooms') }}</label>
                                         <select class="form-select" id="bano" name="banos">
-                                            <option value="">Seleccionar</option>
+                                            <option value="">{{ __('ui.properties.filters.select') }}</option>
                                             <option value="1">1+</option>
                                             <option value="2">2+</option>
                                             <option value="3">3+</option>
@@ -194,7 +194,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-main w-100">Aplicar filtros</button>
+                            <button type="submit" class="btn btn-main w-100">{{ __('ui.common.apply_filters') }}</button>
                         </div>
                     </div>
                 </div>
@@ -206,12 +206,12 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
                 <div>
-                    <h1 class="mb-2 fw-light">Propiedades en venta</h1>
-                    <p class="text-muted mb-0">Explora el catalogo y guarda tus favoritas con un clic.</p>
+                    <h1 class="mb-2 fw-light">{{ __('ui.properties.page_title') }}</h1>
+                    <p class="text-muted mb-0">{{ __('ui.properties.intro') }}</p>
                 </div>
 
                 <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-dark">
-                    Ver favoritos
+                    {{ __('ui.common.view_favorites') }}
                     @if (($favoritePropertiesCount ?? 0) > 0)
                         <span class="badge rounded-pill text-bg-dark ms-2">{{ $favoritePropertiesCount }}</span>
                     @endif
@@ -229,7 +229,7 @@
                     </div>
                 @empty
                     <div class="text-center py-5">
-                        <p>No se encontraron propiedades.</p>
+                        <p>{{ __('ui.properties.empty') }}</p>
                     </div>
                 @endforelse
             </div>

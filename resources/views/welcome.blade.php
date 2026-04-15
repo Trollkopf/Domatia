@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Inicio')
+@section('title', __('ui.home.title'))
 
 @section('style')
 <link href="{{ asset('css/slider.css') }}" rel="stylesheet">
@@ -148,24 +148,24 @@
 
                             <form action="{{ route('search') }}" method="GET" class="hero-search row g-2 mt-4 bg-white p-3 text-dark">
                                 <div class="col-md-3">
-                                    <input type="text" name="location" class="form-control" placeholder="Ubicacion">
+                                    <input type="text" name="location" class="form-control" placeholder="{{ __('ui.home.location_placeholder') }}">
                                 </div>
 
                                 <div class="col-md-3">
                                     <select name="type" class="form-select">
-                                        <option value="">Tipo de propiedad</option>
-                                        <option value="piso">Piso</option>
-                                        <option value="casa">Casa</option>
-                                        <option value="villa">Villa</option>
+                                        <option value="">{{ __('ui.home.property_type') }}</option>
+                                        <option value="piso">{{ __('ui.property_types.piso') }}</option>
+                                        <option value="casa">{{ __('ui.property_types.casa') }}</option>
+                                        <option value="villa">{{ __('ui.property_types.villa') }}</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-2">
-                                    <input type="number" name="min_price" class="form-control" placeholder="Desde EUR">
+                                    <input type="number" name="min_price" class="form-control" placeholder="{{ __('ui.home.min_price') }}">
                                 </div>
 
                                 <div class="col-md-2">
-                                    <input type="number" name="max_price" class="form-control" placeholder="Hasta EUR">
+                                    <input type="number" name="max_price" class="form-control" placeholder="{{ __('ui.home.max_price') }}">
                                 </div>
 
                                 <div class="col-md-2">
@@ -216,7 +216,7 @@
                                         alt="{{ $property->title }}"
                                     >
                                     <div class="position-absolute bottom-0 start-0 end-0 p-2 text-white" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);">
-                                        <div class="fw-semibold small">{{ $property->title }}</div>
+                                        <div class="fw-semibold small">{{ $property->translatedTitle() }}</div>
                                         <div class="small">{{ number_format($property->price, 0, ',', '.') }} EUR</div>
                                     </div>
                                 </a>
@@ -229,8 +229,8 @@
                 </div>
             @else
                 <div class="rounded-4 border bg-light p-4 text-center">
-                    <p class="text-muted mb-3">Todavia no hay propiedades destacadas publicadas.</p>
-                    <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">Ver todo el catalogo</a>
+                    <p class="text-muted mb-3">{{ __('ui.properties.empty') }}</p>
+                    <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">{{ __('ui.common.view_catalog') }}</a>
                 </div>
             @endif
         </div>
@@ -240,11 +240,11 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
                 <div>
-                    <h2 class="mb-2">Ultimas propiedades incorporadas</h2>
-                    <p class="text-muted mb-0">Novedades recientes del catalogo para que la portada respire actualidad.</p>
+                    <h2 class="mb-2">{{ __('ui.home.latest_heading') }}</h2>
+                    <p class="text-muted mb-0">{{ __('ui.home.latest_subtitle') }}</p>
                 </div>
 
-                <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">Ver todas</a>
+                <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">{{ __('ui.common.view_catalog') }}</a>
             </div>
 
             <div class="row g-4">
@@ -254,22 +254,22 @@
                             <div class="home-property-card-media">
                                 <img
                                     src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}"
-                                    alt="{{ $property->title }}"
+                                        alt="{{ $property->translatedTitle() }}"
                                 >
                             </div>
 
                             <div class="p-4">
                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                    <h3 class="h5 mb-0">{{ $property->title }}</h3>
+                                    <h3 class="h5 mb-0">{{ $property->translatedTitle() }}</h3>
                                     @if ($property->is_featured)
-                                        <span class="badge bg-warning text-dark">Destacada</span>
+                                        <span class="badge bg-warning text-dark">{{ __('ui.common.featured') }}</span>
                                     @endif
                                 </div>
 
                                 <p class="text-muted small mb-3">
-                                    {{ $property->location ?? 'Ubicacion pendiente' }}
+                                    {{ $property->translatedLocation() ?? __('ui.properties.location_pending') }}
                                     @if ($property->tipo)
-                                        · {{ ucfirst($property->tipo) }}
+                                        {{ '· ' . $property->translatedTypeLabel() }}
                                     @endif
                                 </p>
 
@@ -283,8 +283,8 @@
                 @empty
                     <div class="col-12">
                         <div class="rounded-4 border bg-white p-4 text-center">
-                            <p class="text-muted mb-3">Todavia no hay propiedades publicadas recientes.</p>
-                            <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">Explorar catalogo</a>
+                            <p class="text-muted mb-3">{{ __('ui.properties.empty') }}</p>
+                            <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">{{ __('ui.common.explore_properties') }}</a>
                         </div>
                     </div>
                 @endforelse
@@ -304,11 +304,11 @@
                     <div class="col-lg-4">
                         <div class="d-grid gap-2">
                             <a href="{{ $siteSettings['home_cta_primary_url'] ?: route('guest.properties.index') }}" class="btn btn-light">
-                                {{ $siteSettings['home_cta_primary_text'] ?: 'Ver propiedades' }}
+                                {{ $siteSettings['home_cta_primary_text'] ?: __('ui.common.view_catalog') }}
                             </a>
 
                             <a href="{{ $siteSettings['home_cta_secondary_url'] ?: route('contact') }}" class="btn btn-outline-light">
-                                {{ $siteSettings['home_cta_secondary_text'] ?: 'Contactar' }}
+                                {{ $siteSettings['home_cta_secondary_text'] ?: __('ui.nav.contact') }}
                             </a>
                         </div>
                     </div>

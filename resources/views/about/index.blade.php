@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Conocenos')
+@section('title', __('ui.about.title'))
 
 @section('style')
     <link href="{{ asset('css/about.css') }}" rel="stylesheet">
@@ -25,28 +25,28 @@
     </section>
 
     <section class="container py-5">
-        <h2 class="text-center mb-4">Contacta con nosotros</h2>
+        <h2 class="text-center mb-4">{{ __('ui.about.contact_title') }}</h2>
 
         <form action="{{ route('contact.store') }}" method="POST" class="row g-3">
             @csrf
 
             <div class="col-md-6">
-                <label for="name" class="form-label">Tu nombre *</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Ingresa tu nombre" required>
+                <label for="name" class="form-label">{{ __('ui.about.name') }} *</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="{{ __('ui.about.name_placeholder') }}" required>
             </div>
 
             <div class="col-md-6">
-                <label for="email" class="form-label">Tu email *</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+                <label for="email" class="form-label">{{ __('ui.about.email') }} *</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="{{ __('ui.about.email_placeholder') }}" required>
             </div>
 
             <div class="col-12">
-                <label for="message" class="form-label">Tu mensaje *</label>
-                <textarea class="form-control" id="message" name="message" rows="4" placeholder="Escribe tu mensaje" required></textarea>
+                <label for="message" class="form-label">{{ __('ui.about.message') }} *</label>
+                <textarea class="form-control" id="message" name="message" rows="4" placeholder="{{ __('ui.about.message_placeholder') }}" required></textarea>
             </div>
 
             <div class="col-12 text-center">
-                <button type="submit" class="btn btn-main w-50">Enviar mensaje</button>
+                <button type="submit" class="btn btn-main w-50">{{ __('ui.common.send_message') }}</button>
             </div>
         </form>
     </section>

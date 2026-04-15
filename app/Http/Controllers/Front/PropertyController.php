@@ -158,11 +158,11 @@ class PropertyController extends Controller
 
         if ($isFavorite) {
             $favoriteSlugs = array_values(array_filter($favoriteSlugs, fn ($favoriteSlug) => $favoriteSlug !== $property->slug));
-            $message = 'Propiedad eliminada de favoritos.';
+            $message = __('ui.properties.favorite_removed');
         } else {
             array_unshift($favoriteSlugs, $property->slug);
             $favoriteSlugs = array_values(array_unique($favoriteSlugs));
-            $message = 'Propiedad guardada en favoritos.';
+            $message = __('ui.properties.favorite_added');
         }
 
         $cookieValue = implode(',', $favoriteSlugs);

@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', $property->title)
+@section('title', $property->translatedTitle())
 
 @section('style')
     <style>
@@ -283,15 +283,15 @@
 
 @section('content')
     @php
-        $locationLabel = $property->zona->nombre ?? ($property->location ?: 'Ubicacion por confirmar');
-        $propertyType = $property->tipo ? ucfirst($property->tipo) : 'Propiedad';
+        $locationLabel = $property->zona?->translatedName() ?? ($property->translatedLocation() ?: __('ui.properties.location_pending'));
+        $propertyType = $property->translatedTypeLabel();
         $mainImage = $galleryImages->first() ? asset('storage/' . $galleryImages->first()) : asset('images/our-company.jpg');
         $isFavorite = in_array($property->slug, $favoriteSlugs ?? [], true);
         $quickSummaryItems = $property->quickSummaryItems();
         $quickSummaryMeta = collect([
-            ['icon' => 'fa-house', 'title' => 'Tipologia'],
-            ['icon' => 'fa-maximize', 'title' => 'Espacio'],
-            ['icon' => 'fa-key', 'title' => 'Operacion'],
+            ['icon' => 'fa-house', 'title' => __('ui.properties.summary_labels.type')],
+            ['icon' => 'fa-maximize', 'title' => __('ui.properties.summary_labels.space')],
+            ['icon' => 'fa-key', 'title' => __('ui.properties.summary_labels.operation')],
         ]);
 
         $featurePills = collect([
@@ -322,7 +322,7 @@
                             <span>{{ $locationLabel }}</span>
                         </div>
 
-                        <img id="property-main-image" src="{{ $mainImage }}" alt="{{ $property->title }}">
+                        <img id="property-main-image" src="{{ $mainImage }}" alt="{{ $property->translatedTitle() }}">
 
                         <div class="property-gallery-count">
                             {{ max($galleryImages->count(), 1) }} foto{{ max($galleryImages->count(), 1) === 1 ? '' : 's' }}
@@ -341,7 +341,7 @@
                                     data-property-thumb
                                     data-image-url="{{ $imageUrl }}"
                                 >
-                                    <img src="{{ $imageUrl }}" alt="Imagen de {{ $property->title }}">
+                                    <img src="{{ $imageUrl }}" alt="Imagen de {{ $property->translatedTitle() }}">
                                 </button>
                                 <a href="{{ $imageUrl }}" class="glightbox d-none" data-gallery="property-gallery"></a>
                             @endforeach
@@ -357,7 +357,7 @@
                                     <i class="fa-solid fa-hashtag"></i>
                                     Ref. {{ $property->ref ?: 'Pendiente' }}
                                 </span>
-                                <h1 class="display-6 mt-3 mb-2">{{ $property->title }}</h1>
+                                <h1 class="display-6 mt-3 mb-2">{{ $property->translatedTitle() }}</h1>
                                 <p class="text-muted mb-0">{{ $propertyType }} en {{ $locationLabel }}</p>
                             </div>
 
@@ -366,7 +366,7 @@
                                 <input type="hidden" name="redirect_to" value="{{ url()->current() }}">
                                 <button type="submit" class="btn {{ $isFavorite ? 'btn-dark' : 'btn-outline-dark' }}" data-favorite-toggle-button aria-pressed="{{ $isFavorite ? 'true' : 'false' }}">
                                     <i class="fa-{{ $isFavorite ? 'solid' : 'regular' }} fa-heart me-2" data-favorite-toggle-icon></i>
-                                    <span data-favorite-toggle-label>{{ $isFavorite ? 'Guardada' : 'Favorita' }}</span>
+                                    <span data-favorite-toggle-label>{{ $isFavorite ? __('ui.properties.saved') : __('ui.properties.favorite') }}</span>
                                 </button>
                             </form>
                         </div>
@@ -375,21 +375,21 @@
 
                         <div class="property-stat-grid mb-4">
                             <div class="property-stat">
-                                <span class="property-stat-label">Dormitorios</span>
+                                <span class="property-stat-label">{{ __('ui.properties.bedrooms') }}</span>
                                 <div class="property-stat-value">{{ $property->bedrooms ?: '-' }}</div>
                             </div>
                             <div class="property-stat">
-                                <span class="property-stat-label">Banos</span>
+                                <span class="property-stat-label">{{ __('ui.properties.bathrooms') }}</span>
                                 <div class="property-stat-value">{{ $property->bathrooms ?: '-' }}</div>
                             </div>
                             <div class="property-stat">
-                                <span class="property-stat-label">Superficie</span>
+                                <span class="property-stat-label">{{ __('ui.properties.surface') }}</span>
                                 <div class="property-stat-value">
-                                    {{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : 'Pendiente' }}
+                                    {{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : __('ui.properties.featured_space') }}
                                 </div>
                             </div>
                             <div class="property-stat">
-                                <span class="property-stat-label">Tipo</span>
+                                <span class="property-stat-label">{{ __('ui.properties.type') }}</span>
                                 <div class="property-stat-value">{{ $propertyType }}</div>
                             </div>
                         </div>
@@ -406,9 +406,9 @@
                         @endif
 
                         <div class="d-grid gap-2">
-                            <a href="#property-contact" class="btn btn-dark btn-lg">Solicitar informacion</a>
+                            <a href="#property-contact" class="btn btn-dark btn-lg">{{ __('ui.properties.request_information') }}</a>
                             <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-secondary">
-                                Ver mis favoritos
+                                {{ __('ui.common.view_favorites') }}
                             </a>
                         </div>
                     </aside>
@@ -420,9 +420,9 @@
                     <section class="property-content-card mb-4">
                         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
                             <div>
-                                <div class="property-section-title mb-2">Descripcion de la propiedad</div>
+                                <div class="property-section-title mb-2">{{ __('ui.properties.description_title') }}</div>
                                 <p class="text-muted mb-0">
-                                    Una vista clara de lo que ofrece esta vivienda y de por que puede encajar contigo.
+                                    {{ __('ui.properties.description_intro') }}
                                 </p>
                             </div>
                             <span class="property-reference">
@@ -432,16 +432,16 @@
                         </div>
 
                         <p class="property-lead mb-0" style="white-space: pre-line;">
-                            {{ $property->description ?: 'Estamos terminando de preparar la descripcion completa de esta propiedad.' }}
+                            {{ $property->translatedDescription() ?: __('ui.properties.description_pending') }}
                         </p>
                     </section>
 
                     <section class="property-content-card mb-4">
-                        <div class="property-section-title mb-3">Resumen rapido</div>
+                        <div class="property-section-title mb-3">{{ __('ui.properties.summary_title') }}</div>
                         <div class="property-highlights">
                             @foreach ($quickSummaryItems as $index => $summaryItem)
                                 @php
-                                    $summaryMeta = $quickSummaryMeta[$index] ?? ['icon' => 'fa-circle-info', 'title' => 'Resumen'];
+                                    $summaryMeta = $quickSummaryMeta[$index] ?? ['icon' => 'fa-circle-info', 'title' => __('ui.properties.summary_labels.default')];
                                 @endphp
                                 <div class="property-highlight">
                                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -458,10 +458,10 @@
                         <section class="property-content-card">
                             <div class="d-flex justify-content-between align-items-end gap-3 flex-wrap mb-4">
                                 <div>
-                                    <div class="property-section-title mb-2">Propiedades relacionadas</div>
-                                    <p class="text-muted mb-0">Mas opciones que encajan por zona o tipologia.</p>
+                                    <div class="property-section-title mb-2">{{ __('ui.properties.related') }}</div>
+                                    <p class="text-muted mb-0">{{ __('ui.properties.related_subtitle') }}</p>
                                 </div>
-                                <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">Ver catalogo</a>
+                                <a href="{{ route('guest.properties.index') }}" class="btn btn-outline-dark">{{ __('ui.common.view_catalog') }}</a>
                             </div>
 
                             <div class="row g-4">
@@ -477,39 +477,39 @@
 
                 <div class="col-lg-4">
                     <section class="property-contact-card" id="property-contact">
-                        <div class="property-section-title mb-2">Solicita informacion</div>
+                        <div class="property-section-title mb-2">{{ __('ui.properties.contact_title') }}</div>
                         <p class="text-muted mb-4">
-                            Dinos como prefieres que te contactemos y te responderemos sobre {{ $property->title }}.
+                            {{ __('ui.properties.contact_intro', ['title' => $property->translatedTitle()]) }}
                         </p>
 
                         <form action="{{ route('contact.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="property_id" value="{{ $property->id }}">
-                            <input type="hidden" name="message" value="Solicitud de informacion sobre la propiedad {{ $property->title }} ({{ $property->ref }})">
+                            <input type="hidden" name="message" value="Solicitud de informacion sobre la propiedad {{ $property->translatedTitle() }} ({{ $property->ref }})">
 
                             <div class="mb-3">
-                                <label class="form-label">Nombre completo *</label>
+                                <label class="form-label">{{ __('ui.properties.name') }} *</label>
                                 <input type="text" name="name" class="form-control" placeholder="Tu nombre" required>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Email *</label>
+                                <label class="form-label">{{ __('ui.properties.email') }} *</label>
                                 <input type="email" name="email" class="form-control" placeholder="tu@email.com" required>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Telefono</label>
+                                <label class="form-label">{{ __('ui.properties.phone') }}</label>
                                 <input type="tel" name="phone" class="form-control" placeholder="+34">
                             </div>
 
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="property_accept_terms" name="accept_terms" required>
                                 <label class="form-check-label" for="property_accept_terms">
-                                    Acepto que se use mi informacion para responder a esta solicitud.
+                                    {{ __('ui.properties.accept_terms') }}
                                 </label>
                             </div>
 
-                            <button type="submit" class="btn btn-dark w-100">Enviar solicitud</button>
+                            <button type="submit" class="btn btn-dark w-100">{{ __('ui.common.send_request') }}</button>
                         </form>
                     </section>
                 </div>

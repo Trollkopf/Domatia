@@ -1,14 +1,14 @@
 @extends('layouts.guest')
 
-@section('title', $zona->nombre)
+@section('title', $zona->translatedName())
 
 @section('content')
     <section class="page-hero" style="min-height: 400px;">
-        <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->nombre }}" class="page-hero-media">
+        <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->translatedName() }}" class="page-hero-media">
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy text-center mx-auto">
-                <h1 class="display-4 fw-semibold">{{ $zona->nombre }}</h1>
+                <h1 class="display-4 fw-semibold">{{ $zona->translatedName() }}</h1>
             </div>
         </div>
     </section>
@@ -22,13 +22,13 @@
             <div class="row align-items-center mb-5 py-4 px-3 rounded {{ $bgClasses[$index % count($bgClasses)] }} {{ $index % 2 === 0 ? '' : 'flex-row-reverse' }}"
                 data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                 <div class="col-md-6">
-                    <img src="{{ asset('storage/' . $seccion->imagen) }}" alt="{{ $seccion->titulo }}"
+                    <img src="{{ asset('storage/' . $seccion->imagen) }}" alt="{{ $seccion->translatedTitle() }}"
                         class="img-fluid rounded shadow-sm">
                 </div>
                 <div class="col-md-6 mt-3 mt-md-0">
-                    <h3 class="fw-semibold">{{ $seccion->titulo }}</h3>
+                    <h3 class="fw-semibold">{{ $seccion->translatedTitle() }}</h3>
                     <p class="text-muted" style="white-space: pre-line;">
-                        {{ $seccion->descripcion }}
+                        {{ $seccion->translatedDescription() }}
                     </p>
                 </div>
             </div>
@@ -37,7 +37,7 @@
 
     @if ($zona->properties->count())
         <section class="container py-5">
-            <h2 class="mb-4">Propiedades en {{ $zona->nombre }}</h2>
+            <h2 class="mb-4">{{ __('ui.environment.properties_in', ['name' => $zona->translatedName()]) }}</h2>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 @foreach ($zona->properties as $property)
                     <div class="col">
@@ -46,8 +46,8 @@
                                 alt="{{ $property->title }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $property->title }}</h5>
-                                <p class="card-text">{{ Str::limit($property->description, 100) }}</p>
-                                <a href="{{ route('guest.property.show', $property->slug) }}" class="btn btn-dark">Ver mas</a>
+                                <p class="card-text">{{ Str::limit($property->translatedDescription(), 100) }}</p>
+                                <a href="{{ route('guest.property.show', $property->slug) }}" class="btn btn-dark">{{ __('ui.environment.view_more') }}</a>
                             </div>
                         </div>
                     </div>

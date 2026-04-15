@@ -13,6 +13,30 @@ class SettingsController extends Controller
     protected const HEADER_TARGET_WIDTH = 1600;
     protected const HEADER_TARGET_HEIGHT = 720;
 
+    protected array $localizableKeys = [
+        'footer_text',
+        'contact_intro',
+        'about_heading',
+        'about_body',
+        'home_hero_badge',
+        'home_hero_title',
+        'home_hero_subtitle',
+        'home_search_button_text',
+        'home_value_1',
+        'home_value_2',
+        'home_value_3',
+        'home_featured_heading',
+        'home_featured_subtitle',
+        'home_cta_heading',
+        'home_cta_body',
+        'home_cta_primary_text',
+        'home_cta_secondary_text',
+        'about_header_title',
+        'contact_header_title',
+        'environment_header_title',
+        'register_header_title',
+    ];
+
     protected array $editableKeys = [
         'company_name',
         'company_phone',
@@ -65,12 +89,16 @@ class SettingsController extends Controller
     {
         $settings = $this->getEditableSettings();
         $headerImageOptions = $this->getHeaderImageOptions($settings);
+        $supportedLocales = config('app.supported_locales', []);
+        $defaultLocale = config('app.locale', 'es');
 
         return view('admin.settings.index', [
             'settings' => $settings,
             'headerImageOptions' => $headerImageOptions,
             'headerTargetWidth' => self::HEADER_TARGET_WIDTH,
             'headerTargetHeight' => self::HEADER_TARGET_HEIGHT,
+            'localizedSettings' => $this->getLocalizedSettings(),
+            'settingsLocales' => collect($supportedLocales)->except($defaultLocale)->all(),
         ]);
     }
 
@@ -129,7 +157,7 @@ class SettingsController extends Controller
             'contact_header_image_crop' => 'nullable|string|max:1000',
             'environment_header_image_crop' => 'nullable|string|max:1000',
             'register_header_image_crop' => 'nullable|string|max:1000',
-        ]);
+        ] + $this->localizedValidationRules());
 
         foreach ($this->editableKeys as $key) {
             if (in_array($key, $this->imageKeys, true)) {
@@ -144,6 +172,10 @@ class SettingsController extends Controller
             Setting::setValue($key, $validated[$key] ?? null);
         }
 
+        foreach ($this->localizedSettingKeys() as $localizedKey) {
+            Setting::setValue($localizedKey, $validated[$localizedKey] ?? null);
+        }
+
         return redirect()->route('admin.settings')->with('success', 'Ajustes actualizados correctamente.');
     }
 
@@ -156,6 +188,64 @@ class SettingsController extends Controller
         }
 
         return $settings;
+    }
+
+    protected function getLocalizedSettings(): array
+    {
+        $settings = [];
+
+        foreach (array_keys(config('app.supported_locales', [])) as $locale) {
+            if ($locale === config('app.locale', 'es')) {
+                continue;
+            }
+
+            foreach ($this->localizableKeys as $key) {
+                $settings[$locale][$key] = Setting::getValue($key . '_' . $locale, '');
+            }
+        }
+
+        return $settings;
+    }
+
+    protected function localizedSettingKeys(): array
+    {
+        $keys = [];
+
+        foreach (array_keys(config('app.supported_locales', [])) as $locale) {
+            if ($locale === config('app.locale', 'es')) {
+                continue;
+            }
+
+            foreach ($this->localizableKeys as $key) {
+                $keys[] = $key . '_' . $locale;
+            }
+        }
+
+        return $keys;
+    }
+
+    protected function localizedValidationRules(): array
+    {
+        $rules = [];
+
+        foreach (array_keys(config('app.supported_locales', [])) as $locale) {
+            if ($locale === config('app.locale', 'es')) {
+                continue;
+            }
+
+            foreach ($this->localizableKeys as $key) {
+                $rules[$key . '_' . $locale] = match ($key) {
+                    'footer_text', 'company_address' => 'nullable|string|max:1000',
+                    'contact_intro', 'home_cta_body' => 'nullable|string|max:2000',
+                    'about_body' => 'nullable|string|max:5000',
+                    'home_hero_subtitle', 'home_featured_subtitle' => 'nullable|string|max:500',
+                    'home_search_button_text', 'home_cta_primary_text', 'home_cta_secondary_text' => 'nullable|string|max:100',
+                    default => 'nullable|string|max:255',
+                };
+            }
+        }
+
+        return $rules;
     }
 
     protected function getHeaderImageOptions(array $settings = []): array

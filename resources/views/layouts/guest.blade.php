@@ -111,7 +111,7 @@
     </main>
 
     <footer class="text-center text-muted border-top py-4 mt-5">
-        © {{ date('Y') }} {{ $siteSettings['company_name'] }}. {{ $siteSettings['footer_text'] }}
+        &copy; {{ date('Y') }} {{ $siteSettings['company_name'] }}. {{ $siteSettings['footer_text'] }}
     </footer>
 
     @stack('scripts')

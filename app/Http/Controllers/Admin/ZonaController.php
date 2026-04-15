@@ -28,6 +28,10 @@ class ZonaController extends Controller
 
         $zona = new Zona();
         $zona->nombre = $validated['nombre'];
+        $zona->nombre_en = $validated['nombre_en'] ?? null;
+        $zona->nombre_fr = $validated['nombre_fr'] ?? null;
+        $zona->nombre_de = $validated['nombre_de'] ?? null;
+        $zona->nombre_ru = $validated['nombre_ru'] ?? null;
 
         if ($request->hasFile('imagen_principal')) {
             $zona->imagen_principal = $request->file('imagen_principal')->store('zonas', 'public');
@@ -45,6 +49,10 @@ class ZonaController extends Controller
         $validated = $this->validateZona($request);
 
         $zona->nombre = $validated['nombre'];
+        $zona->nombre_en = $validated['nombre_en'] ?? null;
+        $zona->nombre_fr = $validated['nombre_fr'] ?? null;
+        $zona->nombre_de = $validated['nombre_de'] ?? null;
+        $zona->nombre_ru = $validated['nombre_ru'] ?? null;
 
         if ($request->hasFile('imagen_principal')) {
             if ($zona->imagen_principal) {
@@ -87,11 +95,23 @@ class ZonaController extends Controller
     {
         return $request->validate([
             'nombre' => 'required|string|max:255',
+            'nombre_en' => 'nullable|string|max:255',
+            'nombre_fr' => 'nullable|string|max:255',
+            'nombre_de' => 'nullable|string|max:255',
+            'nombre_ru' => 'nullable|string|max:255',
             'imagen_principal' => 'nullable|image|max:5120',
             'secciones' => 'nullable|array',
             'secciones.*.id' => 'nullable|integer',
             'secciones.*.titulo' => 'nullable|string|max:255',
+            'secciones.*.titulo_en' => 'nullable|string|max:255',
+            'secciones.*.titulo_fr' => 'nullable|string|max:255',
+            'secciones.*.titulo_de' => 'nullable|string|max:255',
+            'secciones.*.titulo_ru' => 'nullable|string|max:255',
             'secciones.*.descripcion' => 'nullable|string',
+            'secciones.*.descripcion_en' => 'nullable|string',
+            'secciones.*.descripcion_fr' => 'nullable|string',
+            'secciones.*.descripcion_de' => 'nullable|string',
+            'secciones.*.descripcion_ru' => 'nullable|string',
             'secciones.*.imagen' => 'nullable|image|max:5120',
         ]);
     }
@@ -120,7 +140,15 @@ class ZonaController extends Controller
             }
 
             $section->titulo = $sectionData['titulo'] ?? '';
+            $section->titulo_en = $sectionData['titulo_en'] ?? null;
+            $section->titulo_fr = $sectionData['titulo_fr'] ?? null;
+            $section->titulo_de = $sectionData['titulo_de'] ?? null;
+            $section->titulo_ru = $sectionData['titulo_ru'] ?? null;
             $section->descripcion = $sectionData['descripcion'] ?? null;
+            $section->descripcion_en = $sectionData['descripcion_en'] ?? null;
+            $section->descripcion_fr = $sectionData['descripcion_fr'] ?? null;
+            $section->descripcion_de = $sectionData['descripcion_de'] ?? null;
+            $section->descripcion_ru = $sectionData['descripcion_ru'] ?? null;
 
             if ($request->hasFile("secciones.$index.imagen")) {
                 if ($section->imagen) {

@@ -82,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'es'),
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +95,15 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    'supported_locales' => [
+        'es' => 'Español',
+        'en' => 'English',
+        'fr' => 'Français',
+        'de' => 'Deutsch',
+        'ru' => 'Русский',
+    ],
 
     /*
     |--------------------------------------------------------------------------

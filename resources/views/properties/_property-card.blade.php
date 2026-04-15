@@ -24,11 +24,11 @@
         <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
             <div>
                 <p class="property-teaser-location mb-1">
-                    {{ $property->zona->nombre ?? ($property->location ?: 'Ubicacion por confirmar') }}
+                    {{ $property->zona?->translatedName() ?? ($property->translatedLocation() ?: __('ui.properties.location_pending')) }}
                 </p>
                 <h3 class="h5 mb-0">
                     <a href="{{ route('guest.property.show', $property->slug) }}" class="text-dark">
-                        {{ $property->title }}
+                        {{ $property->translatedTitle() }}
                     </a>
                 </h3>
             </div>
@@ -36,12 +36,12 @@
             <div class="property-teaser-price">{{ number_format($property->price, 0, ',', '.') }} EUR</div>
         </div>
 
-        <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($property->description, 110) }}</p>
+        <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($property->translatedDescription(), 110) }}</p>
 
         <div class="property-teaser-meta">
-            <span>{{ $property->bedrooms ?: '-' }} hab</span>
-            <span>{{ $property->bathrooms ?: '-' }} banos</span>
-            <span>{{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : 'm2 por confirmar' }}</span>
+            <span>{{ $property->bedrooms ?: '-' }} {{ __('ui.properties.stats.bedrooms_short') }}</span>
+            <span>{{ $property->bathrooms ?: '-' }} {{ __('ui.properties.stats.bathrooms_short') }}</span>
+            <span>{{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : __('ui.properties.featured_space') }}</span>
         </div>
     </div>
 </article>
