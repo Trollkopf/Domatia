@@ -16,9 +16,8 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        // Verificar si el usuario tiene el rol 'admin'
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
-            return redirect('/');  // Redirige si no es admin
+        if (! auth()->check() || ! auth()->user()->canAccessBackoffice()) {
+            return redirect('/');
         }
 
         return $next($request);

@@ -2,6 +2,19 @@
 
 @section('title', __('ui.about.title'))
 
+@php
+    $aboutSeoTitle = $siteSettings['about_header_title'] ?: __('ui.about.title');
+    $aboutSeoDescription = \Illuminate\Support\Str::limit(
+        trim(($siteSettings['about_heading'] ?? '') . ' ' . ($siteSettings['about_body'] ?? '')),
+        160
+    );
+@endphp
+
+@section('meta_title', $aboutSeoTitle)
+@section('meta_description', $aboutSeoDescription ?: __('ui.about.title'))
+@section('meta_image', $siteSettings['about_header_image'] ?: asset('images/our-company.jpg'))
+@section('canonical', route('about'))
+
 @section('style')
     <link href="{{ asset('css/about.css') }}" rel="stylesheet">
 @endsection

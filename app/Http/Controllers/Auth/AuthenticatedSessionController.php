@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $redirectTo = $request->user()?->role === 'admin'
+        $redirectTo = $request->user()?->canAccessBackoffice()
             ? route('admin.dashboard')
             : route('profile.edit');
 

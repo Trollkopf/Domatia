@@ -12,16 +12,19 @@ use App\Http\Controllers\PropertyController as AdminPropertyController;
 use App\Http\Controllers\Front\SearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 Route::get('/dashboard', function () {
-    return auth()->user()?->role === 'admin'
+    return auth()->user()?->canAccessBackoffice()
         ? redirect()->route('admin.dashboard')
         : redirect()->route('profile.edit');
 })->middleware(['auth'])->name('dashboard');
@@ -50,26 +53,47 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    Route::resource('properties', AdminPropertyController::class);
-    Route::patch('properties/{property}/quick-update', [AdminPropertyController::class, 'quickUpdate'])
-        ->name('properties.quick-update');
-    Route::patch('properties/{property}/images/{image}/set-thumbnail', [PropertyImageController::class, 'setThumbnail'])
-        ->name('properties.images.set-thumbnail');
-    Route::delete('properties/images/{id}', [PropertyImageController::class, 'destroy'])
-        ->name('properties.images.destroy');
+    Route::middleware('backoffice_permission:properties')->group(function () {
+        Route::resource('properties', AdminPropertyController::class);
+        Route::patch('properties/{property}/images/{image}/set-thumbnail', [PropertyImageController::class, 'setThumbnail'])
+            ->name('properties.images.set-thumbnail');
+        Route::delete('properties/images/{id}', [PropertyImageController::class, 'destroy'])
+            ->name('properties.images.destroy');
+    });
 
-    Route::resource('zonas', ZonaController::class)->names('zonas');
+    Route::middleware('backoffice_permission:publish_properties')->group(function () {
+        Route::patch('properties/{property}/quick-update', [AdminPropertyController::class, 'quickUpdate'])
+            ->name('properties.quick-update');
+    });
 
-    Route::get('contactos', [AdminContactoController::class, 'index'])->name('contactos.index');
-    Route::get('contactos/{contacto}', [AdminContactoController::class, 'show'])->name('contactos.show');
-    Route::put('contactos/{contacto}', [AdminContactoController::class, 'update'])->name('contactos.update');
-    Route::patch('contactos/{contacto}/quick-update', [AdminContactoController::class, 'quickUpdate'])->name('contactos.quick-update');
+    Route::middleware('backoffice_permission:zonas')->group(function () {
+        Route::resource('zonas', ZonaController::class)->names('zonas');
+    });
 
-    Route::resource('users', UserController::class);
+    Route::middleware('backoffice_permission:contacts')->group(function () {
+        Route::get('contactos', [AdminContactoController::class, 'index'])->name('contactos.index');
+        Route::get('contactos/{contacto}', [AdminContactoController::class, 'show'])->name('contactos.show');
+        Route::put('contactos/{contacto}', [AdminContactoController::class, 'update'])->name('contactos.update');
+        Route::patch('contactos/{contacto}/quick-update', [AdminContactoController::class, 'quickUpdate'])->name('contactos.quick-update');
+    });
 
-    Route::get('reports', [ReportController::class, 'index'])->name('reports');
-    Route::get('settings', [SettingsController::class, 'index'])->name('settings');
-    Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::middleware('manage_users')->group(function () {
+        Route::post('users/groups', [UserController::class, 'storeGroup'])->name('users.groups.store');
+        Route::patch('users/groups/{group}', [UserController::class, 'updateGroup'])->name('users.groups.update');
+        Route::delete('users/groups/{group}', [UserController::class, 'destroyGroup'])->name('users.groups.destroy');
+        Route::resource('users', UserController::class)->except('show');
+    });
+
+    Route::middleware('backoffice_permission:reports')->group(function () {
+        Route::get('reports/export', [ReportController::class, 'export'])
+            ->middleware('backoffice_permission:export_reports')
+            ->name('reports.export');
+        Route::get('reports', [ReportController::class, 'index'])->name('reports');
+    });
+    Route::middleware('manage_settings')->group(function () {
+        Route::get('settings', [SettingsController::class, 'index'])->name('settings');
+        Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
+    });
 });
 
 require __DIR__ . '/auth.php';

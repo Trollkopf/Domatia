@@ -2,6 +2,25 @@
 
 @section('title', $zona->translatedName())
 
+@php
+    $zonaSeoTitle = $zona->translatedName();
+    $zonaSectionDescription = $zona->secciones
+        ->map(fn ($seccion) => $seccion->translatedDescription())
+        ->filter()
+        ->implode(' ');
+    $zonaSeoDescription = \Illuminate\Support\Str::limit(
+        trim($zonaSectionDescription) ?: __('ui.environment.properties_in', ['name' => $zona->translatedName()]),
+        160
+    );
+    $zonaSeoImage = $zona->imagen_principal ? asset('storage/' . $zona->imagen_principal) : asset('images/our-company.jpg');
+@endphp
+
+@section('meta_title', $zonaSeoTitle)
+@section('meta_description', $zonaSeoDescription)
+@section('meta_image', $zonaSeoImage)
+@section('canonical', route('zonas.show', $zona->slug))
+@section('meta_type', 'article')
+
 @section('content')
     <section class="page-hero" style="min-height: 400px;">
         <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->translatedName() }}" class="page-hero-media">
@@ -55,4 +74,45 @@
             </div>
         </section>
     @endif
+
+    @push('structured_data')
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'Place',
+                'name' => $zona->translatedName(),
+                'description' => $zonaSeoDescription,
+                'url' => route('zonas.show', $zona->slug),
+                'image' => $zonaSeoImage,
+                'inLanguage' => str_replace('_', '-', app()->getLocale()),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
+
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => [
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 1,
+                        'name' => $siteSettings['company_name'] ?? config('app.name', 'Domatia'),
+                        'item' => url('/'),
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 2,
+                        'name' => __('ui.environment.title'),
+                        'item' => route('environment'),
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 3,
+                        'name' => $zona->translatedName(),
+                        'item' => route('zonas.show', $zona->slug),
+                    ],
+                ],
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
+    @endpush
 @endsection

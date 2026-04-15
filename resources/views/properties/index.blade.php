@@ -2,6 +2,38 @@
 
 @section('title', __('ui.properties.page_title'))
 
+@php
+    $hasSeoFilters = request()->filled('search')
+        || request()->filled('q')
+        || filled($precioMin ?? null)
+        || filled($precioMax ?? null)
+        || filled($habitaciones ?? null)
+        || filled($banos ?? null)
+        || filled($metros ?? null)
+        || ! empty($tipos ?? [])
+        || ! empty($zonas ?? [])
+        || ! empty($locations ?? [])
+        || ! empty($features ?? [])
+        || request()->boolean('tiene_solar')
+        || request()->boolean('tiene_patio')
+        || request()->boolean('tiene_piscina')
+        || request()->filled('sort');
+
+    $propertyListingTitle = __('ui.properties.page_title');
+    $propertyListingDescription = \Illuminate\Support\Str::limit(
+        __('ui.properties.intro') . ' ' . trans_choice('ui.properties.results_count', $properties->total(), ['count' => $properties->total()]),
+        160
+    );
+    $listingCanonical = $hasSeoFilters ? route('guest.properties.index') : url()->current();
+@endphp
+
+@section('meta_title', $propertyListingTitle)
+@section('meta_description', $propertyListingDescription)
+@section('meta_image', asset('images/our-company.jpg'))
+@section('canonical', $listingCanonical)
+@section('meta_type', 'website')
+@section('meta_robots', $hasSeoFilters ? 'noindex,follow' : 'index,follow')
+
 @section('style')
 <style>
     :root {
@@ -624,4 +656,29 @@
             </div>
         </div>
     </section>
+
+    @push('structured_data')
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'CollectionPage',
+                'name' => __('ui.properties.page_title'),
+                'description' => $propertyListingDescription,
+                'url' => $listingCanonical,
+                'inLanguage' => str_replace('_', '-', app()->getLocale()),
+                'mainEntity' => [
+                    '@type' => 'ItemList',
+                    'numberOfItems' => $properties->count(),
+                    'itemListElement' => $properties->values()->map(function ($property, $index) {
+                        return [
+                            '@type' => 'ListItem',
+                            'position' => $index + 1,
+                            'url' => route('guest.property.show', $property->slug),
+                            'name' => $property->translatedTitle(),
+                        ];
+                    })->all(),
+                ],
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
+    @endpush
 @endsection

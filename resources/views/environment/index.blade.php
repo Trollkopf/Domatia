@@ -2,6 +2,17 @@
 
 @section('title', __('ui.environment.title'))
 
+@php
+    $environmentSeoTitle = __('ui.environment.title');
+    $environmentSeoDescription = \Illuminate\Support\Str::limit(__('ui.environment.intro'), 160);
+@endphp
+
+@section('meta_title', $environmentSeoTitle)
+@section('meta_description', $environmentSeoDescription)
+@section('meta_image', $siteSettings['environment_header_image'] ?: asset('images/our-company.jpg'))
+@section('canonical', route('environment'))
+@section('meta_type', 'website')
+
 @section('style')
     <link href="{{ asset('css/environment.css') }}" rel="stylesheet">
 @endsection
@@ -47,5 +58,18 @@
         <h2 class="text-center mb-4">{{ __('ui.environment.interactive_map') }}</h2>
         <div id="map" style="height: 400px;"></div>
     </section>
+
+    @push('structured_data')
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'CollectionPage',
+                'name' => __('ui.environment.title'),
+                'description' => $environmentSeoDescription,
+                'url' => route('environment'),
+                'inLanguage' => str_replace('_', '-', app()->getLocale()),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
+    @endpush
 
 @endsection

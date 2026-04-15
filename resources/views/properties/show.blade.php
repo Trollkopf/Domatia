@@ -2,6 +2,21 @@
 
 @section('title', $property->translatedTitle())
 
+@php
+    $propertySeoTitle = $property->translatedTitle();
+    $propertySeoDescription = \Illuminate\Support\Str::limit(
+        trim(($property->translatedDescription() ?: '') . ' ' . collect($property->quickSummaryItems())->implode(' ')),
+        160
+    );
+    $propertySeoImage = $galleryImages->first() ? asset('storage/' . $galleryImages->first()) : asset('images/our-company.jpg');
+@endphp
+
+@section('meta_title', $propertySeoTitle)
+@section('meta_description', $propertySeoDescription)
+@section('meta_image', $propertySeoImage)
+@section('canonical', route('guest.property.show', $property->slug))
+@section('meta_type', 'article')
+
 @section('style')
     <style>
         .property-show-shell {
@@ -543,6 +558,69 @@
                     });
                 });
             });
+        </script>
+    @endpush
+
+    @push('structured_data')
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'RealEstateListing',
+                'name' => $property->translatedTitle(),
+                'description' => $propertySeoDescription,
+                'url' => route('guest.property.show', $property->slug),
+                'image' => $galleryImages->map(fn ($imagePath) => asset('storage/' . $imagePath))->values()->all() ?: [$propertySeoImage],
+                'datePosted' => optional($property->created_at)->toAtomString(),
+                'inLanguage' => str_replace('_', '-', app()->getLocale()),
+                'identifier' => $property->ref ?: $property->slug,
+                'offers' => [
+                    '@type' => 'Offer',
+                    'price' => $property->price,
+                    'priceCurrency' => 'EUR',
+                    'availability' => 'https://schema.org/' . ($property->status === 'published' ? 'InStock' : 'SoldOut'),
+                    'url' => route('guest.property.show', $property->slug),
+                ],
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => $property->translatedLocation() ?: $property->zona?->translatedName(),
+                    'addressRegion' => $property->zona?->translatedName(),
+                    'addressCountry' => 'ES',
+                ],
+                'numberOfRooms' => $property->bedrooms ?: null,
+                'numberOfBathroomsTotal' => $property->bathrooms ?: null,
+                'floorSize' => $property->area ? [
+                    '@type' => 'QuantitativeValue',
+                    'value' => $property->area,
+                    'unitCode' => 'MTK',
+                ] : null,
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
+
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => [
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 1,
+                        'name' => $siteSettings['company_name'] ?? config('app.name', 'Domatia'),
+                        'item' => url('/'),
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 2,
+                        'name' => __('ui.properties.page_title'),
+                        'item' => route('guest.properties.index'),
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 3,
+                        'name' => $property->translatedTitle(),
+                        'item' => route('guest.property.show', $property->slug),
+                    ],
+                ],
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
         </script>
     @endpush
 @endsection

@@ -2,6 +2,19 @@
 
 @section('title', __('ui.contact.title'))
 
+@php
+    $contactSeoTitle = $siteSettings['contact_header_title'] ?: __('ui.contact.title');
+    $contactSeoDescription = \Illuminate\Support\Str::limit(
+        trim(($siteSettings['contact_intro'] ?? '') . ' ' . ($siteSettings['company_phone'] ?? '') . ' ' . ($siteSettings['company_email'] ?? '')),
+        160
+    );
+@endphp
+
+@section('meta_title', $contactSeoTitle)
+@section('meta_description', $contactSeoDescription ?: __('ui.contact.title'))
+@section('meta_image', $siteSettings['contact_header_image'] ?: asset('images/our-company.jpg'))
+@section('canonical', route('contact'))
+
 @section('style')
 <link href="{{ asset('css/contact.css') }}" rel="stylesheet">
 @endsection

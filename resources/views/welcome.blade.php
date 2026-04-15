@@ -2,6 +2,25 @@
 
 @section('title', __('ui.home.title'))
 
+@php
+    $homeMetaTitle = trim($siteSettings['home_hero_title'] ?? __('ui.home.title'));
+    $homeMetaDescription = \Illuminate\Support\Str::limit(
+        trim(($siteSettings['home_hero_subtitle'] ?? '') . ' ' . ($siteSettings['home_featured_subtitle'] ?? '')),
+        160
+    );
+    $homeMetaImage = collect([
+        $siteSettings['home_hero_image_1'] ?? null,
+        $siteSettings['home_hero_image_2'] ?? null,
+        $siteSettings['home_hero_image_3'] ?? null,
+    ])->filter()->first();
+@endphp
+
+@section('meta_title', $homeMetaTitle)
+@section('meta_description', $homeMetaDescription ?: ($siteSettings['company_name'] ?? config('app.name', 'Domatia')))
+@section('meta_image', $homeMetaImage ?: asset('images/our-company.jpg'))
+@section('canonical', url()->current())
+@section('meta_type', 'website')
+
 @section('style')
 <link href="{{ asset('css/slider.css') }}" rel="stylesheet">
 <style>
@@ -350,5 +369,22 @@
             }
         });
     </script>
+    @endpush
+
+    @push('structured_data')
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                'name' => $siteSettings['company_name'] ?? config('app.name', 'Domatia'),
+                'url' => url('/'),
+                'inLanguage' => str_replace('_', '-', app()->getLocale()),
+                'potentialAction' => [
+                    '@type' => 'SearchAction',
+                    'target' => route('guest.properties.index') . '?search={search_term_string}',
+                    'query-input' => 'required name=search_term_string',
+                ],
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+        </script>
     @endpush
 @endsection

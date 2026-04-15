@@ -130,6 +130,8 @@ class PropertyController extends Controller
             'images.*' => 'nullable|image|max:5120',
         ]);
 
+        $publicationState = $this->resolvePublicationState($request);
+
         $property = Property::create([
             'title' => $request->title,
             'title_en' => $request->title_en,
@@ -156,9 +158,9 @@ class PropertyController extends Controller
             'tiene_solar' => $request->has('tiene_solar'),
             'metros_solar' => $request->metros_solar,
             'tiene_patio' => $request->has('tiene_patio'),
-            'is_featured' => $request->has('destacada'),
+            'is_featured' => $publicationState['is_featured'],
             'tiene_piscina' => $request->has('tiene_piscina'),
-            'status' => $request->input('status', 'draft'),
+            'status' => $publicationState['status'],
             'quick_summary_1' => $request->quick_summary_1,
             'quick_summary_2' => $request->quick_summary_2,
             'quick_summary_3' => $request->quick_summary_3,
@@ -267,6 +269,8 @@ class PropertyController extends Controller
             'images.*' => 'nullable|image|max:5120',
         ]);
 
+        $publicationState = $this->resolvePublicationState($request, $property);
+
         $property->update([
             'title' => $request->title,
             'title_en' => $request->title_en,
@@ -293,9 +297,9 @@ class PropertyController extends Controller
             'tiene_solar' => $request->has('tiene_solar'),
             'metros_solar' => $request->metros_solar,
             'tiene_patio' => $request->has('tiene_patio'),
-            'is_featured' => $request->has('destacada'),
+            'is_featured' => $publicationState['is_featured'],
             'tiene_piscina' => $request->has('tiene_piscina'),
-            'status' => $request->input('status', $property->status ?? 'draft'),
+            'status' => $publicationState['status'],
             'quick_summary_1' => $request->quick_summary_1,
             'quick_summary_2' => $request->quick_summary_2,
             'quick_summary_3' => $request->quick_summary_3,
@@ -337,6 +341,11 @@ class PropertyController extends Controller
 
     public function quickUpdate(Request $request, Property $property)
     {
+        if (! $request->user()?->canPublishProperties()) {
+            return redirect()->route('admin.properties.index', $request->except(['status', 'toggle_featured']))
+                ->with('error', 'No tienes permisos para publicar o destacar propiedades.');
+        }
+
         $validated = $request->validate([
             'status' => 'nullable|in:draft,published,reserved,sold,hidden',
             'toggle_featured' => 'nullable|boolean',
@@ -363,5 +372,20 @@ class PropertyController extends Controller
 
         return redirect()->route('admin.properties.index')
             ->with('success', 'Propiedad eliminada exitosamente.');
+    }
+
+    private function resolvePublicationState(Request $request, ?Property $property = null): array
+    {
+        if ($request->user()?->canPublishProperties()) {
+            return [
+                'is_featured' => $request->has('destacada'),
+                'status' => $request->input('status', $property?->status ?? 'draft'),
+            ];
+        }
+
+        return [
+            'is_featured' => (bool) ($property?->is_featured ?? false),
+            'status' => $property?->status ?? 'draft',
+        ];
     }
 }

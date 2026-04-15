@@ -363,6 +363,39 @@
                         <input type="text" name="company_address" class="form-control" value="{{ old('company_address', $settings['company_address']) }}">
                     </div>
 
+                    <div class="col-12 pt-3">
+                        <h2 class="h5 mb-1">SEO tecnico</h2>
+                        <p class="text-muted small mb-0">Base global para titles, descripciones, verificaciones y robots.</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Sufijo global de title</label>
+                        <input type="text" name="seo_title_suffix" class="form-control" value="{{ old('seo_title_suffix', $settings['seo_title_suffix']) }}">
+                        <div class="form-text">Se anade al final del title cuando la pagina no lo incluye ya. Ejemplo: Domatia.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Crawl delay</label>
+                        <input type="number" name="seo_crawl_delay" class="form-control" min="1" max="30" value="{{ old('seo_crawl_delay', $settings['seo_crawl_delay']) }}">
+                        <div class="form-text">Opcional. Se publica en robots.txt para bots que lo respetan.</div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Descripcion SEO por defecto</label>
+                        <textarea name="seo_default_description" class="form-control" rows="3">{{ old('seo_default_description', $settings['seo_default_description']) }}</textarea>
+                        <div class="form-text">Se usa cuando una pagina no tenga una descripcion mas especifica. Mejor entre 140 y 160 caracteres.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Google site verification</label>
+                        <input type="text" name="seo_google_verification" class="form-control" value="{{ old('seo_google_verification', $settings['seo_google_verification']) }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Bing site verification</label>
+                        <input type="text" name="seo_bing_verification" class="form-control" value="{{ old('seo_bing_verification', $settings['seo_bing_verification']) }}">
+                    </div>
+
                     <div class="col-12">
                         <label class="form-label">Texto de footer</label>
                         <input type="text" name="footer_text" class="form-control" value="{{ old('footer_text', $settings['footer_text']) }}">

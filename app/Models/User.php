@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'user_group_id',
     ];
 
     /**
@@ -42,4 +43,77 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function userGroup()
+    {
+        return $this->belongsTo(UserGroup::class);
+    }
+
+    public function resolvedGroup(): ?UserGroup
+    {
+        if ($this->relationLoaded('userGroup')) {
+            return $this->userGroup ?: UserGroup::query()->where('slug', $this->role ?: 'user')->first();
+        }
+
+        if ($this->user_group_id) {
+            return $this->userGroup ?: UserGroup::query()->where('slug', $this->role ?: 'user')->first();
+        }
+
+        return UserGroup::query()->where('slug', $this->role ?: 'user')->first();
+    }
+
+    public function groupLabel(): string
+    {
+        return $this->resolvedGroup()?->name ?: match ($this->role) {
+            'admin' => 'Administradores',
+            'moderator' => 'Moderadores',
+            'commercial' => 'Comerciales',
+            default => 'Usuarios',
+        };
+    }
+
+    public function canAccessBackoffice(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_access_backoffice ?? ($this->role === 'admin'));
+    }
+
+    public function canManageUsers(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_manage_users ?? ($this->role === 'admin'));
+    }
+
+    public function canManageSettings(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_manage_settings ?? ($this->role === 'admin'));
+    }
+
+    public function canManageProperties(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_manage_properties ?? ($this->role === 'admin'));
+    }
+
+    public function canPublishProperties(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_publish_properties ?? ($this->role === 'admin'));
+    }
+
+    public function canManageContacts(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_manage_contacts ?? ($this->role === 'admin'));
+    }
+
+    public function canManageZonas(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_manage_zonas ?? ($this->role === 'admin'));
+    }
+
+    public function canViewReports(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_view_reports ?? ($this->role === 'admin'));
+    }
+
+    public function canExportReports(): bool
+    {
+        return (bool) ($this->resolvedGroup()?->can_export_reports ?? ($this->role === 'admin'));
+    }
 }

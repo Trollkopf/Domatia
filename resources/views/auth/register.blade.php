@@ -49,17 +49,6 @@
                                 <label for="password_confirmation" class="form-label">{{ __('ui.auth.confirm_password') }}</label>
                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                             </div>
-
-                            @if(Auth::user() && Auth::user()->role == 'admin')
-                                <div class="mb-3">
-                                    <label for="role" class="form-label">{{ __('ui.auth.role') }}</label>
-                                    <select class="form-select" id="role" name="role" required>
-                                        <option value="user">{{ __('ui.auth.user') }}</option>
-                                        <option value="admin">{{ __('ui.auth.admin') }}</option>
-                                    </select>
-                                </div>
-                            @endif
-
                             <button type="submit" class="btn btn-main w-100">{{ __('ui.auth.create_account') }}</button>
                         </form>
 

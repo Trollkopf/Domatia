@@ -1,6 +1,10 @@
 @extends('layouts.guest')
 
 @section('title', __('ui.properties.favorites_title'))
+@section('meta_title', __('ui.properties.favorites_title'))
+@section('meta_description', __('ui.properties.favorites_intro'))
+@section('canonical', route('guest.properties.favorites'))
+@section('meta_robots', 'noindex,follow')
 
 @section('style')
     <style>

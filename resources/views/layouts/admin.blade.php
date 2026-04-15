@@ -171,6 +171,10 @@
 <body>
     @php
         $currentRoute = request()->route()?->getName();
+        $adminUser = auth()->user();
+        $hasCommercialAccess = $adminUser?->canManageProperties()
+            || $adminUser?->canManageContacts()
+            || $adminUser?->canManageZonas();
     @endphp
 
     <div class="admin-shell">
@@ -190,36 +194,54 @@
                 </a>
             </div>
 
-            <div class="sidebar-group">
-                <div class="sidebar-label">Comercial</div>
-                <a href="{{ route('admin.properties.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.properties.') ? 'active' : '' }}">
-                    <i class="fas fa-building"></i>
-                    <span>Propiedades</span>
-                </a>
-                <a href="{{ route('admin.contactos.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.contactos.') ? 'active' : '' }}">
-                    <i class="fas fa-address-book"></i>
-                    <span>Contactos</span>
-                </a>
-                <a href="{{ route('admin.zonas.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.zonas.') ? 'active' : '' }}">
-                    <i class="fas fa-map-location-dot"></i>
-                    <span>Zonas</span>
-                </a>
-            </div>
+            @if ($hasCommercialAccess)
+                <div class="sidebar-group">
+                    <div class="sidebar-label">Comercial</div>
+                    @if ($adminUser?->canManageProperties())
+                        <a href="{{ route('admin.properties.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.properties.') ? 'active' : '' }}">
+                            <i class="fas fa-building"></i>
+                            <span>Propiedades</span>
+                        </a>
+                    @endif
+                    @if ($adminUser?->canManageContacts())
+                        <a href="{{ route('admin.contactos.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.contactos.') ? 'active' : '' }}">
+                            <i class="fas fa-address-book"></i>
+                            <span>Contactos</span>
+                        </a>
+                    @endif
+                    @if ($adminUser?->canManageZonas())
+                        <a href="{{ route('admin.zonas.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.zonas.') ? 'active' : '' }}">
+                            <i class="fas fa-map-location-dot"></i>
+                            <span>Zonas</span>
+                        </a>
+                    @endif
+                </div>
+            @endif
 
             <div class="sidebar-group">
                 <div class="sidebar-label">Administracion</div>
-                <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.users.') ? 'active' : '' }}">
-                    <i class="fas fa-users"></i>
-                    <span>Usuarios</span>
+                @if ($adminUser?->canManageUsers())
+                    <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.users.') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Usuarios</span>
+                    </a>
+                @endif
+                <a href="{{ route('profile.edit') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'profile.') ? 'active' : '' }}">
+                    <i class="fas fa-id-card"></i>
+                    <span>Mi perfil</span>
                 </a>
-                <a href="{{ route('admin.settings') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.settings') ? 'active' : '' }}">
-                    <i class="fas fa-sliders"></i>
-                    <span>Ajustes</span>
-                </a>
-                <a href="{{ route('admin.reports') }}" class="sidebar-link {{ $currentRoute === 'admin.reports' ? 'active' : '' }}">
-                    <i class="fas fa-chart-column"></i>
-                    <span>Informes</span>
-                </a>
+                @if ($adminUser?->canManageSettings())
+                    <a href="{{ route('admin.settings') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.settings') ? 'active' : '' }}">
+                        <i class="fas fa-sliders"></i>
+                        <span>Ajustes</span>
+                    </a>
+                @endif
+                @if ($adminUser?->canViewReports())
+                    <a href="{{ route('admin.reports') }}" class="sidebar-link {{ $currentRoute === 'admin.reports' ? 'active' : '' }}">
+                        <i class="fas fa-chart-column"></i>
+                        <span>Informes</span>
+                    </a>
+                @endif
             </div>
 
             <div class="sidebar-footer">
@@ -246,8 +268,20 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('admin.contactos.index', ['status' => 'pendiente']) }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Leads pendientes</a>
-                    <a href="{{ route('admin.properties.create') }}" class="btn btn-main btn-sm d-none d-md-inline-flex">Nueva propiedad</a>
+                    <span class="small text-muted d-none d-md-inline">{{ $adminUser?->name }}</span>
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Mi perfil</a>
+                    @if ($adminUser?->canManageContacts())
+                        <a href="{{ route('admin.contactos.index', ['status' => 'pendiente']) }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Leads pendientes</a>
+                    @endif
+                    @if ($adminUser?->canViewReports())
+                        <a href="{{ route('admin.reports') }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Informes</a>
+                    @endif
+                    @if ($adminUser?->canManageUsers())
+                        <a href="{{ route('admin.users.create') }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Nuevo usuario</a>
+                    @endif
+                    @if ($adminUser?->canManageProperties())
+                        <a href="{{ route('admin.properties.create') }}" class="btn btn-main btn-sm d-none d-md-inline-flex">Nueva propiedad</a>
+                    @endif
                     <button id="menu-toggle" class="btn btn-outline-dark d-lg-none" type="button" aria-label="Abrir menu">
                         <i class="fas fa-bars"></i>
                     </button>

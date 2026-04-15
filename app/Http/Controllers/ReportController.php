@@ -14,6 +14,32 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        return view('admin.reports.index', $this->buildReportPayload($request));
+    }
+
+    public function export(Request $request)
+    {
+        $report = $this->buildReportPayload($request);
+        $filename = 'informes-domatia-' . now()->format('Ymd-His') . '.csv';
+
+        return response()->streamDownload(function () use ($report) {
+            $handle = fopen('php://output', 'w');
+
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($handle, ['Seccion', 'Etiqueta', 'Valor'], ';');
+
+            foreach ($this->buildExportRows($report) as $row) {
+                fputcsv($handle, $row, ';');
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    protected function buildReportPayload(Request $request): array
+    {
         $filters = [
             'from' => $request->input('from', now()->subMonths(5)->startOfMonth()->toDateString()),
             'to' => $request->input('to', now()->toDateString()),
@@ -161,7 +187,7 @@ class ReportController extends Controller
             ->orderBy('tipo')
             ->pluck('tipo');
 
-        return view('admin.reports.index', compact(
+        return compact(
             'overview',
             'conversionRate',
             'leadStatusBreakdown',
@@ -174,7 +200,55 @@ class ReportController extends Controller
             'filters',
             'zonas',
             'tipos'
-        ));
+        );
+    }
+
+    protected function buildExportRows(array $report): array
+    {
+        $rows = [
+            ['Filtros', 'Desde', $report['filters']['from']],
+            ['Filtros', 'Hasta', $report['filters']['to']],
+            ['Filtros', 'Zona', $report['zonas']->firstWhere('id', $report['filters']['zona_id'])?->nombre ?: 'Todas'],
+            ['Filtros', 'Tipo', $report['filters']['tipo'] ?: 'Todos'],
+            ['Resumen', 'Propiedades publicadas', $report['overview']['published_properties']],
+            ['Resumen', 'Propiedades en borrador', $report['overview']['draft_properties']],
+            ['Resumen', 'Propiedades destacadas', $report['overview']['featured_properties']],
+            ['Resumen', 'Leads totales', $report['overview']['total_leads']],
+            ['Resumen', 'Leads pendientes', $report['overview']['pending_leads']],
+            ['Resumen', 'Leads cerrados', $report['overview']['closed_leads']],
+            ['Resumen', 'Conversion cerrada', $report['conversionRate'] . '%'],
+            ['Resumen', 'Precio medio publicado', number_format($report['overview']['avg_price'], 2, '.', '')],
+        ];
+
+        foreach ($report['leadStatusBreakdown'] as $item) {
+            $rows[] = ['Leads por estado', ucfirst($item->status), $item->total];
+        }
+
+        foreach ($report['inventoryByStatus'] as $item) {
+            $rows[] = ['Inventario por estado', $item->status, $item->total];
+        }
+
+        foreach ($report['inventoryByType'] as $item) {
+            $rows[] = ['Inventario por tipo', $item->tipo, $item->total];
+        }
+
+        foreach ($report['monthlyLeads'] as $item) {
+            $rows[] = ['Leads mensuales', $item->period, $item->total];
+        }
+
+        foreach ($report['topPropertiesByLeads'] as $property) {
+            $rows[] = ['Top propiedades', $property->title, $property->contactos_count];
+        }
+
+        foreach ($report['topZones'] as $zona) {
+            $rows[] = ['Top zonas', $zona->nombre, $zona->leads_count];
+        }
+
+        foreach ($report['qualityChecks'] as $check) {
+            $rows[] = ['Chequeos de calidad', $check['label'], $check['count']];
+        }
+
+        return $rows;
     }
 
     protected function buildMonthlyLeads(Collection $leads, Carbon $fromDate, Carbon $toDate): Collection
