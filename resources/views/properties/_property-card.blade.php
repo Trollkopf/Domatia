@@ -36,12 +36,26 @@
             <div class="property-teaser-price">{{ number_format($property->price, 0, ',', '.') }} EUR</div>
         </div>
 
-        <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($property->translatedDescription(), 110) }}</p>
+        <p class="property-teaser-summary mb-0">{{ \Illuminate\Support\Str::limit($property->translatedDescription(), 110) }}</p>
 
         <div class="property-teaser-meta">
-            <span>{{ $property->bedrooms ?: '-' }} {{ __('ui.properties.stats.bedrooms_short') }}</span>
-            <span>{{ $property->bathrooms ?: '-' }} {{ __('ui.properties.stats.bathrooms_short') }}</span>
-            <span>{{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : __('ui.properties.featured_space') }}</span>
+            <span>
+                <strong>{{ $property->bedrooms ?: '-' }}</strong>
+                {{ __('ui.properties.stats.bedrooms_short') }}
+            </span>
+            <span>
+                <strong>{{ $property->bathrooms ?: '-' }}</strong>
+                {{ __('ui.properties.stats.bathrooms_short') }}
+            </span>
+            <span>
+                @if ($property->area)
+                    <strong>{{ number_format($property->area, 0, ',', '.') }}</strong>
+                    m2
+                @else
+                    <strong>-</strong>
+                    {{ __('ui.properties.featured_space') }}
+                @endif
+            </span>
         </div>
     </div>
 </article>

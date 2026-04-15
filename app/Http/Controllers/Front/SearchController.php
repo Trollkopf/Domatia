@@ -3,34 +3,20 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
     public function index(Request $request)
     {
-        $properties = Property::query();
+        $query = array_filter([
+            'search' => $request->input('search', $request->input('q', $request->input('location'))),
+            'tipo' => $request->filled('type') ? [$request->input('type')] : $request->input('tipo'),
+            'precio_min' => $request->input('precio_min', $request->input('min_price')),
+            'precio_max' => $request->input('precio_max', $request->input('max_price')),
+            'sort' => $request->input('sort'),
+        ], fn ($value) => $value !== null && $value !== '' && $value !== []);
 
-        if ($request->filled('location')) {
-            $properties->where('location', 'like', '%' . $request->location . '%');
-        }
-
-        $type = $request->input('type', $request->input('tipo'));
-        if (filled($type)) {
-            $properties->where('tipo', $type);
-        }
-
-        if ($request->filled('min_price')) {
-            $properties->where('price', '>=', $request->min_price);
-        }
-
-        if ($request->filled('max_price')) {
-            $properties->where('price', '<=', $request->max_price);
-        }
-
-        $results = $properties->paginate(9);
-
-        return view('search.results', compact('results'));
+        return redirect()->route('guest.properties.index', $query);
     }
 }

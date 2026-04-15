@@ -14,7 +14,35 @@ class PropertyController extends Controller
 
     public function index(Request $request)
     {
-        $properties = Property::query()->where('status', 'published');
+        $properties = Property::query()
+            ->where('status', 'published')
+            ->with('zona');
+
+        $search = trim((string) $request->input('search', $request->input('q', '')));
+        if ($search !== '') {
+            $properties->where(function ($query) use ($search) {
+                $query
+                    ->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('title_en', 'like', '%' . $search . '%')
+                    ->orWhere('title_fr', 'like', '%' . $search . '%')
+                    ->orWhere('title_de', 'like', '%' . $search . '%')
+                    ->orWhere('title_ru', 'like', '%' . $search . '%')
+                    ->orWhere('location', 'like', '%' . $search . '%')
+                    ->orWhere('location_en', 'like', '%' . $search . '%')
+                    ->orWhere('location_fr', 'like', '%' . $search . '%')
+                    ->orWhere('location_de', 'like', '%' . $search . '%')
+                    ->orWhere('location_ru', 'like', '%' . $search . '%')
+                    ->orWhere('ref', 'like', '%' . $search . '%')
+                    ->orWhereHas('zona', function ($zonaQuery) use ($search) {
+                        $zonaQuery
+                            ->where('nombre', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_en', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_fr', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_de', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_ru', 'like', '%' . $search . '%');
+                    });
+            });
+        }
 
         $tipos = array_filter((array) $request->input('tipo', $request->input('types', [])));
         if ($tipos !== []) {
@@ -79,9 +107,65 @@ class PropertyController extends Controller
             $properties->where('tiene_patio', true);
         }
 
-        $properties = $properties->with('zona')->latest()->paginate(12)->withQueryString();
+        $sort = $request->input('sort', 'latest');
+        match ($sort) {
+            'price_asc' => $properties->orderBy('price')->orderByDesc('id'),
+            'price_desc' => $properties->orderByDesc('price')->orderByDesc('id'),
+            'area_desc' => $properties->orderByDesc('area')->orderByDesc('id'),
+            'area_asc' => $properties->orderBy('area')->orderByDesc('id'),
+            'oldest' => $properties->oldest(),
+            default => $properties->latest(),
+        };
 
-        return view('properties.index', compact('properties'));
+        $properties = $properties->paginate(12)->withQueryString();
+
+        $filterBaseQuery = Property::query()->where('status', 'published');
+        $propertyTypes = (clone $filterBaseQuery)
+            ->whereNotNull('tipo')
+            ->where('tipo', '!=', '')
+            ->distinct()
+            ->orderBy('tipo')
+            ->pluck('tipo');
+
+        $availableZones = \App\Models\Zona::query()
+            ->whereHas('properties', fn ($query) => $query->where('status', 'published'))
+            ->orderBy('nombre')
+            ->get();
+
+        $availableLocations = (clone $filterBaseQuery)
+            ->whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->orderBy('location')
+            ->pluck('location');
+
+        $sortOptions = [
+            'latest' => __('ui.properties.sort.latest'),
+            'price_asc' => __('ui.properties.sort.price_asc'),
+            'price_desc' => __('ui.properties.sort.price_desc'),
+            'area_desc' => __('ui.properties.sort.area_desc'),
+            'area_asc' => __('ui.properties.sort.area_asc'),
+            'oldest' => __('ui.properties.sort.oldest'),
+        ];
+
+        return view('properties.index', compact(
+            'properties',
+            'propertyTypes',
+            'availableZones',
+            'availableLocations',
+            'sortOptions',
+            'sort',
+            'search',
+            'tipos',
+            'zonas',
+            'locations',
+            'features',
+            'precioMin',
+            'precioMax',
+            'habitaciones',
+            'banos',
+            'metros'
+        ));
     }
 
     public function show(Request $request, $slug)
