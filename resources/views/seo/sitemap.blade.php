@@ -3,7 +3,7 @@
 @foreach ($urls as $url)
     <url>
         <loc>{{ $url['loc'] }}</loc>
-        <lastmod>{{ \Illuminate\Support\Carbon::parse($url['lastmod'])->toAtomString() }}</lastmod>
+        <lastmod>{{ $url['lastmod'] }}</lastmod>
         <changefreq>{{ $url['changefreq'] }}</changefreq>
         <priority>{{ $url['priority'] }}</priority>
     </url>

@@ -53,6 +53,14 @@
         $maxLeadStatus = max($leadStatusBreakdown->max('total') ?? 0, 1);
         $maxInventoryType = max($inventoryByType->max('total') ?? 0, 1);
         $maxMonthlyLeads = max($monthlyLeads->max('total') ?? 0, 1);
+        $canExportReports = auth()->user()?->canExportReports();
+        $propertyStatusLabels = [
+            'draft' => 'Borrador',
+            'published' => 'Publicada',
+            'reserved' => 'Reservada',
+            'sold' => 'Vendida',
+            'hidden' => 'Oculta',
+        ];
     @endphp
 
     <div class="reports-shell">
@@ -66,6 +74,9 @@
             </div>
 
             <div class="d-flex gap-2 flex-wrap">
+                @if ($canExportReports)
+                    <a href="{{ route('admin.reports.export', request()->query()) }}" class="btn btn-main">Exportar CSV</a>
+                @endif
                 <a href="{{ route('admin.properties.index', array_filter(['zona_id' => $filters['zona_id'], 'tipo' => $filters['tipo']])) }}" class="btn btn-outline-dark">Ir a propiedades</a>
                 <a href="{{ route('admin.contactos.index') }}" class="btn btn-outline-dark">Ir a contactos</a>
             </div>
@@ -184,10 +195,10 @@
                             @forelse ($inventoryByStatus as $item)
                                 <div class="mini-row py-3 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="fw-semibold">{{ $item->status === 'published' ? 'Publicadas' : 'Borrador' }}</div>
+                                        <div class="fw-semibold">{{ $propertyStatusLabels[$item->status] ?? ucfirst($item->status) }}</div>
                                         <div class="small text-muted">Estado editorial del catalogo</div>
                                     </div>
-                                    <span class="badge {{ $item->status === 'published' ? 'bg-success' : 'bg-secondary' }}">{{ $item->total }}</span>
+                                    <span class="badge {{ $item->status === 'published' ? 'bg-success' : ($item->status === 'reserved' ? 'bg-warning text-dark' : ($item->status === 'sold' ? 'bg-dark' : ($item->status === 'hidden' ? 'bg-light text-dark' : 'bg-secondary'))) }}">{{ $item->total }}</span>
                                 </div>
                             @empty
                                 <p class="text-muted mb-0">No hay inventario para los filtros seleccionados.</p>
@@ -287,7 +298,7 @@
                                     <div>
                                         <div class="fw-semibold">{{ $property->title }}</div>
                                         <div class="small text-muted">
-                                            {{ $property->zona?->nombre ?? 'Sin zona' }} · {{ $property->status === 'published' ? 'Publicada' : 'Borrador' }}
+                                            {{ $property->zona?->nombre ?? 'Sin zona' }} - {{ $propertyStatusLabels[$property->status] ?? ucfirst($property->status) }}
                                         </div>
                                     </div>
 
@@ -318,7 +329,7 @@
                                     <div>
                                         <div class="fw-semibold">{{ $zona->nombre }}</div>
                                         <div class="small text-muted">
-                                            {{ $zona->published_properties_count }} publicadas · {{ $zona->properties_count }} totales
+                                            {{ $zona->published_properties_count }} publicadas - {{ $zona->properties_count }} totales
                                         </div>
                                     </div>
 

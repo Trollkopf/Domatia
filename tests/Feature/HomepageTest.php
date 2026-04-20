@@ -55,7 +55,7 @@ class HomepageTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('Ultimas propiedades incorporadas');
+        $response->assertSee(__('ui.home.latest_heading'));
         $response->assertSee('Ultima Publicada');
         $response->assertDontSee('Borrador Reciente');
     }

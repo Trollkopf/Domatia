@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\Setting;
 use App\Models\Zona;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 
 class SeoController extends Controller
 {
@@ -14,36 +15,36 @@ class SeoController extends Controller
         $settingsLastModified = Setting::query()->max('updated_at') ?? now();
 
         $pages = collect([
-            [
-                'loc' => url('/'),
-                'lastmod' => $settingsLastModified,
-                'changefreq' => 'weekly',
-                'priority' => '1.0',
-            ],
-            [
-                'loc' => route('guest.properties.index'),
-                'lastmod' => Property::query()->where('status', 'published')->max('updated_at') ?? now(),
-                'changefreq' => 'daily',
-                'priority' => '0.9',
-            ],
-            [
-                'loc' => route('environment'),
-                'lastmod' => Zona::query()->max('updated_at') ?? now(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ],
-            [
-                'loc' => route('about'),
-                'lastmod' => $settingsLastModified,
-                'changefreq' => 'monthly',
-                'priority' => '0.5',
-            ],
-            [
-                'loc' => route('contact'),
-                'lastmod' => $settingsLastModified,
-                'changefreq' => 'monthly',
-                'priority' => '0.5',
-            ],
+            $this->makeSitemapEntry(
+                url('/'),
+                $settingsLastModified,
+                'weekly',
+                '1.0'
+            ),
+            $this->makeSitemapEntry(
+                route('guest.properties.index'),
+                Property::query()->where('status', 'published')->max('updated_at') ?? now(),
+                'daily',
+                '0.9'
+            ),
+            $this->makeSitemapEntry(
+                route('environment'),
+                Zona::query()->max('updated_at') ?? now(),
+                'weekly',
+                '0.8'
+            ),
+            $this->makeSitemapEntry(
+                route('about'),
+                $settingsLastModified,
+                'monthly',
+                '0.5'
+            ),
+            $this->makeSitemapEntry(
+                route('contact'),
+                $settingsLastModified,
+                'monthly',
+                '0.5'
+            ),
         ]);
 
         $properties = Property::query()
@@ -51,23 +52,23 @@ class SeoController extends Controller
             ->select(['slug', 'updated_at'])
             ->latest('updated_at')
             ->get()
-            ->map(fn (Property $property) => [
-                'loc' => route('guest.property.show', $property->slug),
-                'lastmod' => $property->updated_at ?? now(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ]);
+            ->map(fn (Property $property) => $this->makeSitemapEntry(
+                route('guest.property.show', $property->slug),
+                $property->updated_at ?? now(),
+                'weekly',
+                '0.8'
+            ));
 
         $zonas = Zona::query()
             ->select(['slug', 'updated_at'])
             ->latest('updated_at')
             ->get()
-            ->map(fn (Zona $zona) => [
-                'loc' => route('zonas.show', $zona->slug),
-                'lastmod' => $zona->updated_at ?? now(),
-                'changefreq' => 'weekly',
-                'priority' => '0.7',
-            ]);
+            ->map(fn (Zona $zona) => $this->makeSitemapEntry(
+                route('zonas.show', $zona->slug),
+                $zona->updated_at ?? now(),
+                'weekly',
+                '0.7'
+            ));
 
         $urls = $pages
             ->concat($properties)
@@ -77,6 +78,20 @@ class SeoController extends Controller
         return response()
             ->view('seo.sitemap', compact('urls'))
             ->header('Content-Type', 'application/xml; charset=UTF-8');
+    }
+
+    protected function makeSitemapEntry(string $loc, mixed $lastmod, string $changefreq, string $priority): array
+    {
+        $lastModified = $lastmod instanceof Carbon
+            ? $lastmod
+            : Carbon::parse($lastmod ?: now());
+
+        return [
+            'loc' => $loc,
+            'lastmod' => $lastModified->toAtomString(),
+            'changefreq' => $changefreq,
+            'priority' => $priority,
+        ];
     }
 
     public function robots(): Response
