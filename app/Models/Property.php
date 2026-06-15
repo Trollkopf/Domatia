@@ -272,9 +272,9 @@ class Property extends Model
             },
             default => match ($this->status) {
                 'reserved' => 'Actualmente reservada',
-                'sold' => 'Operacion cerrada recientemente',
-                'hidden' => 'Ficha en revision interna',
-                'draft' => 'Ficha en preparacion',
+                'sold' => 'Operación cerrada recientemente',
+                'hidden' => 'Ficha en revisión interna',
+                'draft' => 'Ficha en preparación',
                 default => 'Disponible para su consulta',
             },
         };
@@ -284,7 +284,7 @@ class Property extends Model
             'fr' => $statusText . ($this->ref ? ' avec la reference ' . $this->ref : '') . ' pour un suivi rapide.',
             'de' => $statusText . ($this->ref ? ' mit Referenz ' . $this->ref : '') . ' fur eine schnelle Bearbeitung.',
             'ru' => $statusText . ($this->ref ? ' с номером ' . $this->ref : '') . ' для быстрого сопровождения.',
-            default => $statusText . ($this->ref ? ' con referencia ' . $this->ref : '') . ' para gestionarla de forma agil desde el backoffice.',
+            default => $statusText . ($this->ref ? ' con referencia ' . $this->ref : '') . ' para gestionarla de forma ágil desde el backoffice.',
         };
     }
 
@@ -292,7 +292,7 @@ class Property extends Model
     {
         $extras = collect([
             $this->bedrooms ? $this->bedrooms . ' dormitorio' . ($this->bedrooms === 1 ? '' : 's') : null,
-            $this->bathrooms ? $this->bathrooms . ' bano' . ($this->bathrooms === 1 ? '' : 's') : null,
+            $this->bathrooms ? $this->bathrooms . ' baño' . ($this->bathrooms === 1 ? '' : 's') : null,
             $this->tiene_piscina ? 'piscina' : null,
         ])->filter()->values();
 
@@ -384,7 +384,7 @@ class Property extends Model
             return 'Espacios destacados: ' . collect($details)->join(', ', ' y ') . '.';
         }
 
-        return 'Distribucion practica y espacio preparado para adaptarse a distintos usos.';
+        return 'Distribución práctica y espacio preparado para adaptarse a distintos usos.';
     }
 
     protected function buildEnglishSpaceSummary(array $parts): string

@@ -183,7 +183,7 @@
                 <div class="text-center">
                     <img src="{{ asset('images/domatia_logo.png') }}" alt="Domatia Logo" class="img-fluid mx-auto d-block">
                 </div>
-                <div class="small text-center text-white-50 mt-3">Centro de control del backoffice</div>
+                <div class="small text-center text-white-50 mt-3">Centro de control</div>
             </div>
 
             <div class="sidebar-group">

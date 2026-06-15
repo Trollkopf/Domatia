@@ -14,6 +14,17 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <div class="fw-semibold mb-2">No se pudieron guardar las imágenes o los datos de la zona.</div>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body p-0">
             <table class="table table-striped m-0" id="zona-table">
@@ -73,6 +84,7 @@
                     <div class="mb-3">
                         <label class="form-label">Imagen principal</label>
                         <input type="file" name="imagen_principal" class="form-control" accept="image/*">
+                        <div class="form-text">Formatos admitidos: JPG, PNG, WEBP. Tamaño recomendado: hasta 10 MB.</div>
                     </div>
 
                     <hr>

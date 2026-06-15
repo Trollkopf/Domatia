@@ -1,7 +1,7 @@
 <section class="profile-card">
     <header class="mb-4">
         <h2>Seguridad de la cuenta</h2>
-        <p class="profile-card-intro">Cambia la contrasena por una mas robusta para mantener el acceso bajo control.</p>
+        <p class="profile-card-intro">Cambia la contraseña por una más robusta para mantener el acceso bajo control.</p>
     </header>
 
     <form method="post" action="{{ route('password.update') }}">
@@ -10,7 +10,7 @@
 
         <div class="row g-3">
             <div class="col-12">
-                <label for="current_password" class="form-label">Contrasena actual</label>
+                <label for="current_password" class="form-label">Contraseña actual</label>
                 <input
                     id="current_password"
                     name="current_password"
@@ -24,7 +24,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="password" class="form-label">Nueva contrasena</label>
+                <label for="password" class="form-label">Nueva contraseña</label>
                 <input
                     id="password"
                     name="password"
@@ -38,7 +38,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="password_confirmation" class="form-label">Confirmar nueva contrasena</label>
+                <label for="password_confirmation" class="form-label">Confirmar nueva contraseña</label>
                 <input
                     id="password_confirmation"
                     name="password_confirmation"
@@ -53,10 +53,10 @@
         </div>
 
         <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
-            <button type="submit" class="btn btn-dark">Actualizar contrasena</button>
+            <button type="submit" class="btn btn-dark">Actualizar contraseña</button>
 
             @if (session('status') === 'password-updated')
-                <span class="profile-feedback">Contrasena actualizada correctamente</span>
+                <span class="profile-feedback">Contraseña actualizada correctamente</span>
             @endif
         </div>
     </form>

@@ -14,12 +14,12 @@
 
 <div class="row">
     <div class="mb-3 col-md-6">
-        <label class="form-label">Titulo base (ES)</label>
+        <label class="form-label">Título base (ES)</label>
         <input type="text" name="title" class="form-control" value="{{ old('title', $property->title ?? '') }}" required>
     </div>
 
     <div class="mb-3 col-md-6">
-        <label class="form-label">Ubicacion base (ES)</label>
+        <label class="form-label">Ubicación base (ES)</label>
         <input type="text" name="location" class="form-control" value="{{ old('location', $property->location ?? '') }}">
     </div>
 
@@ -44,7 +44,7 @@
         @else
             <input type="text" class="form-control" value="{{ $statusLabels[$statusValue] ?? ucfirst($statusValue) }}" disabled>
             <div class="form-text">
-                {{ isset($property) ? 'Tu grupo puede editar la ficha, pero no cambiar su estado de publicacion.' : 'Las nuevas propiedades se guardaran como borrador hasta que un perfil con permiso de publicacion las revise.' }}
+                {{ isset($property) ? 'Tu grupo puede editar la ficha, pero no cambiar su estado de publicación.' : 'Las nuevas propiedades se guardarán como borrador hasta que un perfil con permiso de publicación las revise.' }}
             </div>
         @endif
     </div>
@@ -64,38 +64,38 @@
     <div class="col-12">
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="mb-3">Titulos y ubicaciones por idioma</h5>
+                <h5 class="mb-3">Títulos y ubicaciones por idioma</h5>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Titulo EN</label>
+                        <label class="form-label">Título EN</label>
                         <input type="text" name="title_en" class="form-control" value="{{ old('title_en', $property->title_en ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ubicacion EN</label>
+                        <label class="form-label">Ubicación EN</label>
                         <input type="text" name="location_en" class="form-control" value="{{ old('location_en', $property->location_en ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Titulo FR</label>
+                        <label class="form-label">Título FR</label>
                         <input type="text" name="title_fr" class="form-control" value="{{ old('title_fr', $property->title_fr ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ubicacion FR</label>
+                        <label class="form-label">Ubicación FR</label>
                         <input type="text" name="location_fr" class="form-control" value="{{ old('location_fr', $property->location_fr ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Titulo DE</label>
+                        <label class="form-label">Título DE</label>
                         <input type="text" name="title_de" class="form-control" value="{{ old('title_de', $property->title_de ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ubicacion DE</label>
+                        <label class="form-label">Ubicación DE</label>
                         <input type="text" name="location_de" class="form-control" value="{{ old('location_de', $property->location_de ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Titulo RU</label>
+                        <label class="form-label">Título RU</label>
                         <input type="text" name="title_ru" class="form-control" value="{{ old('title_ru', $property->title_ru ?? '') }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ubicacion RU</label>
+                        <label class="form-label">Ubicación RU</label>
                         <input type="text" name="location_ru" class="form-control" value="{{ old('location_ru', $property->location_ru ?? '') }}">
                     </div>
                 </div>
@@ -123,7 +123,7 @@
     </div>
 
     <div class="mb-3 col-md-4">
-        <label class="form-label">Banos</label>
+        <label class="form-label">Baños</label>
         <input type="number" name="banos" class="form-control" value="{{ old('banos', $property->bathrooms ?? '') }}">
     </div>
 
@@ -171,23 +171,23 @@
         @else
             <label class="form-label d-block">Destacada</label>
             <span class="badge {{ ($property->is_featured ?? false) ? 'bg-success' : 'bg-secondary' }}">
-                {{ ($property->is_featured ?? false) ? 'Si' : 'No' }}
+                {{ ($property->is_featured ?? false) ? 'Sí' : 'No' }}
             </span>
-            <div class="form-text">Solo los perfiles con permiso de publicacion pueden cambiar este ajuste.</div>
+            <div class="form-text">Solo los perfiles con permiso de publicación pueden cambiar este ajuste.</div>
         @endif
     </div>
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Descripcion (ES)</label>
+    <label class="form-label">Descripción (ES)</label>
     <textarea name="description" class="form-control">{{ old('description', $property->description ?? '') }}</textarea>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
-        <h5 class="mb-2">Resumen rapido</h5>
+        <h5 class="mb-2">Resumen rápido</h5>
         <p class="text-muted small mb-3">
-            Si dejas estos campos vacios, la ficha publica generara frases automaticas segun las caracteristicas de la vivienda.
+            Si dejas estos campos vacíos, la ficha pública generará frases automáticas según las características de la vivienda.
         </p>
 
         <div class="row g-3">
@@ -261,31 +261,31 @@
 
 <div class="row">
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripcion (EN)</label>
+        <label class="form-label">Descripción (EN)</label>
         <textarea name="description_en" class="form-control">{{ old('description_en', $property->description_en ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripcion (FR)</label>
+        <label class="form-label">Descripción (FR)</label>
         <textarea name="description_fr" class="form-control">{{ old('description_fr', $property->description_fr ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripcion (DE)</label>
+        <label class="form-label">Descripción (DE)</label>
         <textarea name="description_de" class="form-control">{{ old('description_de', $property->description_de ?? '') }}</textarea>
     </div>
     <div class="mb-3 col-md-6">
-        <label class="form-label">Descripcion (RU)</label>
+        <label class="form-label">Descripción (RU)</label>
         <textarea name="description_ru" class="form-control">{{ old('description_ru', $property->description_ru ?? '') }}</textarea>
     </div>
 </div>
 
 @if (!isset($property))
     <div class="mb-4">
-        <label class="form-label">Imagenes de la propiedad</label>
+        <label class="form-label">Imágenes de la propiedad</label>
         <div class="dropzone" id="dropzone">
-            Arrastra las imagenes aqui o haz clic para seleccionar
+            Arrastra las imágenes aquí o haz clic para seleccionar
             <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
         </div>
-        <div class="form-text mt-2">La primera imagen se usara como miniatura principal.</div>
+        <div class="form-text mt-2">La primera imagen se usará como miniatura principal.</div>
     </div>
 @endif
 

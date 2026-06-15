@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Contacto;
 use App\Models\Property;
 use App\Models\PropertyImage;
+use App\Models\Setting;
 use App\Models\Zona;
 use App\Models\ZonaSection;
 use Database\Seeders\Concerns\SeedsMediaAssets;
@@ -23,67 +24,110 @@ class ReportsPlaygroundSeeder extends Seeder
             $this->existingPublicAssets('propiedad/storage/properties'),
             $this->publishSeedAssets('properties/defaults', 'properties/defaults')
         );
+
         $playgroundPropertyImages = $this->mergeSeedImagePools(
             $this->existingPublicAssets('properties/playground'),
             $this->publishSeedAssets('properties/playground', 'properties/playground'),
             $defaultPropertyImages
         );
-        $zoneHeaderImages = $this->existingPublicAssets('zonas');
-        $zoneSectionImages = $this->existingPublicAssets('zonas/secciones');
-        $zones = $this->seedZones($zoneHeaderImages, $zoneSectionImages);
+
+        $zones = $this->seedZones();
         $properties = $this->seedProperties($zones, $defaultPropertyImages, $playgroundPropertyImages);
+        $this->seedHeroSettings($zones);
 
         $this->seedContacts($properties);
     }
 
-    protected function seedZones(array $zoneHeaderImages, array $zoneSectionImages): array
+    protected function seedZones(): array
     {
         $definitions = [
             [
                 'nombre' => 'Centro',
+                'header_asset' => 'centro-ciudad',
                 'sections' => [
-                    ['titulo' => 'Vida urbana', 'descripcion' => 'Servicios, restauracion y vida a pie de calle.'],
-                    ['titulo' => 'Conexion', 'descripcion' => 'Buena movilidad para clientes que priorizan ubicacion.'],
+                    [
+                        'asset' => 'vida-urbana',
+                        'titulo' => 'Vida urbana',
+                        'descripcion' => "Una zona pensada para cliente que quiere bajar a la calle y tenerlo todo a mano: cafeterias, comercios, restauracion y ritmo diario.\n\nAqui encajan muy bien los pisos para primera residencia, compradores que vienen de alquiler y perfiles que valoran poder moverse sin depender del coche.\n\nTambien funciona especialmente bien en visita porque la sensacion de barrio, actividad y servicios se percibe enseguida.",
+                    ],
+                    [
+                        'asset' => 'conexion',
+                        'titulo' => 'Conexion',
+                        'descripcion' => "Centro tiene una lectura muy clara en movilidad: accesos comodos, transporte, conexiones rapidas y una vida diaria facil de organizar.\n\nEs una zona que suele convencer a perfiles profesionales, familias urbanas y compradores que priorizan tiempo, practicidad y cercania.\n\nA nivel comercial, ayuda mucho cuando queremos defender ubicaciones con uso real los doce meses del ano.",
+                    ],
                 ],
             ],
             [
                 'nombre' => 'Costa',
+                'header_asset' => 'costa',
                 'sections' => [
-                    ['titulo' => 'Frente al mar', 'descripcion' => 'Producto vacacional y segunda residencia de ticket alto.'],
-                    ['titulo' => 'Estilo de vida', 'descripcion' => 'Piscina, terraza y demanda internacional.'],
+                    [
+                        'asset' => 'frente-al-mar',
+                        'titulo' => 'Frente al mar',
+                        'descripcion' => "La costa concentra el producto mas aspiracional del catalogo: vistas abiertas, cercania al agua y una sensacion inmediata de escapada premium.\n\nAqui encontramos muy buena respuesta en segunda residencia, cliente internacional y operaciones donde el componente emocional pesa tanto como el racional.\n\nVisualmente es una zona muy potente para portada, destacados y fichas que necesitan impacto desde la primera imagen.",
+                    ],
+                    [
+                        'asset' => 'estilo-de-vida',
+                        'titulo' => 'Estilo de vida',
+                        'descripcion' => "Terrazas, piscina, luz natural y una forma de vivir mucho mas abierta al exterior definen muy bien este entorno.\n\nSuele funcionar con comprador que busca descanso, teletrabajo con calidad de vida o una vivienda de disfrute familiar en periodos largos.\n\nA nivel comercial, es una zona facil de defender porque mezcla estilo de vida, valor percibido y una demanda muy reconocible.",
+                    ],
                 ],
             ],
             [
                 'nombre' => 'Residencial Norte',
+                'header_asset' => 'residencial-norte',
                 'sections' => [
-                    ['titulo' => 'Familiar', 'descripcion' => 'Chalets, adosados y demanda de primera vivienda.'],
-                    ['titulo' => 'Crecimiento', 'descripcion' => 'Zona util para captar familias y compradores estables.'],
+                    [
+                        'asset' => 'familiar',
+                        'titulo' => 'Familiar',
+                        'descripcion' => "Residencial Norte tiene una lectura muy clara de estabilidad: chalets, adosados y vivienda pensada para quedarse.\n\nEncaja bien con familias que buscan metros, zonas tranquilas y una rutina mas comoda sin salir del entorno urbano ampliado.\n\nEs una ubicacion muy util para propiedades de reposicion, primera compra consolidada o cambio a una casa con mas espacio.",
+                    ],
+                    [
+                        'asset' => 'crecimiento',
+                        'titulo' => 'Crecimiento',
+                        'descripcion' => "Es una zona que transmite evolucion y proyecto de vida, algo que comercialmente ayuda mucho cuando hablamos de compradores con vision a medio plazo.\n\nTiene capacidad para captar perfiles estables, familias que comparan bien y clientes que buscan equilibrio entre precio, superficie y entorno.\n\nAdemas, ofrece margen para presentar producto con narrativa de mejora, arraigo y futuro.",
+                    ],
                 ],
             ],
             [
                 'nombre' => 'Campo',
+                'header_asset' => 'campo',
                 'sections' => [
-                    ['titulo' => 'Privacidad', 'descripcion' => 'Fincas y villas con terreno.'],
+                    [
+                        'asset' => 'privacidad',
+                        'titulo' => 'Privacidad',
+                        'descripcion' => "El campo conecta con un comprador que busca silencio, vistas abiertas y distancia respecto al ritmo de ciudad.\n\nAqui encajan fincas, villas con terreno y operaciones donde la parcela y el exterior pesan tanto como la vivienda principal.\n\nEs un entorno muy atractivo para segunda residencia, cambio de estilo de vida o cliente que quiere espacio real para disfrutar con calma.",
+                    ],
                 ],
             ],
         ];
 
+        $headerImages = collect($this->publishResourceAssets('assets/entornos', 'zonas'))
+            ->keyBy(fn (string $path) => pathinfo($path, PATHINFO_FILENAME));
+
         $zones = [];
 
-        foreach ($definitions as $zoneIndex => $definition) {
+        foreach ($definitions as $definition) {
             $zone = Zona::updateOrCreate(
                 ['nombre' => $definition['nombre']],
-                ['imagen_principal' => $this->cycleSeedImage($zoneHeaderImages, $zoneIndex)]
+                ['imagen_principal' => $headerImages[$definition['header_asset']] ?? null]
             );
 
-            foreach ($definition['sections'] as $sectionIndex => $section) {
+            $sectionImages = collect(
+                $this->publishResourceAssets(
+                    'assets/entornos/' . $definition['header_asset'],
+                    'zonas/secciones/' . $definition['header_asset']
+                )
+            )->keyBy(fn (string $path) => pathinfo($path, PATHINFO_FILENAME));
+
+            foreach ($definition['sections'] as $section) {
                 ZonaSection::updateOrCreate(
                     [
                         'zona_id' => $zone->id,
                         'titulo' => $section['titulo'],
                     ],
                     [
-                        'imagen' => $this->cycleSeedImage($zoneSectionImages, ($zoneIndex * 3) + $sectionIndex),
+                        'imagen' => $sectionImages[$section['asset']] ?? null,
                         'descripcion' => $section['descripcion'],
                     ]
                 );
@@ -345,5 +389,29 @@ class ReportsPlaygroundSeeder extends Seeder
                 'updated_at' => now()->subWeeks(2),
             ]
         );
+    }
+
+    protected function seedHeroSettings(array $zones): void
+    {
+        $propertyImages = collect($this->existingPublicAssets('properties'))
+            ->keyBy(fn (string $path) => pathinfo($path, PATHINFO_FILENAME));
+
+        $zoneImages = collect($zones)
+            ->mapWithKeys(fn (Zona $zona, string $key) => [$key => $zona->imagen_principal ? '/storage/' . $zona->imagen_principal : null]);
+
+        $settings = [
+            'home_hero_count' => '3',
+            'home_hero_image_1' => isset($propertyImages['chalet3']) ? '/storage/' . $propertyImages['chalet3'] : ($zoneImages['Costa'] ?? '/images/our-company.jpg'),
+            'home_hero_image_2' => isset($propertyImages['piso3']) ? '/storage/' . $propertyImages['piso3'] : ($zoneImages['Centro'] ?? '/images/images.jpg'),
+            'home_hero_image_3' => $zoneImages['Costa'] ?? '/images/images.jpg',
+            'about_header_image' => $zoneImages['Campo'] ?? '/images/our-company.jpg',
+            'contact_header_image' => $zoneImages['Centro'] ?? '/images/our-company.jpg',
+            'environment_header_image' => $zoneImages['Costa'] ?? '/images/images.jpg',
+            'register_header_image' => $zoneImages['Residencial Norte'] ?? '/images/our-company.jpg',
+        ];
+
+        foreach ($settings as $key => $value) {
+            Setting::setValue($key, $value);
+        }
     }
 }

@@ -82,7 +82,7 @@ class AdminController extends Controller
         $overviewCards = collect([
             [
                 'permission' => 'properties',
-                'label' => 'Catalogo publicado',
+                'label' => 'Catálogo publicado',
                 'value' => $stats['properties_published'],
                 'help' => $stats['properties_total'] . ' propiedades en total',
             ],
@@ -153,19 +153,19 @@ class AdminController extends Controller
         $workspaceSections = collect([
             [
                 'title' => 'Propiedades',
-                'description' => 'Gestion del catalogo, revision editorial y publicacion.',
+                'description' => 'Gestión del catálogo, revisión editorial y publicación.',
                 'metric' => $stats['properties_total'] . ' registradas',
                 'tone' => 'primary',
                 'permission' => 'properties',
                 'links' => [
-                    ['label' => 'Ver catalogo', 'url' => route('admin.properties.index')],
+                    ['label' => 'Ver catálogo', 'url' => route('admin.properties.index')],
                     ['label' => 'Crear propiedad', 'url' => route('admin.properties.create')],
                     ['label' => 'Borradores', 'url' => route('admin.properties.index', ['status' => 'draft'])],
                 ],
             ],
             [
                 'title' => 'Contactos',
-                'description' => 'Seguimiento comercial y proxima accion de cada lead.',
+                'description' => 'Seguimiento comercial y próxima acción de cada lead.',
                 'metric' => $stats['contactos_total'] . ' leads',
                 'tone' => 'warning',
                 'permission' => 'contacts',
@@ -188,13 +188,13 @@ class AdminController extends Controller
             ],
             [
                 'title' => 'Contenido y ajustes',
-                'description' => 'Textos globales, portada y configuracion del sitio.',
+                'description' => 'Textos globales, portada y configuración del sitio.',
                 'metric' => 'Home y paginas editables',
                 'tone' => 'dark',
                 'permission' => 'settings',
                 'links' => [
                     ['label' => 'Abrir ajustes', 'url' => route('admin.settings')],
-                    ['label' => 'Ver web publica', 'url' => url('/')],
+                    ['label' => 'Ver web pública', 'url' => url('/')],
                 ],
             ],
             [
@@ -209,7 +209,7 @@ class AdminController extends Controller
             ],
             [
                 'title' => 'Informes',
-                'description' => 'Vision ejecutiva del rendimiento comercial y del catalogo.',
+                'description' => 'Visión ejecutiva del rendimiento comercial y del catálogo.',
                 'metric' => 'KPI y analitica',
                 'tone' => 'secondary',
                 'permission' => 'reports',
@@ -224,7 +224,7 @@ class AdminController extends Controller
                 'permission' => 'contacts',
                 'title' => 'Leads sin siguiente accion',
                 'count' => $stats['contactos_without_next_action'],
-                'help' => 'Contactos abiertos que aun no tienen una fecha de seguimiento.',
+                'help' => 'Contactos abiertos que aún no tienen una fecha de seguimiento.',
                 'url' => route('admin.contactos.index'),
                 'action' => 'Revisar contactos',
                 'empty' => 'Todos los leads abiertos tienen siguiente paso definido.',
@@ -257,7 +257,7 @@ class AdminController extends Controller
                 'help' => 'Propiedades en borrador que ya tienen imagen principal.',
                 'url' => route('admin.properties.index', ['status' => 'draft']),
                 'action' => 'Revisar borradores',
-                'empty' => 'Aun no hay borradores listos para publicar.',
+                'empty' => 'Aún no hay borradores listos para publicar.',
                 'tone' => 'success',
             ],
         ])->filter(fn (array $item) => $permissions[$item['permission']] ?? false)->values()->all();
@@ -273,14 +273,14 @@ class AdminController extends Controller
             [
                 'permissions' => ['zonas', 'reports'],
                 'title' => 'Zonas sin portada',
-                'help' => 'Conviene revisarlas para cuidar la navegacion publica',
+                'help' => 'Conviene revisarlas para cuidar la navegación pública',
                 'badge_class' => 'bg-warning-subtle text-warning',
                 'value' => $stats['zonas_without_image'],
             ],
             [
                 'permissions' => ['properties', 'reports'],
                 'title' => 'Borradores vivos',
-                'help' => 'Propiedades aun no publicadas',
+                'help' => 'Propiedades aún no publicadas',
                 'badge_class' => 'bg-secondary',
                 'value' => $stats['properties_draft'],
             ],

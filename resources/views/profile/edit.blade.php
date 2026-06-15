@@ -2,7 +2,7 @@
 
 @section('title', 'Mi perfil')
 @section('meta_title', 'Mi perfil')
-@section('meta_description', 'Gestion de cuenta y seguridad del usuario autenticado.')
+@section('meta_description', 'Gestión de cuenta y seguridad del usuario autenticado.')
 @section('meta_robots', 'noindex,follow')
 
 @section('styles')
@@ -200,7 +200,7 @@
                     <div>
                         <span class="profile-kicker">Cuenta</span>
                         <h1>Mi perfil</h1>
-                        <p>Desde aqui puedes mantener tus datos al dia, reforzar la seguridad de acceso y gestionar la cuenta sin salir del flujo de trabajo.</p>
+                        <p>Desde aquí puedes mantener tus datos al día, reforzar la seguridad de acceso y gestionar la cuenta sin salir del flujo de trabajo.</p>
                     </div>
 
                     <div class="d-flex flex-wrap gap-2">
@@ -249,7 +249,7 @@
 
                 <div class="col-xl-8">
                     @if (session('status') === 'verification-link-sent')
-                        <div class="alert alert-success rounded-4 border-0 shadow-sm">Hemos enviado un nuevo enlace de verificacion a tu correo.</div>
+                        <div class="alert alert-success rounded-4 border-0 shadow-sm">Hemos enviado un nuevo enlace de verificación a tu correo.</div>
                     @endif
 
                     @include('profile.partials.update-profile-information-form')

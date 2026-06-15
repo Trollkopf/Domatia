@@ -46,7 +46,7 @@
                 @endif
 
                 @if ($property->images->count() > 0)
-                    <h5 class="mt-4">Imagenes actuales</h5>
+                    <h5 class="mt-4">Imágenes actuales</h5>
                     <div class="row g-2">
                         @foreach ($property->images as $image)
                             <div class="col-3 position-relative">
@@ -65,12 +65,12 @@
                 @endif
 
                 <div class="mb-4">
-                    <label class="form-label">Anadir nuevas imagenes</label>
+                    <label class="form-label">Añadir nuevas imágenes</label>
                     <div class="dropzone" id="dropzone">
-                        Arrastra las imagenes aqui o haz clic para seleccionar
+                        Arrastra las imágenes aquí o haz clic para seleccionar
                         <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
                     </div>
-                    <div class="form-text mt-2">Las nuevas imagenes se anadiran al final.</div>
+                    <div class="form-text mt-2">Las nuevas imágenes se añadirán al final.</div>
                 </div>
             </form>
         </div>
@@ -138,7 +138,7 @@
         }
 
         function deleteImage(id) {
-            if (!confirm('Seguro que quieres eliminar esta imagen?')) {
+            if (!confirm('¿Seguro que quieres eliminar esta imagen?')) {
                 return;
             }
 

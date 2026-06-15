@@ -40,6 +40,7 @@
                         </div>
                     @endif
                     <input type="file" name="imagen_principal" class="form-control">
+                    <div class="form-text">Formatos admitidos: JPG, PNG, WEBP. Tamaño recomendado: hasta 10 MB.</div>
                 </div>
 
                 <hr>
