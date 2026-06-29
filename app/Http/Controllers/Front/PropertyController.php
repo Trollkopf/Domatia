@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 
 class PropertyController extends Controller
 {
@@ -46,7 +47,14 @@ class PropertyController extends Controller
 
         $tipos = array_filter((array) $request->input('tipo', $request->input('types', [])));
         if ($tipos !== []) {
-            $properties->whereIn('tipo', $tipos);
+            $normalizedTipos = collect($tipos)
+                ->map(fn ($tipo) => Str::title(Str::lower(trim((string) $tipo))))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $properties->whereIn('tipo', $normalizedTipos);
         }
 
         $zonas = array_filter((array) $request->input('zona', []));

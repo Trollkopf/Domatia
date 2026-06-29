@@ -18,10 +18,13 @@ class EnvironmentController extends Controller
     public function show($slug)
     {
         $zona = Zona::whereRaw('LOWER(slug) = ?', [Str::slug($slug)])
-        ->with(['secciones', 'properties'])
-        ->firstOrFail();
+            ->with([
+                'secciones',
+                'publishedProperties' => fn ($query) => $query->latest(),
+            ])
+            ->firstOrFail();
 
-    return view('environment.show', compact('zona'));
+        return view('environment.show', compact('zona'));
     }
 
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ContactoController as AdminContactoController;
+use App\Http\Controllers\Admin\KyeroImportController;
 use App\Http\Controllers\Admin\PropertyImageController;
 use App\Http\Controllers\Admin\ZonaController;
 use App\Http\Controllers\AdminController;
@@ -44,8 +45,8 @@ Route::get('/favoritos', [PropertyController::class, 'favorites'])->name('guest.
 
 Route::get('/nosotros', fn() => view('about.index'))->name('about');
 
-Route::get('/entorno', [EnvironmentController::class, 'index'])->name('environment');
-Route::get('/entorno/{slug}', [EnvironmentController::class, 'show'])->name('zonas.show');
+Route::get('/zonas', [EnvironmentController::class, 'index'])->name('environment');
+Route::get('/zonas/{slug}', [EnvironmentController::class, 'show'])->name('zonas.show');
 
 Route::get('/contact', fn() => view('contact.index'))->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
@@ -55,6 +56,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::middleware('backoffice_permission:properties')->group(function () {
         Route::resource('properties', AdminPropertyController::class);
+        Route::get('kyero', [KyeroImportController::class, 'index'])->name('kyero.index');
+        Route::post('kyero', [KyeroImportController::class, 'store'])->name('kyero.store');
+        Route::get('kyero/{run}', [KyeroImportController::class, 'show'])->name('kyero.show');
+        Route::post('kyero/{run}/process', [KyeroImportController::class, 'process'])->name('kyero.process');
         Route::patch('properties/{property}/images/{image}/set-thumbnail', [PropertyImageController::class, 'setThumbnail'])
             ->name('properties.images.set-thumbnail');
         Route::delete('properties/images/{id}', [PropertyImageController::class, 'destroy'])

@@ -9,12 +9,11 @@ import 'glightbox/dist/css/glightbox.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-
 window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = GLightbox({
+    GLightbox({
         selector: '.glightbox',
         touchNavigation: true,
         loop: true,
@@ -118,13 +117,68 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    var map = L.map('map').setView([40.4168, -3.7038], 13); // Coordenadas de ejemplo (Madrid)
+    const latitude = Number.parseFloat(mapElement.dataset.latitude || '');
+    const longitude = Number.parseFloat(mapElement.dataset.longitude || '');
+    const address = (mapElement.dataset.address || '').trim();
+    const zoom = Number.parseInt(mapElement.dataset.zoom || '14', 10);
+    const mapTitle = mapElement.dataset.title || 'Ubicacion';
+    const map = L.map(mapElement);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    L.marker([40.4168, -3.7038]).addTo(map) // Marcador en la ubicación de ejemplo
-        .bindPopup('Aquí está la propiedad')
-        .openPopup();
+    const renderMarker = function(targetLatitude, targetLongitude) {
+        map.setView([targetLatitude, targetLongitude], zoom);
+
+        L.marker([targetLatitude, targetLongitude]).addTo(map)
+            .bindPopup(mapTitle)
+            .openPopup();
+    };
+
+    if (!Number.isNaN(latitude) && !Number.isNaN(longitude)) {
+        renderMarker(latitude, longitude);
+        return;
+    }
+
+    if (address === '') {
+        return;
+    }
+
+    const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
+    geocodeUrl.searchParams.set('format', 'json');
+    geocodeUrl.searchParams.set('limit', '1');
+    geocodeUrl.searchParams.set('q', address);
+
+    fetch(geocodeUrl.toString(), {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('No se pudo geocodificar la direccion.');
+            }
+
+            return response.json();
+        })
+        .then(function(results) {
+            const firstResult = Array.isArray(results) ? results[0] : null;
+
+            if (!firstResult) {
+                return;
+            }
+
+            const resolvedLatitude = Number.parseFloat(firstResult.lat || '');
+            const resolvedLongitude = Number.parseFloat(firstResult.lon || '');
+
+            if (Number.isNaN(resolvedLatitude) || Number.isNaN(resolvedLongitude)) {
+                return;
+            }
+
+            renderMarker(resolvedLatitude, resolvedLongitude);
+        })
+        .catch(function() {
+            map.remove();
+        });
 });

@@ -54,11 +54,11 @@
         @endforeach
     </section>
 
-    @if ($zona->properties->count())
+    @if ($zona->publishedProperties->count())
         <section class="container py-5">
             <h2 class="mb-4">{{ __('ui.environment.properties_in', ['name' => $zona->translatedName()]) }}</h2>
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach ($zona->properties as $property)
+                @foreach ($zona->publishedProperties as $property)
                     <div class="col">
                         <div class="card h-100 shadow-sm">
                             <img src="{{ asset('storage/' . $property->thumbnail) }}" class="card-img-top"

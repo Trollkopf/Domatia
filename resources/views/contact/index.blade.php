@@ -17,6 +17,15 @@
 
 @section('style')
 <link href="{{ asset('css/contact.css') }}" rel="stylesheet">
+<style>
+    .contact-map {
+        height: 420px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+</style>
 @endsection
 
 @section('content')
@@ -80,4 +89,17 @@
         </div>
     </div>
 </section>
+
+@if (! empty($siteSettings['company_address']))
+    <section class="container pb-5">
+        <h2 class="mb-4">Mapa</h2>
+        <div
+            id="map"
+            class="contact-map"
+            data-address="{{ $siteSettings['company_address'] }}"
+            data-title="{{ $siteSettings['company_name'] ?: 'Domatia' }}"
+            data-zoom="15"
+        ></div>
+    </section>
+@endif
 @endsection

@@ -33,7 +33,7 @@
                 </h3>
             </div>
 
-            <div class="property-teaser-price">{{ number_format($property->price, 0, ',', '.') }} EUR</div>
+            <div class="property-teaser-price">{{ number_format($property->price, 0, ',', '.') }} {{ $property->currency ?: 'EUR' }}</div>
         </div>
 
         <p class="property-teaser-summary mb-0">{{ \Illuminate\Support\Str::limit($property->translatedDescription(), 110) }}</p>

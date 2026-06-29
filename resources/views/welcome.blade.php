@@ -173,9 +173,9 @@
                                 <div class="col-md-3">
                                     <select name="type" class="form-select">
                                         <option value="">{{ __('ui.home.property_type') }}</option>
-                                        <option value="piso">{{ __('ui.property_types.piso') }}</option>
-                                        <option value="casa">{{ __('ui.property_types.casa') }}</option>
-                                        <option value="villa">{{ __('ui.property_types.villa') }}</option>
+                                        <option value="Piso">{{ __('ui.property_types.piso') }}</option>
+                                        <option value="Casa">{{ __('ui.property_types.casa') }}</option>
+                                        <option value="Villa">{{ __('ui.property_types.villa') }}</option>
                                     </select>
                                 </div>
 

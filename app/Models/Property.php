@@ -11,6 +11,32 @@ class Property extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'tiene_solar' => 'boolean',
+        'tiene_patio' => 'boolean',
+        'tiene_piscina' => 'boolean',
+        'part_ownership' => 'boolean',
+        'leasehold' => 'boolean',
+        'new_build' => 'boolean',
+        'features_json' => 'array',
+        'description_extra' => 'array',
+        'has_air_conditioning' => 'boolean',
+        'has_garage' => 'boolean',
+        'has_lift' => 'boolean',
+        'has_garden' => 'boolean',
+        'has_terrace' => 'boolean',
+        'has_sea_views' => 'boolean',
+        'has_parking' => 'boolean',
+        'is_furnished' => 'boolean',
+        'has_storage_room' => 'boolean',
+        'has_solarium' => 'boolean',
+        'source_date' => 'datetime',
+        'source_last_synced_at' => 'datetime',
+        'latitude' => 'float',
+        'longitude' => 'float',
+    ];
+
     protected $fillable = [
         'ref',
         'title',
@@ -57,6 +83,39 @@ class Property extends Model
         'quick_summary_3_fr',
         'quick_summary_3_de',
         'quick_summary_3_ru',
+        'source_name',
+        'source_listing_id',
+        'source_payload_hash',
+        'source_last_synced_at',
+        'source_date',
+        'currency',
+        'price_freq',
+        'part_ownership',
+        'leasehold',
+        'new_build',
+        'town',
+        'province',
+        'country',
+        'location_detail',
+        'latitude',
+        'longitude',
+        'energy_consumption',
+        'energy_emissions',
+        'video_url',
+        'virtual_tour_url',
+        'source_notes',
+        'features_json',
+        'description_extra',
+        'has_air_conditioning',
+        'has_garage',
+        'has_lift',
+        'has_garden',
+        'has_terrace',
+        'has_sea_views',
+        'has_parking',
+        'is_furnished',
+        'has_storage_room',
+        'has_solarium',
     ];
 
     public function zona()
@@ -123,6 +182,7 @@ class Property extends Model
     public function translatedDescription(?string $locale = null): string
     {
         $locale = $locale ?: App::currentLocale();
+        $extraDescriptions = (array) ($this->description_extra ?? []);
 
         $localizedValue = match ($locale) {
             'en' => $this->description_en,
@@ -132,7 +192,9 @@ class Property extends Model
             default => $this->description,
         };
 
-        return $this->sanitizeQuickSummary($localizedValue) ?: (string) $this->description;
+        return $this->sanitizeQuickSummary($localizedValue)
+            ?: $this->sanitizeQuickSummary($extraDescriptions[$locale] ?? null)
+            ?: (string) $this->description;
     }
 
     public function translatedTitle(?string $locale = null): string
@@ -165,19 +227,52 @@ class Property extends Model
         return $this->sanitizeQuickSummary($localizedValue) ?: $this->location;
     }
 
+    public function featuresList(): array
+    {
+        return collect((array) ($this->features_json ?? []))
+            ->map(fn ($feature) => trim((string) $feature))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    public function fullLocationLabel(): string
+    {
+        return collect([
+            $this->translatedLocation(),
+            $this->town,
+            $this->province,
+            $this->country,
+        ])->filter()->unique()->implode(', ');
+    }
+
     public function translatedTypeLabel(?string $locale = null): string
     {
         $type = (string) $this->tipo;
+        $translationKey = Str::lower($type);
 
         if ($type === '') {
             return __('ui.properties.type_fallback', locale: $locale ?: App::currentLocale());
         }
 
-        $translated = __('ui.property_types.' . $type, locale: $locale ?: App::currentLocale());
+        $translated = __('ui.property_types.' . $translationKey, locale: $locale ?: App::currentLocale());
 
-        return $translated === 'ui.property_types.' . $type
+        return $translated === 'ui.property_types.' . $translationKey
             ? ucfirst($type)
             : $translated;
+    }
+
+    public function setTipoAttribute($value): void
+    {
+        $value = trim((string) $value);
+
+        $this->attributes['tipo'] = $value !== '' ? Str::title(Str::lower($value)) : null;
     }
 
     protected function sanitizeQuickSummary(?string $value): ?string

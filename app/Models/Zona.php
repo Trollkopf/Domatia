@@ -26,6 +26,11 @@ class Zona extends Model
         return $this->hasMany(Property::class);
     }
 
+    public function publishedProperties()
+    {
+        return $this->hasMany(Property::class)->where('status', 'published');
+    }
+
     public function secciones()
     {
         return $this->hasMany(ZonaSection::class);

@@ -28,10 +28,13 @@
             color: var(--admin-text);
         }
 
+        body.admin-nav-open {
+            overflow: hidden;
+        }
+
         .admin-shell {
-            display: grid;
-            grid-template-columns: 280px minmax(0, 1fr);
             min-height: 100vh;
+            min-height: 100dvh;
         }
 
         .admin-sidebar {
@@ -41,7 +44,36 @@
             position: sticky;
             top: 0;
             height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-self: start;
+            z-index: 1040;
+            scrollbar-width: thin;
+        }
+
+        .admin-sidebar-desktop {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 280px;
+        }
+
+        .admin-sidebar-mobile {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: min(320px, calc(100vw - 2rem));
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            z-index: 1050;
+            border-radius: 0 24px 24px 0;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+        }
+
+        .admin-sidebar-mobile.open {
+            transform: translateX(0);
         }
 
         .brand-panel {
@@ -98,7 +130,12 @@
         }
 
         .sidebar-footer {
-            margin-top: 2rem;
+            margin-top: auto;
+            padding-top: 1.5rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .sidebar-footer-inner {
             padding-top: 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
@@ -113,6 +150,7 @@
 
         .admin-main {
             min-width: 0;
+            margin-left: 280px;
             padding: 1.5rem;
         }
 
@@ -123,10 +161,23 @@
             padding: 1rem 1.25rem;
             margin-bottom: 1.5rem;
             backdrop-filter: blur(10px);
+            position: sticky;
+            top: 1rem;
+            z-index: 1020;
         }
 
         .content-surface {
             min-width: 0;
+        }
+
+        .admin-sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.52);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 1030;
         }
 
         .btn-main {
@@ -144,25 +195,19 @@
         }
 
         @media (max-width: 991.98px) {
-            .admin-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .admin-sidebar {
-                position: fixed;
-                inset: 0 auto 0 0;
-                width: 280px;
-                transform: translateX(-100%);
-                transition: transform 0.25s ease;
-                z-index: 1050;
-            }
-
-            .admin-sidebar.open {
-                transform: translateX(0);
+            .admin-sidebar-backdrop.open {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             .admin-main {
+                margin-left: 0;
                 padding: 1rem;
+            }
+
+            .admin-topbar {
+                top: 0.75rem;
+                padding: 0.9rem 1rem;
             }
         }
     </style>
@@ -175,10 +220,107 @@
         $hasCommercialAccess = $adminUser?->canManageProperties()
             || $adminUser?->canManageContacts()
             || $adminUser?->canManageZonas();
+
+        $generalLinks = [
+            [
+                'visible' => true,
+                'url' => route('admin.dashboard'),
+                'icon' => 'fas fa-house',
+                'label' => 'Dashboard',
+                'active' => $currentRoute === 'admin.dashboard',
+            ],
+        ];
+
+        $commercialLinks = [
+            [
+                'visible' => $adminUser?->canManageProperties(),
+                'url' => route('admin.properties.index'),
+                'icon' => 'fas fa-building',
+                'label' => 'Propiedades',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.properties.'),
+            ],
+            [
+                'visible' => $adminUser?->canManageProperties(),
+                'url' => route('admin.kyero.index'),
+                'icon' => 'fas fa-file-import',
+                'label' => 'Importar Kyero',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.kyero.'),
+            ],
+            [
+                'visible' => $adminUser?->canManageContacts(),
+                'url' => route('admin.contactos.index'),
+                'icon' => 'fas fa-address-book',
+                'label' => 'Contactos',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.contactos.'),
+            ],
+            [
+                'visible' => $adminUser?->canManageZonas(),
+                'url' => route('admin.zonas.index'),
+                'icon' => 'fas fa-map-location-dot',
+                'label' => 'Zonas',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.zonas.'),
+            ],
+        ];
+
+        $adminLinks = [
+            [
+                'visible' => $adminUser?->canManageUsers(),
+                'url' => route('admin.users.index'),
+                'icon' => 'fas fa-users',
+                'label' => 'Usuarios',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.users.'),
+            ],
+            [
+                'visible' => true,
+                'url' => route('profile.edit'),
+                'icon' => 'fas fa-id-card',
+                'label' => 'Mi perfil',
+                'active' => str_starts_with($currentRoute ?? '', 'profile.'),
+            ],
+            [
+                'visible' => $adminUser?->canManageSettings(),
+                'url' => route('admin.settings'),
+                'icon' => 'fas fa-sliders',
+                'label' => 'Ajustes',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.settings'),
+            ],
+            [
+                'visible' => $adminUser?->canViewReports(),
+                'url' => route('admin.reports'),
+                'icon' => 'fas fa-chart-column',
+                'label' => 'Informes',
+                'active' => $currentRoute === 'admin.reports',
+            ],
+        ];
     @endphp
+    @once
+        @php
+            function renderAdminSidebarGroup(string $label, array $links): string {
+                $visibleLinks = array_filter($links, fn ($link) => $link['visible']);
+
+                if ($visibleLinks === []) {
+                    return '';
+                }
+
+                $html = '<div class="sidebar-group">';
+                $html .= '<div class="sidebar-label">' . e($label) . '</div>';
+
+                foreach ($visibleLinks as $link) {
+                    $html .= '<a href="' . e($link['url']) . '" class="sidebar-link' . ($link['active'] ? ' active' : '') . '">';
+                    $html .= '<i class="' . e($link['icon']) . '"></i>';
+                    $html .= '<span>' . e($link['label']) . '</span>';
+                    $html .= '</a>';
+                }
+
+                $html .= '</div>';
+
+                return $html;
+            }
+        @endphp
+    @endonce
 
     <div class="admin-shell">
-        <aside class="admin-sidebar" id="admin-sidebar">
+        <aside class="admin-sidebar admin-sidebar-desktop d-none d-lg-flex">
             <div class="brand-panel">
                 <div class="text-center">
                     <img src="{{ asset('images/domatia_logo.png') }}" alt="Domatia Logo" class="img-fluid mx-auto d-block">
@@ -186,79 +328,68 @@
                 <div class="small text-center text-white-50 mt-3">Centro de control</div>
             </div>
 
-            <div class="sidebar-group">
-                <div class="sidebar-label">General</div>
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}">
-                    <i class="fas fa-house"></i>
-                    <span>Dashboard</span>
-                </a>
-            </div>
-
+            {!! renderAdminSidebarGroup('General', $generalLinks) !!}
             @if ($hasCommercialAccess)
-                <div class="sidebar-group">
-                    <div class="sidebar-label">Comercial</div>
-                    @if ($adminUser?->canManageProperties())
-                        <a href="{{ route('admin.properties.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.properties.') ? 'active' : '' }}">
-                            <i class="fas fa-building"></i>
-                            <span>Propiedades</span>
-                        </a>
-                    @endif
-                    @if ($adminUser?->canManageContacts())
-                        <a href="{{ route('admin.contactos.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.contactos.') ? 'active' : '' }}">
-                            <i class="fas fa-address-book"></i>
-                            <span>Contactos</span>
-                        </a>
-                    @endif
-                    @if ($adminUser?->canManageZonas())
-                        <a href="{{ route('admin.zonas.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.zonas.') ? 'active' : '' }}">
-                            <i class="fas fa-map-location-dot"></i>
-                            <span>Zonas</span>
-                        </a>
-                    @endif
-                </div>
+                {!! renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
             @endif
-
-            <div class="sidebar-group">
-                <div class="sidebar-label">Administracion</div>
-                @if ($adminUser?->canManageUsers())
-                    <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.users.') ? 'active' : '' }}">
-                        <i class="fas fa-users"></i>
-                        <span>Usuarios</span>
-                    </a>
-                @endif
-                <a href="{{ route('profile.edit') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'profile.') ? 'active' : '' }}">
-                    <i class="fas fa-id-card"></i>
-                    <span>Mi perfil</span>
-                </a>
-                @if ($adminUser?->canManageSettings())
-                    <a href="{{ route('admin.settings') }}" class="sidebar-link {{ str_starts_with($currentRoute ?? '', 'admin.settings') ? 'active' : '' }}">
-                        <i class="fas fa-sliders"></i>
-                        <span>Ajustes</span>
-                    </a>
-                @endif
-                @if ($adminUser?->canViewReports())
-                    <a href="{{ route('admin.reports') }}" class="sidebar-link {{ $currentRoute === 'admin.reports' ? 'active' : '' }}">
-                        <i class="fas fa-chart-column"></i>
-                        <span>Informes</span>
-                    </a>
-                @endif
-            </div>
+            {!! renderAdminSidebarGroup('Administracion', $adminLinks) !!}
 
             <div class="sidebar-footer">
-                <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
-                    <i class="fas fa-arrow-up-right-from-square"></i>
-                    <span>Ver web publica</span>
-                </a>
+                <div class="sidebar-footer-inner">
+                    <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        <span>Ver web publica</span>
+                    </a>
 
-                <form action="{{ route('logout') }}" method="POST" class="mt-2">
-                    @csrf
-                    <button type="submit" class="sidebar-link logout-button">
-                        <i class="fas fa-right-from-bracket"></i>
-                        <span>Cerrar sesion</span>
-                    </button>
-                </form>
+                    <form action="{{ route('logout') }}" method="POST" class="mt-2">
+                        @csrf
+                        <button type="submit" class="sidebar-link logout-button">
+                            <i class="fas fa-right-from-bracket"></i>
+                            <span>Cerrar sesion</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </aside>
+
+        <aside class="admin-sidebar admin-sidebar-mobile d-lg-none" id="admin-sidebar-mobile" aria-hidden="true">
+            <div class="brand-panel">
+                <div class="d-flex justify-content-between align-items-center gap-3">
+                    <div class="text-center flex-grow-1">
+                        <img src="{{ asset('images/domatia_logo.png') }}" alt="Domatia Logo" class="img-fluid mx-auto d-block">
+                        <div class="small text-center text-white-50 mt-3">Centro de control</div>
+                    </div>
+                    <button id="menu-close" class="btn btn-outline-light btn-sm align-self-start" type="button" aria-label="Cerrar menu">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            {!! renderAdminSidebarGroup('General', $generalLinks) !!}
+            @if ($hasCommercialAccess)
+                {!! renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
+            @endif
+            {!! renderAdminSidebarGroup('Administracion', $adminLinks) !!}
+
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-inner">
+                    <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        <span>Ver web publica</span>
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST" class="mt-2">
+                        @csrf
+                        <button type="submit" class="sidebar-link logout-button">
+                            <i class="fas fa-right-from-bracket"></i>
+                            <span>Cerrar sesion</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <button class="admin-sidebar-backdrop" id="admin-sidebar-backdrop" type="button" aria-label="Cerrar menu"></button>
 
         <main class="admin-main">
             <div class="admin-topbar d-flex justify-content-between align-items-center gap-3">
@@ -282,7 +413,7 @@
                     @if ($adminUser?->canManageProperties())
                         <a href="{{ route('admin.properties.create') }}" class="btn btn-main btn-sm d-none d-md-inline-flex">Nueva propiedad</a>
                     @endif
-                    <button id="menu-toggle" class="btn btn-outline-dark d-lg-none" type="button" aria-label="Abrir menu">
+                    <button id="menu-toggle" class="btn btn-outline-dark d-lg-none" type="button" aria-label="Abrir menu" aria-controls="admin-sidebar" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
@@ -297,12 +428,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggle = document.getElementById('menu-toggle');
-            const sidebar = document.getElementById('admin-sidebar');
+            const sidebar = document.getElementById('admin-sidebar-mobile');
+            const backdrop = document.getElementById('admin-sidebar-backdrop');
+            const closeButton = document.getElementById('menu-close');
 
-            if (toggle && sidebar) {
+            const setOpenState = function (isOpen) {
+                if (!sidebar || !toggle || !backdrop) {
+                    return;
+                }
+
+                sidebar.classList.toggle('open', isOpen);
+                backdrop.classList.toggle('open', isOpen);
+                document.body.classList.toggle('admin-nav-open', isOpen);
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                sidebar.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            };
+
+            if (toggle && sidebar && backdrop) {
                 toggle.addEventListener('click', function () {
-                    sidebar.classList.toggle('open');
+                    const shouldOpen = !sidebar.classList.contains('open');
+                    setOpenState(shouldOpen);
                 });
+
+                if (closeButton) {
+                    closeButton.addEventListener('click', function () {
+                        setOpenState(false);
+                    });
+                }
+
+                backdrop.addEventListener('click', function () {
+                    setOpenState(false);
+                });
+
+                sidebar.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', function () {
+                        setOpenState(false);
+                    });
+                });
+
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        setOpenState(false);
+                    }
+                });
+
+                setOpenState(false);
             }
         });
     </script>

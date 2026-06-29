@@ -1,10 +1,10 @@
 @extends('layouts.guest')
 
-@section('title', __('ui.environment.title'))
+@section('title', 'Zonas')
 
 @php
-    $environmentSeoTitle = __('ui.environment.title');
-    $environmentSeoDescription = \Illuminate\Support\Str::limit(__('ui.environment.intro'), 160);
+    $environmentSeoTitle = 'Zonas';
+    $environmentSeoDescription = \Illuminate\Support\Str::limit('Descubre las zonas en las que trabajamos y conoce mejor el estilo de vida, el entorno y las propiedades disponibles en cada una de ellas.', 160);
 @endphp
 
 @section('meta_title', $environmentSeoTitle)
@@ -25,14 +25,14 @@
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy">
-                <h1 class="fw-light">{{ $siteSettings['environment_header_title'] }}</h1>
+                <h1 class="fw-light">Zonas</h1>
             </div>
         </div>
     </section>
 
     <section class="container py-5">
         <p class="text-center mb-5">
-            {{ __('ui.environment.intro') }}
+            Descubre las zonas en las que trabajamos y conoce mejor el estilo de vida, el entorno y las propiedades disponibles en cada una de ellas.
         </p>
     </section>
 
@@ -54,17 +54,12 @@
         @endforeach
     </div>
 
-    <section class="container py-5">
-        <h2 class="text-center mb-4">{{ __('ui.environment.interactive_map') }}</h2>
-        <div id="map" style="height: 400px;"></div>
-    </section>
-
     @push('structured_data')
         <script type="application/ld+json">
             {!! json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'CollectionPage',
-                'name' => __('ui.environment.title'),
+                'name' => 'Zonas',
                 'description' => $environmentSeoDescription,
                 'url' => route('environment'),
                 'inLanguage' => str_replace('_', '-', app()->getLocale()),

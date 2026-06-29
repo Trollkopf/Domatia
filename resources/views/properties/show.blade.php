@@ -184,6 +184,27 @@
             padding: 1.75rem;
         }
 
+        .property-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+
+        .property-detail-item {
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 0.95rem 1rem;
+        }
+
+        .property-map {
+            width: 100%;
+            height: 340px;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
         .property-section-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -289,8 +310,9 @@
                 padding: 1.25rem;
             }
 
-            .property-stat-grid {
-                grid-template-columns: 1fr 1fr;
+            .property-stat-grid,
+            .property-detail-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -314,8 +336,32 @@
             $property->tiene_patio ? ['icon' => 'fa-seedling', 'label' => 'Jardin o patio'] : null,
             $property->tiene_solar ? ['icon' => 'fa-vector-square', 'label' => 'Solar disponible'] : null,
             $property->metros_solar ? ['icon' => 'fa-border-all', 'label' => number_format($property->metros_solar, 0, ',', '.') . ' m2 de parcela'] : null,
+            $property->has_air_conditioning ? ['icon' => 'fa-snowflake', 'label' => 'Aire acondicionado'] : null,
+            $property->has_garage ? ['icon' => 'fa-warehouse', 'label' => 'Garaje'] : null,
+            $property->has_lift ? ['icon' => 'fa-elevator', 'label' => 'Ascensor'] : null,
+            $property->has_parking ? ['icon' => 'fa-square-parking', 'label' => 'Parking'] : null,
+            $property->has_terrace ? ['icon' => 'fa-sun', 'label' => 'Terraza'] : null,
+            $property->has_garden ? ['icon' => 'fa-tree', 'label' => 'Jardin'] : null,
+            $property->has_solarium ? ['icon' => 'fa-sun-plant-wilt', 'label' => 'Solarium'] : null,
+            $property->has_storage_room ? ['icon' => 'fa-box-open', 'label' => 'Trastero'] : null,
+            $property->is_furnished ? ['icon' => 'fa-couch', 'label' => 'Amueblada'] : null,
+            $property->has_sea_views ? ['icon' => 'fa-water', 'label' => 'Vistas al mar'] : null,
+            $property->new_build ? ['icon' => 'fa-building-circle-check', 'label' => 'Obra nueva'] : null,
             $property->is_featured ? ['icon' => 'fa-star', 'label' => 'Propiedad destacada'] : null,
         ])->filter()->values();
+        $propertyDetails = collect([
+            ['label' => 'Poblacion', 'value' => $property->town],
+            ['label' => 'Provincia', 'value' => $property->province],
+            ['label' => 'Pais', 'value' => $property->country],
+            ['label' => 'Zona detallada', 'value' => $property->location_detail],
+            ['label' => 'Precio', 'value' => $property->price ? number_format($property->price, 0, ',', '.') . ' ' . ($property->currency ?: 'EUR') : null],
+            ['label' => 'Operacion', 'value' => $property->price_freq],
+            ['label' => 'Consumo energetico', 'value' => $property->energy_consumption],
+            ['label' => 'Emisiones', 'value' => $property->energy_emissions],
+            ['label' => 'Referencia', 'value' => $property->ref],
+            ['label' => 'Fecha de origen', 'value' => $property->source_date?->format('d/m/Y H:i')],
+        ])->filter(fn (array $item) => filled($item['value']))->values();
+        $featureList = collect($property->featuresList())->values();
     @endphp
 
     <div class="property-show-shell py-5">
@@ -326,12 +372,7 @@
 
             <div class="row g-4 align-items-start">
                 <div class="col-lg-7">
-                    <a
-                        href="{{ $mainImage }}"
-                        id="property-main-link"
-                        class="glightbox property-gallery-stage"
-                        data-gallery="property-gallery"
-                    >
+                    <a href="{{ $mainImage }}" id="property-main-link" class="glightbox property-gallery-stage" data-gallery="property-gallery">
                         <div class="property-gallery-badge">
                             <i class="fa-solid fa-location-dot"></i>
                             <span>{{ $locationLabel }}</span>
@@ -350,12 +391,7 @@
                                 @php
                                     $imageUrl = asset('storage/' . $imagePath);
                                 @endphp
-                                <button
-                                    type="button"
-                                    class="property-thumb {{ $loop->first ? 'is-active' : '' }}"
-                                    data-property-thumb
-                                    data-image-url="{{ $imageUrl }}"
-                                >
+                                <button type="button" class="property-thumb {{ $loop->first ? 'is-active' : '' }}" data-property-thumb data-image-url="{{ $imageUrl }}">
                                     <img src="{{ $imageUrl }}" alt="Imagen de {{ $property->translatedTitle() }}">
                                 </button>
                                 <a href="{{ $imageUrl }}" class="glightbox d-none" data-gallery="property-gallery"></a>
@@ -386,7 +422,7 @@
                             </form>
                         </div>
 
-                        <div class="property-price fw-semibold mb-3">{{ number_format($property->price, 0, ',', '.') }} EUR</div>
+                        <div class="property-price fw-semibold mb-3">{{ number_format($property->price, 0, ',', '.') }} {{ $property->currency ?: 'EUR' }}</div>
 
                         <div class="property-stat-grid mb-4">
                             <div class="property-stat">
@@ -422,9 +458,13 @@
 
                         <div class="d-grid gap-2">
                             <a href="#property-contact" class="btn btn-dark btn-lg">{{ __('ui.properties.request_information') }}</a>
-                            <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-secondary">
-                                {{ __('ui.common.view_favorites') }}
-                            </a>
+                            <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-secondary">{{ __('ui.common.view_favorites') }}</a>
+                            @if ($property->video_url)
+                                <a href="{{ $property->video_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">Ver vídeo</a>
+                            @endif
+                            @if ($property->virtual_tour_url)
+                                <a href="{{ $property->virtual_tour_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">Ver tour virtual</a>
+                            @endif
                         </div>
                     </aside>
                 </div>
@@ -436,9 +476,7 @@
                         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
                             <div>
                                 <div class="property-section-title mb-2">{{ __('ui.properties.description_title') }}</div>
-                                <p class="text-muted mb-0">
-                                    {{ __('ui.properties.description_intro') }}
-                                </p>
+                                <p class="text-muted mb-0">{{ __('ui.properties.description_intro') }}</p>
                             </div>
                             <span class="property-reference">
                                 <i class="fa-solid fa-location-dot"></i>
@@ -469,6 +507,41 @@
                         </div>
                     </section>
 
+                    @if ($propertyDetails->isNotEmpty())
+                        <section class="property-content-card mb-4">
+                            <div class="property-section-title mb-3">Ficha técnica</div>
+                            <div class="property-detail-grid">
+                                @foreach ($propertyDetails as $detail)
+                                    <div class="property-detail-item">
+                                        <div class="small text-uppercase text-muted mb-1">{{ $detail['label'] }}</div>
+                                        <div class="fw-semibold">{{ $detail['value'] }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endif
+
+                    @if ($featureList->isNotEmpty())
+                        <section class="property-content-card mb-4">
+                            <div class="property-section-title mb-3">Características destacadas</div>
+                            <div class="property-pills">
+                                @foreach ($featureList as $feature)
+                                    <span class="property-pill">
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>{{ $feature }}</span>
+                                    </span>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endif
+
+                    @if ($property->hasCoordinates())
+                        <section class="property-content-card mb-4">
+                            <div class="property-section-title mb-3">Ubicación en mapa</div>
+                            <div id="map" class="property-map" data-latitude="{{ $property->latitude }}" data-longitude="{{ $property->longitude }}" data-zoom="14" data-title="{{ $property->translatedTitle() }}"></div>
+                        </section>
+                    @endif
+
                     @if ($relatedProperties->isNotEmpty())
                         <section class="property-content-card">
                             <div class="d-flex justify-content-between align-items-end gap-3 flex-wrap mb-4">
@@ -493,9 +566,7 @@
                 <div class="col-lg-4">
                     <section class="property-contact-card" id="property-contact">
                         <div class="property-section-title mb-2">{{ __('ui.properties.contact_title') }}</div>
-                        <p class="text-muted mb-4">
-                            {{ __('ui.properties.contact_intro', ['title' => $property->translatedTitle()]) }}
-                        </p>
+                        <p class="text-muted mb-4">{{ __('ui.properties.contact_intro', ['title' => $property->translatedTitle()]) }}</p>
 
                         <form action="{{ route('contact.store') }}" method="POST">
                             @csrf
@@ -519,9 +590,7 @@
 
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="property_accept_terms" name="accept_terms" required>
-                                <label class="form-check-label" for="property_accept_terms">
-                                    {{ __('ui.properties.accept_terms') }}
-                                </label>
+                                <label class="form-check-label" for="property_accept_terms">{{ __('ui.properties.accept_terms') }}</label>
                             </div>
 
                             <button type="submit" class="btn btn-dark w-100">{{ __('ui.common.send_request') }}</button>
@@ -570,22 +639,27 @@
                 'description' => $propertySeoDescription,
                 'url' => route('guest.property.show', $property->slug),
                 'image' => $galleryImages->map(fn ($imagePath) => asset('storage/' . $imagePath))->values()->all() ?: [$propertySeoImage],
-                'datePosted' => optional($property->created_at)->toAtomString(),
+                'datePosted' => optional($property->source_date ?: $property->created_at)->toAtomString(),
                 'inLanguage' => str_replace('_', '-', app()->getLocale()),
                 'identifier' => $property->ref ?: $property->slug,
                 'offers' => [
                     '@type' => 'Offer',
                     'price' => $property->price,
-                    'priceCurrency' => 'EUR',
+                    'priceCurrency' => $property->currency ?: 'EUR',
                     'availability' => 'https://schema.org/' . ($property->status === 'published' ? 'InStock' : 'SoldOut'),
                     'url' => route('guest.property.show', $property->slug),
                 ],
                 'address' => [
                     '@type' => 'PostalAddress',
-                    'addressLocality' => $property->translatedLocation() ?: $property->zona?->translatedName(),
-                    'addressRegion' => $property->zona?->translatedName(),
-                    'addressCountry' => 'ES',
+                    'addressLocality' => $property->town ?: ($property->translatedLocation() ?: $property->zona?->translatedName()),
+                    'addressRegion' => $property->province ?: $property->zona?->translatedName(),
+                    'addressCountry' => $property->country ?: 'ES',
                 ],
+                'geo' => $property->hasCoordinates() ? [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => $property->latitude,
+                    'longitude' => $property->longitude,
+                ] : null,
                 'numberOfRooms' => $property->bedrooms ?: null,
                 'numberOfBathroomsTotal' => $property->bathrooms ?: null,
                 'floorSize' => $property->area ? [
