@@ -21,7 +21,7 @@
                     <a class="nav-link" href="{{ route('about') }}">{{ __('ui.nav.about') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('environment') }}">Zonas</a>
+                    <a class="nav-link" href="{{ route('environment') }}">{{ __('ui.environment.title') }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('contact') }}">{{ __('ui.nav.contact') }}</a>

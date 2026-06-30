@@ -1,10 +1,10 @@
 @extends('layouts.guest')
 
-@section('title', 'Zonas')
+@section('title', __('frontend.environment.title'))
 
 @php
-    $environmentSeoTitle = 'Zonas';
-    $environmentSeoDescription = \Illuminate\Support\Str::limit('Descubre las zonas en las que trabajamos y conoce mejor el estilo de vida, el entorno y las propiedades disponibles en cada una de ellas.', 160);
+    $environmentSeoTitle = __('frontend.environment.title');
+    $environmentSeoDescription = \Illuminate\Support\Str::limit(__('frontend.environment.intro'), 160);
 @endphp
 
 @section('meta_title', $environmentSeoTitle)
@@ -25,14 +25,14 @@
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy">
-                <h1 class="fw-light">Zonas</h1>
+                <h1 class="fw-light">{{ __('frontend.environment.title') }}</h1>
             </div>
         </div>
     </section>
 
     <section class="container py-5">
         <p class="text-center mb-5">
-            Descubre las zonas en las que trabajamos y conoce mejor el estilo de vida, el entorno y las propiedades disponibles en cada una de ellas.
+            {{ __('frontend.environment.intro') }}
         </p>
     </section>
 
@@ -59,7 +59,7 @@
             {!! json_encode([
                 '@context' => 'https://schema.org',
                 '@type' => 'CollectionPage',
-                'name' => 'Zonas',
+                'name' => __('frontend.environment.title'),
                 'description' => $environmentSeoDescription,
                 'url' => route('environment'),
                 'inLanguage' => str_replace('_', '-', app()->getLocale()),

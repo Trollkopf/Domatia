@@ -1,7 +1,7 @@
 <section class="profile-card">
     <header class="mb-4">
-        <h2>Informacion de acceso</h2>
-        <p class="profile-card-intro">Actualiza el nombre visible y el correo principal asociado a la cuenta.</p>
+        <h2>{{ __('frontend.profile.access_title') }}</h2>
+        <p class="profile-card-intro">{{ __('frontend.profile.access_intro') }}</p>
     </header>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}" class="d-none">
@@ -14,7 +14,7 @@
 
         <div class="row g-3">
             <div class="col-md-6">
-                <label for="name" class="form-label">Nombre completo</label>
+                <label for="name" class="form-label">{{ __('frontend.profile.full_name') }}</label>
                 <input
                     id="name"
                     name="name"
@@ -31,7 +31,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="email" class="form-label">Correo electronico</label>
+                <label for="email" class="form-label">{{ __('frontend.profile.email') }}</label>
                 <input
                     id="email"
                     name="email"
@@ -51,22 +51,22 @@
             <div class="alert alert-warning rounded-4 border-0 mt-4 mb-0">
                 <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
                     <div>
-                        <strong>Correo pendiente de verificacion.</strong>
-                        <div class="small mt-1">Necesitas verificar la direccion para terminar de asegurar la cuenta.</div>
+                        <strong>{{ __('frontend.profile.email_unverified') }}</strong>
+                        <div class="small mt-1">{{ __('frontend.profile.email_verify_help') }}</div>
                     </div>
 
                     <button form="send-verification" class="btn btn-outline-dark btn-sm" type="submit">
-                        Reenviar enlace
+                        {{ __('frontend.profile.resend_link') }}
                     </button>
                 </div>
             </div>
         @endif
 
         <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
-            <button type="submit" class="btn btn-dark">Guardar cambios</button>
+            <button type="submit" class="btn btn-dark">{{ __('frontend.profile.save_changes') }}</button>
 
             @if (session('status') === 'profile-updated')
-                <span class="profile-feedback">Perfil actualizado correctamente</span>
+                <span class="profile-feedback">{{ __('frontend.profile.profile_updated') }}</span>
             @endif
         </div>
     </form>

@@ -6,7 +6,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <h1 class="mb-1">Propietarios</h1>
-            <p class="text-muted mb-0">Gestiona titulares, datos de contacto y propiedades vinculadas.</p>
+            <p class="text-muted mb-0">Gestiona propietarios, datos de contacto y propiedades vinculadas.</p>
         </div>
         <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-dark">Ver propiedades</a>
     </div>

@@ -47,11 +47,11 @@
             <div class="d-flex flex-column mb-4">
                 <div class="d-flex align-items-center mb-3">
                     <i class="bi bi-telephone me-3" style="font-size: 1.5rem;"></i>
-                    <p class="mb-0">Tel: {{ $siteSettings['company_phone'] ?: __('ui.contact.phone_pending') }}</p>
+                    <p class="mb-0">{{ __('frontend.contact.phone_prefix') }} {{ $siteSettings['company_phone'] ?: __('ui.contact.phone_pending') }}</p>
                 </div>
                 <div class="d-flex align-items-center mb-3">
                     <i class="bi bi-envelope me-3" style="font-size: 1.5rem;"></i>
-                    <p class="mb-0">Email: {{ $siteSettings['company_email'] ?: __('ui.contact.email_pending') }}</p>
+                    <p class="mb-0">{{ __('frontend.contact.email_prefix') }} {{ $siteSettings['company_email'] ?: __('ui.contact.email_pending') }}</p>
                 </div>
                 <div class="d-flex align-items-center">
                     <i class="bi bi-geo-alt me-3" style="font-size: 1.5rem;"></i>
@@ -92,7 +92,7 @@
 
 @if (! empty($siteSettings['company_address']))
     <section class="container pb-5">
-        <h2 class="mb-4">Mapa</h2>
+        <h2 class="mb-4">{{ __('frontend.contact.map') }}</h2>
         <div
             id="map"
             class="contact-map"

@@ -68,7 +68,7 @@
                     <span class="badge bg-light text-dark rounded-pill px-3 py-2 mb-3">Panel operativo</span>
                     <h1 class="display-6 mb-2">Backoffice listo para trabajar por prioridades</h1>
                     <p class="mb-0 text-white-50">
-                        Controla el catalogo, revisa leads pendientes y entra a cada seccion con filtros ya preparados.
+                        Controla el catálogo, revisa contactos pendientes y entra en cada sección con filtros ya preparados.
                     </p>
                 </div>
 
@@ -104,7 +104,7 @@
                     <div class="col-12">
                         <div class="card metric-card bg-white">
                             <div class="card-body">
-                                <p class="mb-0 text-muted">Todavia no hay metricas disponibles para este perfil de acceso.</p>
+                                <p class="mb-0 text-muted">Todavía no hay métricas disponibles para este perfil de acceso.</p>
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <h2 class="h4 mb-1">Secciones de trabajo</h2>
-                    <p class="text-muted mb-0">Entradas rapidas para gestionar cada area con contexto.</p>
+                    <p class="text-muted mb-0">Accesos rápidos para gestionar cada área con contexto.</p>
                 </div>
             </div>
 
@@ -183,7 +183,7 @@
             @else
                 <div class="card section-card">
                     <div class="card-body">
-                        <p class="mb-0 text-muted">No hay secciones operativas visibles para este grupo todavia.</p>
+                        <p class="mb-0 text-muted">Todavía no hay secciones operativas visibles para este grupo.</p>
                     </div>
                 </div>
             @endif
@@ -197,7 +197,7 @@
                             <div class="card panel-card h-100">
                                 <div class="card-header bg-white border-0 pt-4 px-4">
                                     <h2 class="h5 mb-1">Salud del sistema</h2>
-                                    <p class="text-muted small mb-0">Una vista rapida para detectar bloqueo operativo.</p>
+                                    <p class="text-muted small mb-0">Una vista rápida para detectar bloqueos operativos.</p>
                                 </div>
                                 <div class="card-body pt-3">
                                     @foreach ($systemChecks as $item)
@@ -219,10 +219,10 @@
                             <div class="card panel-card h-100">
                                 <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h2 class="h5 mb-1">Ultimas propiedades</h2>
+                                        <h2 class="h5 mb-1">Últimas propiedades</h2>
                                         <p class="text-muted small mb-0">Las fichas en las que se ha estado trabajando mas recientemente.</p>
                                     </div>
-                                    <a href="{{ route('admin.properties.index') }}" class="small">Ver catalogo</a>
+                                    <a href="{{ route('admin.properties.index') }}" class="small">Ver catálogo</a>
                                 </div>
                                 <div class="card-body pt-3">
                                     @forelse ($latestProperties as $property)
@@ -245,7 +245,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <p class="text-muted mb-0">Todavia no hay propiedades creadas.</p>
+                                        <p class="text-muted mb-0">Todavía no hay propiedades creadas.</p>
                                     @endforelse
                                 </div>
                             </div>
@@ -283,7 +283,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <p class="text-muted mb-0">Todavia no hay contactos registrados.</p>
+                                        <p class="text-muted mb-0">Todavía no hay contactos registrados.</p>
                                     @endforelse
                                 </div>
                             </div>
@@ -302,7 +302,7 @@
                                 <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                     <div>
                                         <h2 class="h5 mb-1">Pendientes de imagen principal</h2>
-                                        <p class="text-muted small mb-0">Fichas que necesitan mejorar presentacion publica.</p>
+                                        <p class="text-muted small mb-0">Fichas que necesitan mejorar su presentación pública.</p>
                                     </div>
                                     <a href="{{ route('admin.properties.index', ['missing_thumbnail' => 1]) }}" class="small">Ver todas</a>
                                 </div>
@@ -317,7 +317,7 @@
                                             <a href="{{ route('admin.properties.edit', $property) }}" class="btn btn-sm btn-outline-primary">Completar</a>
                                         </div>
                                     @empty
-                                        <p class="text-muted mb-0">Todo el catalogo tiene imagen principal asignada.</p>
+                                        <p class="text-muted mb-0">Todo el catálogo tiene una imagen principal asignada.</p>
                                     @endforelse
                                 </div>
                             </div>
@@ -365,7 +365,7 @@
                             <div class="card panel-card h-100">
                                 <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h2 class="h5 mb-1">Pendientes de publicacion</h2>
+                                        <h2 class="h5 mb-1">Pendientes de publicación</h2>
                                         <p class="text-muted small mb-0">Borradores que siguen en cola editorial.</p>
                                     </div>
                                     <a href="{{ route('admin.properties.index', ['status' => 'draft']) }}" class="small">Ver borradores</a>
@@ -392,7 +392,7 @@
                         <div class="card panel-card h-100">
                             <div class="card-header bg-white border-0 pt-4 px-4">
                                 <h2 class="h5 mb-1">Distribucion por tipo</h2>
-                                <p class="text-muted small mb-0">Composicion actual del catalogo.</p>
+                                <p class="text-muted small mb-0">Composición actual del catálogo.</p>
                             </div>
                             <div class="card-body pt-3">
                                 <div class="row g-3">

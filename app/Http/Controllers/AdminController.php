@@ -108,7 +108,7 @@ class AdminController extends Controller
                 'permission' => 'users',
                 'label' => 'Equipo y acceso',
                 'value' => $stats['users_total'],
-                'help' => $stats['management_users'] . ' con gestion y ' . $stats['backoffice_users'] . ' con acceso al backoffice',
+                'help' => $stats['management_users'] . ' con gestión y ' . $stats['backoffice_users'] . ' con acceso al backoffice',
             ],
             [
                 'permission' => 'reports',
@@ -189,7 +189,7 @@ class AdminController extends Controller
             [
                 'title' => 'Contenido y ajustes',
                 'description' => 'Textos globales, portada y configuración del sitio.',
-                'metric' => 'Home y paginas editables',
+                'metric' => 'Inicio y páginas editables',
                 'tone' => 'dark',
                 'permission' => 'settings',
                 'links' => [

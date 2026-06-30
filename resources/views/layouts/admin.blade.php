@@ -343,14 +343,14 @@
                 <div class="sidebar-footer-inner">
                     <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
                         <i class="fas fa-arrow-up-right-from-square"></i>
-                        <span>Ver web publica</span>
+                        <span>Ver web pública</span>
                     </a>
 
                     <form action="{{ route('logout') }}" method="POST" class="mt-2">
                         @csrf
                         <button type="submit" class="sidebar-link logout-button">
                             <i class="fas fa-right-from-bracket"></i>
-                            <span>Cerrar sesion</span>
+                            <span>Cerrar sesión</span>
                         </button>
                     </form>
                 </div>
@@ -380,14 +380,14 @@
                 <div class="sidebar-footer-inner">
                     <a href="{{ url('/') }}" class="sidebar-link sidebar-link-muted" target="_blank">
                         <i class="fas fa-arrow-up-right-from-square"></i>
-                        <span>Ver web publica</span>
+                        <span>Ver web pública</span>
                     </a>
 
                     <form action="{{ route('logout') }}" method="POST" class="mt-2">
                         @csrf
                         <button type="submit" class="sidebar-link logout-button">
                             <i class="fas fa-right-from-bracket"></i>
-                            <span>Cerrar sesion</span>
+                            <span>Cerrar sesión</span>
                         </button>
                     </form>
                 </div>
@@ -407,7 +407,7 @@
                     <span class="small text-muted d-none d-md-inline">{{ $adminUser?->name }}</span>
                     <a href="{{ route('profile.edit') }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Mi perfil</a>
                     @if ($adminUser?->canManageContacts())
-                        <a href="{{ route('admin.contactos.index', ['status' => 'pendiente']) }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Leads pendientes</a>
+                        <a href="{{ route('admin.contactos.index', ['status' => 'pendiente']) }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Contactos pendientes</a>
                     @endif
                     @if ($adminUser?->canViewReports())
                         <a href="{{ route('admin.reports') }}" class="btn btn-outline-dark btn-sm d-none d-md-inline-flex">Informes</a>

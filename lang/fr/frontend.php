@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'common' => ['image_of' => 'Image de :title', 'reference_short' => 'Réf.', 'pending' => 'En attente', 'photos' => '{1} :count photo|[2,*] :count photos'],
+    'contact' => ['map' => 'Carte', 'phone_prefix' => 'Téléphone :', 'email_prefix' => 'E-mail :'],
+    'profile_page' => ['kicker'=>'Compte','title'=>'Mon profil','intro'=>'Gardez vos informations à jour, renforcez la sécurité et gérez votre compte depuis un seul endroit.','back_to_backoffice'=>'Retour au backoffice','back_home'=>'Retour à l’accueil','role'=>'Rôle','email_status'=>'État de l’e-mail','verified'=>'Vérifié','verification_pending'=>'Vérification en attente','member_since'=>'Membre depuis','no_date'=>'Aucune date','manage_account'=>'Gérer le compte','go_to_settings'=>'Accéder aux réglages','verification_sent'=>'Un nouveau lien de vérification vous a été envoyé par e-mail.'],
+    'environment' => ['title' => 'Zones', 'intro' => 'Découvrez les zones où nous travaillons, leur cadre de vie et les propriétés disponibles dans chacune d’elles.'],
+    'properties' => [
+        'filter_title' => 'Filtrer les propriétés', 'filter_intro' => 'Affinez votre recherche pour trouver rapidement les propriétés qui vous correspondent.',
+        'favorites_kicker' => 'Sélection enregistrée', 'favorites_count' => '{1} :count propriété enregistrée|[2,*] :count propriétés enregistrées',
+        'type_in_location' => ':type à :location', 'video' => 'Voir la vidéo', 'virtual_tour' => 'Voir la visite virtuelle',
+        'technical_sheet' => 'Fiche technique', 'highlighted_features' => 'Caractéristiques principales', 'map_location' => 'Emplacement sur la carte',
+        'contact_default_message' => 'Demande d’informations sur la propriété :title (:reference)', 'name_placeholder' => 'Votre nom',
+        'features' => ['pool'=>'Piscine','patio'=>'Jardin ou patio','plot_available'=>'Terrain disponible','plot_area'=>'Terrain de :area m²','air_conditioning'=>'Climatisation','garage'=>'Garage','lift'=>'Ascenseur','parking'=>'Parking','terrace'=>'Terrasse','garden'=>'Jardin','solarium'=>'Solarium','storage_room'=>'Débarras','furnished'=>'Meublé','sea_views'=>'Vue sur la mer','new_build'=>'Construction neuve','featured'=>'Propriété à la une'],
+        'details' => ['town'=>'Ville','province'=>'Province','country'=>'Pays','location_detail'=>'Zone détaillée','price'=>'Prix','operation'=>'Opération','energy_consumption'=>'Consommation énergétique','emissions'=>'Émissions','reference'=>'Référence','source_date'=>'Date d’origine'],
+    ],
+    'profile' => ['access_title'=>'Informations de connexion','access_intro'=>'Modifiez le nom affiché et l’adresse e-mail principale du compte.','full_name'=>'Nom complet','email'=>'Adresse e-mail','email_unverified'=>'Adresse e-mail en attente de vérification.','email_verify_help'=>'Vérifiez l’adresse pour sécuriser votre compte.','resend_link'=>'Renvoyer le lien','save_changes'=>'Enregistrer','profile_updated'=>'Profil mis à jour','security_title'=>'Sécurité du compte','security_intro'=>'Utilisez un mot de passe robuste pour protéger votre accès.','current_password'=>'Mot de passe actuel','new_password'=>'Nouveau mot de passe','confirm_password'=>'Confirmer le nouveau mot de passe','update_password'=>'Modifier le mot de passe','password_updated'=>'Mot de passe mis à jour','danger_title'=>'Supprimer le compte','danger_intro'=>'Cette action supprime définitivement l’accès. Continuez uniquement si vous en êtes certain.','delete_password'=>'Mot de passe actuel pour confirmer','password_placeholder'=>'Saisissez votre mot de passe','delete_warning'=>'La suppression est irréversible et efface les données associées au compte.','delete_account'=>'Supprimer le compte'],
+];

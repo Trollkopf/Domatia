@@ -27,7 +27,7 @@ class EnsureBackofficePermission
 
         if (! $authorized) {
             return redirect()->route('admin.dashboard')
-                ->with('error', 'No tienes permisos para acceder a esta seccion.');
+                ->with('error', 'No tienes permisos para acceder a esta sección.');
         }
 
         return $next($request);

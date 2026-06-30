@@ -30,7 +30,7 @@
                             @foreach ($groups as $group)
                                 <option value="{{ $group->id }}" @selected((string) $selectedGroupId === (string) $group->id)>
                                     {{ $group->name }}
-                                    {{ $group->can_access_backoffice ? '- Backoffice' : '- Web publica' }}
+                                    {{ $group->can_access_backoffice ? '- Backoffice' : '- Web pública' }}
                                 </option>
                             @endforeach
                         </select>
@@ -40,16 +40,16 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ $isEdit ? 'Nueva contrasena' : 'Contrasena' }}</label>
+                        <label class="form-label">{{ $isEdit ? 'Nueva contraseña' : 'Contraseña' }}</label>
                         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" {{ $isEdit ? '' : 'required' }}>
-                        <div class="form-text">{{ $isEdit ? 'Solo rellena este campo si quieres cambiar la contrasena actual.' : 'Se solicitara al usuario en su primer acceso.' }}</div>
+                        <div class="form-text">{{ $isEdit ? 'Rellena este campo solo si quieres cambiar la contraseña actual.' : 'Se solicitará al usuario en su primer acceso.' }}</div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">{{ $isEdit ? 'Confirmar nueva contrasena' : 'Confirmar contrasena' }}</label>
+                        <label class="form-label">{{ $isEdit ? 'Confirmar nueva contraseña' : 'Confirmar contraseña' }}</label>
                         <input type="password" name="password_confirmation" class="form-control">
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                                     <span class="badge text-bg-primary">Propiedades</span>
                                 @endif
                                 @if ($group->can_publish_properties)
-                                    <span class="badge text-bg-dark">Publicacion</span>
+                                    <span class="badge text-bg-dark">Publicación</span>
                                 @endif
                                 @if ($group->can_manage_contacts)
                                     <span class="badge text-bg-success">Contactos</span>
@@ -102,10 +102,10 @@
                                     <span class="badge text-bg-dark">Exporta informes</span>
                                 @endif
                                 @if ($group->can_manage_users)
-                                    <span class="badge text-bg-warning">Gestion usuarios</span>
+                                    <span class="badge text-bg-warning">Gestión de usuarios</span>
                                 @endif
                                 @if ($group->can_manage_settings)
-                                    <span class="badge text-bg-info">Gestion ajustes</span>
+                                    <span class="badge text-bg-info">Gestión de ajustes</span>
                                 @endif
                             </div>
                         </div>

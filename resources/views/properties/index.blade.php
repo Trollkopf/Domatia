@@ -474,8 +474,8 @@
                     <form method="GET" action="{{ route('guest.properties.index') }}" class="properties-filter-card">
                         <div class="properties-filter-head">
                             <div>
-                                <p class="properties-filter-title">Filtrado</p>
-                                <p class="properties-filter-intro">Afinamos el catálogo para que encuentres algo útil sin pelearte con el listado.</p>
+                                <p class="properties-filter-title">{{ __('frontend.properties.filter_title') }}</p>
+                                <p class="properties-filter-intro">{{ __('frontend.properties.filter_intro') }}</p>
                             </div>
                         </div>
 
@@ -541,7 +541,7 @@
 
                         <div class="properties-filter-section">
                             <div class="properties-filter-label">{{ __('ui.properties.filters.minimum_area') }}</div>
-                            <input type="number" name="metros" class="form-control" value="{{ is_array($metros) ? '' : $metros }}" placeholder="m2">
+                            <input type="number" name="metros" class="form-control" value="{{ is_array($metros) ? '' : $metros }}" placeholder="m²">
                         </div>
 
                         <div class="properties-filter-section">

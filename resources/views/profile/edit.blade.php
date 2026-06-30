@@ -1,8 +1,8 @@
 @extends(auth()->user()?->canAccessBackoffice() ? 'layouts.admin' : 'layouts.guest')
 
-@section('title', 'Mi perfil')
-@section('meta_title', 'Mi perfil')
-@section('meta_description', 'Gestión de cuenta y seguridad del usuario autenticado.')
+@section('title', __('frontend.profile_page.title'))
+@section('meta_title', __('frontend.profile_page.title'))
+@section('meta_description', __('frontend.profile_page.intro'))
 @section('meta_robots', 'noindex,follow')
 
 @section('styles')
@@ -198,16 +198,16 @@
             <div class="profile-hero">
                 <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
                     <div>
-                        <span class="profile-kicker">Cuenta</span>
-                        <h1>Mi perfil</h1>
-                        <p>Desde aquí puedes mantener tus datos al día, reforzar la seguridad de acceso y gestionar la cuenta sin salir del flujo de trabajo.</p>
+                        <span class="profile-kicker">{{ __('frontend.profile_page.kicker') }}</span>
+                        <h1>{{ __('frontend.profile_page.title') }}</h1>
+                        <p>{{ __('frontend.profile_page.intro') }}</p>
                     </div>
 
                     <div class="d-flex flex-wrap gap-2">
                         @if ($hasBackofficeAccess)
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-dark">Volver al backoffice</a>
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-dark">{{ __('frontend.profile_page.back_to_backoffice') }}</a>
                         @else
-                            <a href="{{ url('/') }}" class="btn btn-outline-dark">Volver al inicio</a>
+                            <a href="{{ url('/') }}" class="btn btn-outline-dark">{{ __('frontend.profile_page.back_home') }}</a>
                         @endif
                     </div>
                 </div>
@@ -225,23 +225,23 @@
 
                         <div class="profile-stat-list">
                             <div class="profile-stat">
-                                <span class="profile-stat-label">Rol</span>
+                                <span class="profile-stat-label">{{ __('frontend.profile_page.role') }}</span>
                                 <div class="profile-stat-value">{{ $user->groupLabel() }}</div>
                             </div>
                             <div class="profile-stat">
-                                <span class="profile-stat-label">Estado del email</span>
-                                <div class="profile-stat-value">{{ $user->email_verified_at ? 'Verificado' : 'Pendiente de verificar' }}</div>
+                                <span class="profile-stat-label">{{ __('frontend.profile_page.email_status') }}</span>
+                                <div class="profile-stat-value">{{ $user->email_verified_at ? __('frontend.profile_page.verified') : __('frontend.profile_page.verification_pending') }}</div>
                             </div>
                             <div class="profile-stat">
-                                <span class="profile-stat-label">Miembro desde</span>
-                                <div class="profile-stat-value">{{ optional($user->created_at)->format('d/m/Y') ?: 'Sin fecha' }}</div>
+                                <span class="profile-stat-label">{{ __('frontend.profile_page.member_since') }}</span>
+                                <div class="profile-stat-value">{{ optional($user->created_at)->format('d/m/Y') ?: __('frontend.profile_page.no_date') }}</div>
                             </div>
                         </div>
 
                         <div class="profile-actions">
-                            <a href="{{ route('profile.edit') }}" class="btn btn-dark">Gestionar cuenta</a>
+                            <a href="{{ route('profile.edit') }}" class="btn btn-dark">{{ __('frontend.profile_page.manage_account') }}</a>
                             @if ($canManageSettings)
-                                <a href="{{ route('admin.settings') }}" class="btn btn-outline-secondary">Ir a ajustes</a>
+                                <a href="{{ route('admin.settings') }}" class="btn btn-outline-secondary">{{ __('frontend.profile_page.go_to_settings') }}</a>
                             @endif
                         </div>
                     </aside>
@@ -249,7 +249,7 @@
 
                 <div class="col-xl-8">
                     @if (session('status') === 'verification-link-sent')
-                        <div class="alert alert-success rounded-4 border-0 shadow-sm">Hemos enviado un nuevo enlace de verificación a tu correo.</div>
+                        <div class="alert alert-success rounded-4 border-0 shadow-sm">{{ __('frontend.profile_page.verification_sent') }}</div>
                     @endif
 
                     @include('profile.partials.update-profile-information-form')

@@ -124,8 +124,8 @@ class KyeroImportController extends Controller
 
         return redirect()->route('admin.kyero.index', ['run' => $run->id])
             ->with('success', $backgroundStarted
-                ? 'Importacion preparada. Se esta procesando en segundo plano.'
-                : 'Importacion preparada. Si no avanza sola, puedes dejar esta pantalla abierta o procesar tandas manualmente.');
+                ? 'Importación preparada. Se está procesando en segundo plano.'
+                : 'Importación preparada. Si no avanza sola, puedes dejar esta pantalla abierta o procesar tandas manualmente.');
     }
 
     public function process(PropertyImportRun $run)

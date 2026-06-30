@@ -61,10 +61,10 @@
                 @foreach ($zona->publishedProperties as $property)
                     <div class="col">
                         <div class="card h-100 shadow-sm">
-                            <img src="{{ asset('storage/' . $property->thumbnail) }}" class="card-img-top"
-                                alt="{{ $property->title }}">
+                            <img src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}" class="card-img-top"
+                                alt="{{ __('frontend.common.image_of', ['title' => $property->translatedTitle()]) }}">
                             <div class="card-body">
-                                <h5 class="card-title">{{ $property->title }}</h5>
+                                <h5 class="card-title">{{ $property->translatedTitle() }}</h5>
                                 <p class="card-text">{{ Str::limit($property->translatedDescription(), 100) }}</p>
                                 <a href="{{ route('guest.property.show', $property->slug) }}" class="btn btn-dark">{{ __('ui.environment.view_more') }}</a>
                             </div>

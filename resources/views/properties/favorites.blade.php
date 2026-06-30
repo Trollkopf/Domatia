@@ -233,7 +233,7 @@
             <div class="favorites-hero p-4 p-lg-5 mb-4 mb-lg-5">
                 <div class="row align-items-end g-4">
                     <div class="col-lg-8">
-                        <span class="favorites-kicker">Selección guardada</span>
+                        <span class="favorites-kicker">{{ __('frontend.properties.favorites_kicker') }}</span>
                         <h1 class="favorites-title">{{ __('ui.properties.favorites_title') }}</h1>
                         <p class="favorites-intro">
                             {{ __('ui.properties.favorites_intro') }}
@@ -241,7 +241,7 @@
                     </div>
                     <div class="col-lg-4 text-lg-end">
                         <span class="favorites-count">
-                            {{ $properties->count() }} guardada{{ $properties->count() === 1 ? '' : 's' }}
+                            {{ trans_choice('frontend.properties.favorites_count', $properties->count(), ['count' => $properties->count()]) }}
                         </span>
                     </div>
                 </div>

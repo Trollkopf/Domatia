@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'common' => ['image_of' => 'Bild von :title', 'reference_short' => 'Ref.', 'pending' => 'Ausstehend', 'photos' => '{1} :count Foto|[2,*] :count Fotos'],
+    'contact' => ['map' => 'Karte', 'phone_prefix' => 'Telefon:', 'email_prefix' => 'E-Mail:'],
+    'profile_page' => ['kicker'=>'Konto','title'=>'Mein Profil','intro'=>'Halten Sie Ihre Daten aktuell, verbessern Sie die Sicherheit und verwalten Sie Ihr Konto an einem Ort.','back_to_backoffice'=>'Zurück zum Backoffice','back_home'=>'Zurück zur Startseite','role'=>'Rolle','email_status'=>'E-Mail-Status','verified'=>'Bestätigt','verification_pending'=>'Bestätigung ausstehend','member_since'=>'Mitglied seit','no_date'=>'Kein Datum','manage_account'=>'Konto verwalten','go_to_settings'=>'Zu den Einstellungen','verification_sent'=>'Wir haben einen neuen Bestätigungslink an Ihre E-Mail-Adresse gesendet.'],
+    'environment' => ['title' => 'Regionen', 'intro' => 'Entdecken Sie unsere Regionen, ihre Lebensqualität und Umgebung sowie die dort verfügbaren Immobilien.'],
+    'properties' => [
+        'filter_title' => 'Immobilien filtern', 'filter_intro' => 'Verfeinern Sie Ihre Suche, um schnell passende Immobilien zu finden.',
+        'favorites_kicker' => 'Gespeicherte Auswahl', 'favorites_count' => '{1} :count gespeicherte Immobilie|[2,*] :count gespeicherte Immobilien',
+        'type_in_location' => ':type in :location', 'video' => 'Video ansehen', 'virtual_tour' => 'Virtuellen Rundgang ansehen',
+        'technical_sheet' => 'Immobiliendetails', 'highlighted_features' => 'Besondere Merkmale', 'map_location' => 'Lage auf der Karte',
+        'contact_default_message' => 'Informationsanfrage zur Immobilie :title (:reference)', 'name_placeholder' => 'Ihr Name',
+        'features' => ['pool'=>'Pool','patio'=>'Garten oder Innenhof','plot_available'=>'Grundstück verfügbar','plot_area'=>':area m² Grundstück','air_conditioning'=>'Klimaanlage','garage'=>'Garage','lift'=>'Aufzug','parking'=>'Parkplatz','terrace'=>'Terrasse','garden'=>'Garten','solarium'=>'Sonnenterrasse','storage_room'=>'Abstellraum','furnished'=>'Möbliert','sea_views'=>'Meerblick','new_build'=>'Neubau','featured'=>'Ausgewählte Immobilie'],
+        'details' => ['town'=>'Ort','province'=>'Provinz','country'=>'Land','location_detail'=>'Detaillierte Lage','price'=>'Preis','operation'=>'Vermarktungsart','energy_consumption'=>'Energieverbrauch','emissions'=>'Emissionen','reference'=>'Referenz','source_date'=>'Quelldatum'],
+    ],
+    'profile' => ['access_title'=>'Zugangsdaten','access_intro'=>'Ändern Sie den Anzeigenamen und die primäre E-Mail-Adresse Ihres Kontos.','full_name'=>'Vollständiger Name','email'=>'E-Mail-Adresse','email_unverified'=>'E-Mail-Adresse noch nicht bestätigt.','email_verify_help'=>'Bestätigen Sie die Adresse, um Ihr Konto zu schützen.','resend_link'=>'Link erneut senden','save_changes'=>'Änderungen speichern','profile_updated'=>'Profil erfolgreich aktualisiert','security_title'=>'Kontosicherheit','security_intro'=>'Verwenden Sie ein starkes Passwort, um Ihren Zugang zu schützen.','current_password'=>'Aktuelles Passwort','new_password'=>'Neues Passwort','confirm_password'=>'Neues Passwort bestätigen','update_password'=>'Passwort aktualisieren','password_updated'=>'Passwort erfolgreich aktualisiert','danger_title'=>'Konto löschen','danger_intro'=>'Dadurch wird der Zugang dauerhaft gelöscht. Fahren Sie nur fort, wenn Sie sich sicher sind.','delete_password'=>'Aktuelles Passwort zur Bestätigung','password_placeholder'=>'Passwort eingeben','delete_warning'=>'Die Löschung kann nicht rückgängig gemacht werden und entfernt die Kontodaten.','delete_account'=>'Konto löschen'],
+];

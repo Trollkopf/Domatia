@@ -90,7 +90,7 @@ class UserController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'user_group_id' => 'No puedes quitarte a ti mismo los permisos de gestion de usuarios desde esta pantalla.',
+                    'user_group_id' => 'No puedes quitarte a ti mismo los permisos de gestión de usuarios desde esta pantalla.',
                 ]);
         }
 
@@ -121,7 +121,7 @@ class UserController extends Controller
             ->with('userGroup')
             ->get()
             ->contains(fn (User $candidate) => $candidate->canManageUsers())) {
-            return back()->with('error', 'No puedes eliminar el ultimo usuario con permisos de gestion.');
+            return back()->with('error', 'No puedes eliminar el último usuario con permisos de gestión.');
         }
 
         $user->delete();
@@ -178,7 +178,7 @@ class UserController extends Controller
         $canAccessBackoffice = $permissions['can_access_backoffice'];
 
         if ($group->users()->whereKey($request->user()->id)->exists() && ! $canManageUsers) {
-            return back()->with('error', 'No puedes quitarle a tu propio grupo los permisos de gestion de usuarios.');
+            return back()->with('error', 'No puedes quitarle a tu propio grupo los permisos de gestión de usuarios.');
         }
 
         if ($group->users()->whereKey($request->user()->id)->exists() && ! $canAccessBackoffice) {

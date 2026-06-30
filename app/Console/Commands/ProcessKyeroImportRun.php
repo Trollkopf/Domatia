@@ -34,7 +34,7 @@ class ProcessKyeroImportRun extends Command
             $kyeroFeedService->syncFeedStatus($run);
         }
 
-        $this->info('Importacion finalizada con estado: ' . $run->status);
+        $this->info('Importación finalizada con estado: ' . $run->status);
 
         return $run->status === 'completed'
             ? self::SUCCESS

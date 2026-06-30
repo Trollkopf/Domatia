@@ -50,7 +50,7 @@
             <span>
                 @if ($property->area)
                     <strong>{{ number_format($property->area, 0, ',', '.') }}</strong>
-                    m2
+                    m²
                 @else
                     <strong>-</strong>
                     {{ __('ui.properties.featured_space') }}

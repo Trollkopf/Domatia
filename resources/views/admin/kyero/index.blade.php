@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Importacion Kyero')
+@section('title', 'Importación Kyero')
 
 @section('styles')
     <style>
@@ -224,15 +224,15 @@
     <div class="tab-pane fade {{ $kyeroInitialTab === 'manual' ? 'show active' : '' }}" id="kyero-manual-pane" role="tabpanel" aria-labelledby="kyero-manual-tab" tabindex="0">
             <div class="card kyero-card">
                 <div class="card-body p-4 p-lg-5">
-                    <span class="badge text-bg-dark rounded-pill px-3 py-2 mb-3">Importacion manual</span>
+                    <span class="badge text-bg-dark rounded-pill px-3 py-2 mb-3">Importación manual</span>
                     <h2 class="h3 mb-2">Lanzar importacion de Kyero</h2>
                     <p class="text-muted mb-4">
-                        Sube el XML del feed o pega su contenido para actualizar el catalogo desde el backoffice cuando quieras.
+                        Sube el XML del feed o pega su contenido para actualizar el catálogo desde el backoffice cuando quieras.
                     </p>
 
                     @if ($activeRun && in_array($activeRun->status, ['queued', 'running']))
                         <div class="alert alert-info rounded-4 mb-4">
-                            Hay una importacion en curso. Si el proceso en segundo plano esta disponible, seguira avanzando aunque cambies de pagina.
+                            Hay una importación en curso. Si el proceso en segundo plano está disponible, seguirá avanzando aunque cambies de página.
                         </div>
                     @endif
 
@@ -258,7 +258,7 @@
                         </div>
 
                         <div>
-                            <label for="max_images_per_property" class="form-label fw-semibold">Maximo de imagenes por propiedad</label>
+                            <label for="max_images_per_property" class="form-label fw-semibold">Máximo de imágenes por propiedad</label>
                             <input
                                 type="number"
                                 class="form-control"
@@ -273,7 +273,7 @@
 
                         <div class="d-flex flex-wrap gap-2">
                             <button type="submit" class="btn btn-main">Preparar importacion</button>
-                            <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-dark">Volver al catalogo</a>
+                            <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-dark">Volver al catálogo</a>
                         </div>
                     </form>
                 </div>
@@ -330,7 +330,7 @@
                 <div class="card kyero-card">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-                            <h2 class="h5 mb-0">Ultimas ejecuciones</h2>
+                            <h2 class="h5 mb-0">Últimas ejecuciones</h2>
                             <span class="small text-muted">Solo las ultimas 10</span>
                         </div>
 
@@ -339,7 +339,7 @@
                                 <div class="kyero-run-item">
                                     <div class="d-flex justify-content-between align-items-start gap-3">
                                         <div>
-                                            <div class="fw-semibold">{{ $run->input_name ?: 'Importacion manual' }}</div>
+                                            <div class="fw-semibold">{{ $run->input_name ?: 'Importación manual' }}</div>
                                             <div class="small text-muted">
                                                 {{ $run->started_at?->format('d/m/Y H:i') ?? '-' }}
                                                 @if ($run->user)
@@ -364,7 +364,7 @@
                                     @endif
                                 </div>
                             @empty
-                                <p class="text-muted mb-0">Todavia no se ha lanzado ninguna importacion.</p>
+                                <p class="text-muted mb-0">Todavía no se ha lanzado ninguna importación.</p>
                             @endforelse
                         </div>
                     </div>

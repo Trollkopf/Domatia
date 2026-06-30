@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Configuracion')
+@section('title', 'Configuración')
 
 @section('styles')
     <style>
@@ -375,33 +375,33 @@
     @php
         $localizedTextFields = [
             'home_hero_badge' => ['label' => 'Etiqueta superior hero', 'type' => 'text'],
-            'home_hero_title' => ['label' => 'Titulo hero', 'type' => 'text'],
+            'home_hero_title' => ['label' => 'Título principal', 'type' => 'text'],
             'home_hero_subtitle' => ['label' => 'Subtitulo hero', 'type' => 'text'],
             'home_search_button_text' => ['label' => 'Texto boton buscador', 'type' => 'text'],
             'home_value_1' => ['label' => 'Argumento 1', 'type' => 'text'],
             'home_value_2' => ['label' => 'Argumento 2', 'type' => 'text'],
             'home_value_3' => ['label' => 'Argumento 3', 'type' => 'text'],
-            'home_featured_heading' => ['label' => 'Titulo destacadas', 'type' => 'text'],
+            'home_featured_heading' => ['label' => 'Título de destacadas', 'type' => 'text'],
             'home_featured_subtitle' => ['label' => 'Subtitulo destacadas', 'type' => 'text'],
-            'home_cta_heading' => ['label' => 'Titulo bloque final', 'type' => 'text'],
+            'home_cta_heading' => ['label' => 'Título del bloque final', 'type' => 'text'],
             'home_cta_body' => ['label' => 'Texto bloque final', 'type' => 'textarea', 'rows' => 4],
             'home_cta_primary_text' => ['label' => 'Texto CTA principal', 'type' => 'text'],
             'home_cta_secondary_text' => ['label' => 'Texto CTA secundario', 'type' => 'text'],
             'contact_intro' => ['label' => 'Texto de introduccion en contacto', 'type' => 'textarea', 'rows' => 3],
-            'about_heading' => ['label' => 'Titulo seccion Sobre nosotros', 'type' => 'text'],
+            'about_heading' => ['label' => 'Título de la sección Sobre nosotros', 'type' => 'text'],
             'about_body' => ['label' => 'Texto principal Sobre nosotros', 'type' => 'textarea', 'rows' => 6],
-            'about_header_title' => ['label' => 'Titulo header Sobre nosotros', 'type' => 'text'],
-            'contact_header_title' => ['label' => 'Titulo header Contacto', 'type' => 'text'],
-            'environment_header_title' => ['label' => 'Titulo header Entorno', 'type' => 'text'],
-            'register_header_title' => ['label' => 'Titulo header Registro', 'type' => 'text'],
+            'about_header_title' => ['label' => 'Título de cabecera de Sobre nosotros', 'type' => 'text'],
+            'contact_header_title' => ['label' => 'Título de cabecera de Contacto', 'type' => 'text'],
+            'environment_header_title' => ['label' => 'Título de cabecera de Entorno', 'type' => 'text'],
+            'register_header_title' => ['label' => 'Título de cabecera de Registro', 'type' => 'text'],
             'footer_text' => ['label' => 'Texto de footer', 'type' => 'text'],
         ];
     @endphp
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="mb-1">Configuracion</h1>
-            <p class="text-muted mb-0">Gestiona datos base de la empresa y los textos clave del sitio.</p>
+            <h1 class="mb-1">Configuración</h1>
+            <p class="text-muted mb-0">Gestiona los datos básicos de la empresa y los textos clave del sitio.</p>
         </div>
     </div>
 
@@ -459,7 +459,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Telefono</label>
+                        <label class="form-label">Teléfono</label>
                         <input type="text" name="company_phone" class="form-control" value="{{ old('company_phone', $settings['company_phone']) }}">
                     </div>
 
@@ -469,7 +469,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Direccion</label>
+                        <label class="form-label">Dirección</label>
                         <input type="text" name="company_address" class="form-control" value="{{ old('company_address', $settings['company_address']) }}">
                     </div>
 
@@ -487,7 +487,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Sufijo global de title</label>
                         <input type="text" name="seo_title_suffix" class="form-control" value="{{ old('seo_title_suffix', $settings['seo_title_suffix']) }}">
-                        <div class="form-text">Se anade al final del title cuando la pagina no lo incluye ya. Ejemplo: Domatia.</div>
+                        <div class="form-text">Se añade al final del título cuando la página aún no lo incluye. Ejemplo: Domatia.</div>
                     </div>
 
                     <div class="col-md-6">
@@ -497,9 +497,9 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Descripcion SEO por defecto</label>
+                        <label class="form-label">Descripción SEO predeterminada</label>
                         <textarea name="seo_default_description" class="form-control" rows="3">{{ old('seo_default_description', $settings['seo_default_description']) }}</textarea>
-                        <div class="form-text">Se usa cuando una pagina no tenga una descripcion mas especifica. Mejor entre 140 y 160 caracteres.</div>
+                        <div class="form-text">Se usa cuando una página no tiene una descripción más específica. Se recomiendan entre 140 y 160 caracteres.</div>
                     </div>
 
                     <div class="col-md-6">
@@ -535,7 +535,7 @@
                             <option value="2" @selected(old('home_hero_count', $settings['home_hero_count']) == '2')>2 heroes</option>
                             <option value="3" @selected(old('home_hero_count', $settings['home_hero_count']) == '3')>3 heroes</option>
                         </select>
-                        <div class="form-text">Se mostraran las primeras imagenes configuradas en este bloque.</div>
+                        <div class="form-text">Se mostrarán las primeras imágenes configuradas en este bloque.</div>
                     </div>
 
                     <div class="col-12"></div>
@@ -573,7 +573,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo hero</label>
+                        <label class="form-label">Título principal</label>
                         <input type="text" name="home_hero_title" class="form-control" value="{{ old('home_hero_title', $settings['home_hero_title']) }}">
                     </div>
 
@@ -603,7 +603,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo destacadas</label>
+                        <label class="form-label">Título de destacadas</label>
                         <input type="text" name="home_featured_heading" class="form-control" value="{{ old('home_featured_heading', $settings['home_featured_heading']) }}">
                     </div>
 
@@ -613,7 +613,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo bloque final</label>
+                        <label class="form-label">Título del bloque final</label>
                         <input type="text" name="home_cta_heading" class="form-control" value="{{ old('home_cta_heading', $settings['home_cta_heading']) }}">
                     </div>
 
@@ -659,7 +659,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo seccion "Sobre nosotros"</label>
+                        <label class="form-label">Título de la sección «Sobre nosotros»</label>
                         <input type="text" name="about_heading" class="form-control" value="{{ old('about_heading', $settings['about_heading']) }}">
                     </div>
 
@@ -675,12 +675,12 @@
                 <div class="row g-3">
 
                     <div class="col-12">
-                        <h2 class="h5 mb-1">Headers de secciones</h2>
-                        <p class="text-muted small mb-0">Controla el titulo y la imagen principal de cada portada publica.</p>
+                        <h2 class="h5 mb-1">Cabeceras de secciones</h2>
+                        <p class="text-muted small mb-0">Controla el título y la imagen principal de cada portada pública.</p>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo header "Sobre nosotros"</label>
+                        <label class="form-label">Título de cabecera de «Sobre nosotros»</label>
                         <input type="text" name="about_header_title" class="form-control" value="{{ old('about_header_title', $settings['about_header_title']) }}">
                     </div>
 
@@ -694,7 +694,7 @@
                     ])
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo header "Contacto"</label>
+                        <label class="form-label">Título de cabecera de «Contacto»</label>
                         <input type="text" name="contact_header_title" class="form-control" value="{{ old('contact_header_title', $settings['contact_header_title']) }}">
                     </div>
 
@@ -708,7 +708,7 @@
                     ])
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo header "Entorno"</label>
+                        <label class="form-label">Título de cabecera de «Entorno»</label>
                         <input type="text" name="environment_header_title" class="form-control" value="{{ old('environment_header_title', $settings['environment_header_title']) }}">
                     </div>
 
@@ -722,7 +722,7 @@
                     ])
 
                     <div class="col-md-6">
-                        <label class="form-label">Titulo header "Registro"</label>
+                        <label class="form-label">Título de cabecera de «Registro»</label>
                         <input type="text" name="register_header_title" class="form-control" value="{{ old('register_header_title', $settings['register_header_title']) }}">
                     </div>
 
@@ -779,7 +779,7 @@
                                     >
                                         <div class="mb-3">
                                             <h3 class="h6 mb-1">{{ $localeLabel }}</h3>
-                                            <p class="text-muted small mb-0">Overrides de contenido para la interfaz publica en {{ $localeLabel }}.</p>
+                                            <p class="text-muted small mb-0">Textos personalizados para la interfaz pública en {{ $localeLabel }}.</p>
                                         </div>
 
                                         <div class="row g-3">

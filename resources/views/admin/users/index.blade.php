@@ -64,7 +64,7 @@
 
         <div class="col-md-4">
             <div class="team-metric-card">
-                <div class="text-muted small mb-2">Con gestion de usuarios</div>
+                <div class="text-muted small mb-2">Con gestión de usuarios</div>
                 <div class="team-metric-value">{{ $stats['management_users'] }}</div>
             </div>
         </div>
@@ -100,13 +100,13 @@
                                 <td>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span class="badge {{ $user->canAccessBackoffice() ? 'text-bg-primary' : 'text-bg-secondary' }}">
-                                            {{ $user->canAccessBackoffice() ? 'Backoffice' : 'Web publica' }}
+                                            {{ $user->canAccessBackoffice() ? 'Backoffice' : 'Web pública' }}
                                         </span>
                                         @if ($user->canManageProperties())
                                             <span class="badge text-bg-primary">Propiedades</span>
                                         @endif
                                         @if ($user->canPublishProperties())
-                                            <span class="badge text-bg-dark">Publicacion</span>
+                                            <span class="badge text-bg-dark">Publicación</span>
                                         @endif
                                         @if ($user->canManageContacts())
                                             <span class="badge text-bg-success">Contactos</span>
@@ -121,10 +121,10 @@
                                             <span class="badge text-bg-dark">Exporta informes</span>
                                         @endif
                                         @if ($user->canManageUsers())
-                                            <span class="badge text-bg-warning">Gestion usuarios</span>
+                                            <span class="badge text-bg-warning">Gestión de usuarios</span>
                                         @endif
                                         @if ($user->canManageSettings())
-                                            <span class="badge text-bg-info">Gestion ajustes</span>
+                                            <span class="badge text-bg-info">Gestión de ajustes</span>
                                         @endif
                                     </div>
                                 </td>
@@ -175,7 +175,7 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Descripcion</label>
+                        <label class="form-label">Descripción</label>
                         <textarea name="group_description" class="form-control @error('group_description') is-invalid @enderror" rows="3">{{ old('group_description') }}</textarea>
                         @error('group_description')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -257,7 +257,7 @@
                                         <span class="badge text-bg-primary">Propiedades</span>
                                     @endif
                                     @if ($group->can_publish_properties)
-                                        <span class="badge text-bg-dark">Publicacion</span>
+                                        <span class="badge text-bg-dark">Publicación</span>
                                     @endif
                                     @if ($group->can_manage_contacts)
                                         <span class="badge text-bg-success">Contactos</span>
@@ -272,10 +272,10 @@
                                         <span class="badge text-bg-dark">Exporta informes</span>
                                     @endif
                                     @if ($group->can_manage_users)
-                                        <span class="badge text-bg-warning">Gestion usuarios</span>
+                                        <span class="badge text-bg-warning">Gestión de usuarios</span>
                                     @endif
                                     @if ($group->can_manage_settings)
-                                        <span class="badge text-bg-info">Gestion ajustes</span>
+                                        <span class="badge text-bg-info">Gestión de ajustes</span>
                                     @endif
                                 </div>
                             </div>
@@ -302,7 +302,7 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">Descripcion</label>
+                                    <label class="form-label">Descripción</label>
                                     <input type="text" name="description" class="form-control" value="{{ old('description', $group->description) }}">
                                 </div>
 
@@ -315,12 +315,12 @@
 
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="can_manage_users" value="1" id="group-{{ $group->id }}-users" @checked($group->can_manage_users)>
-                                            <label class="form-check-label" for="group-{{ $group->id }}-users">Gestion usuarios</label>
+                                            <label class="form-check-label" for="group-{{ $group->id }}-users">Gestión de usuarios</label>
                                         </div>
 
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="can_manage_settings" value="1" id="group-{{ $group->id }}-settings" @checked($group->can_manage_settings)>
-                                            <label class="form-check-label" for="group-{{ $group->id }}-settings">Gestion ajustes</label>
+                                            <label class="form-check-label" for="group-{{ $group->id }}-settings">Gestión de ajustes</label>
                                         </div>
 
                                         <div class="form-check">
@@ -330,7 +330,7 @@
 
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="can_publish_properties" value="1" id="group-{{ $group->id }}-publish" @checked($group->can_publish_properties)>
-                                            <label class="form-check-label" for="group-{{ $group->id }}-publish">Publicacion</label>
+                                            <label class="form-check-label" for="group-{{ $group->id }}-publish">Publicación</label>
                                         </div>
 
                                         <div class="form-check">

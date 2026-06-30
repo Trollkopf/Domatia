@@ -52,7 +52,7 @@ class KyeroImportService
             'total_properties' => count($nodes),
             'max_images_per_property' => max(1, min($maxImagesPerProperty, 30)),
             'started_at' => now(),
-            'notes' => 'Importacion preparada. Pendiente de procesar.',
+            'notes' => 'Importación preparada. Pendiente de procesar.',
         ]);
 
         $payloadPath = 'imports/kyero/run-' . $run->id . '.xml';
@@ -81,7 +81,7 @@ class KyeroImportService
             if ($slice === []) {
                 $run->update([
                     'status' => 'completed',
-                    'notes' => 'Importacion completada desde backoffice.',
+                    'notes' => 'Importación completada desde el backoffice.',
                     'finished_at' => now(),
                 ]);
 
@@ -115,7 +115,7 @@ class KyeroImportService
             if ($run->properties_seen >= max($run->total_properties, count($nodes))) {
                 $run->update([
                     'status' => 'completed',
-                    'notes' => 'Importacion completada desde backoffice.',
+                    'notes' => 'Importación completada desde el backoffice.',
                     'finished_at' => now(),
                 ]);
             }

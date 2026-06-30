@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="mb-1">Editar usuario</h1>
-            <p class="text-muted mb-0">Ajusta datos de acceso, contrasena y grupo operativo del usuario.</p>
+            <p class="text-muted mb-0">Ajusta los datos de acceso, la contraseña y el grupo operativo del usuario.</p>
         </div>
     </div>
 

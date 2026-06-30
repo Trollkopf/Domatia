@@ -68,7 +68,7 @@
             <div>
                 <h1 class="mb-1">Informes</h1>
                 <p class="text-muted mb-0">
-                    Lectura rapida del negocio, la calidad del catalogo y el estado comercial.
+                    Lectura rápida del negocio, la calidad del catálogo y el estado comercial.
                     Analizando del {{ \Carbon\Carbon::parse($filters['from'])->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($filters['to'])->format('d/m/Y') }}.
                 </p>
             </div>
@@ -189,14 +189,14 @@
                     <div class="card report-card h-100">
                         <div class="card-header bg-white border-0 pt-4 px-4">
                             <h2 class="h5 mb-1">Inventario por estado</h2>
-                            <p class="text-muted small mb-0">Cuanto del catalogo filtrado esta publicado y cuanto sigue en preparacion.</p>
+                            <p class="text-muted small mb-0">Cuánto del catálogo filtrado está publicado y cuánto sigue en preparación.</p>
                         </div>
                         <div class="card-body pt-3">
                             @forelse ($inventoryByStatus as $item)
                                 <div class="mini-row py-3 d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="fw-semibold">{{ $propertyStatusLabels[$item->status] ?? ucfirst($item->status) }}</div>
-                                        <div class="small text-muted">Estado editorial del catalogo</div>
+                                        <div class="small text-muted">Estado editorial del catálogo</div>
                                     </div>
                                     <span class="badge {{ $item->status === 'published' ? 'bg-success' : ($item->status === 'reserved' ? 'bg-warning text-dark' : ($item->status === 'sold' ? 'bg-dark' : ($item->status === 'hidden' ? 'bg-light text-dark' : 'bg-secondary'))) }}">{{ $item->total }}</span>
                                 </div>
@@ -211,7 +211,7 @@
                     <div class="card report-card h-100">
                         <div class="card-header bg-white border-0 pt-4 px-4">
                             <h2 class="h5 mb-1">Chequeos de calidad</h2>
-                            <p class="text-muted small mb-0">Puntos que suelen bloquear ventas o una buena presentacion.</p>
+                            <p class="text-muted small mb-0">Puntos que suelen bloquear ventas o una buena presentación.</p>
                         </div>
                         <div class="card-body pt-3">
                             @foreach ($qualityChecks as $check)
@@ -259,7 +259,7 @@
                     <div class="card report-card h-100">
                         <div class="card-header bg-white border-0 pt-4 px-4">
                             <h2 class="h5 mb-1">Inventario por tipo</h2>
-                            <p class="text-muted small mb-0">Composicion actual del catalogo dentro del segmento filtrado.</p>
+                            <p class="text-muted small mb-0">Composición actual del catálogo dentro del segmento filtrado.</p>
                         </div>
                         <div class="card-body pt-3">
                             @forelse ($inventoryByType as $item)
@@ -290,7 +290,7 @@
                                 <h2 class="h5 mb-1">Propiedades con mas interes</h2>
                                 <p class="text-muted small mb-0">Ranking segun contactos asociados en el periodo elegido.</p>
                             </div>
-                            <a href="{{ route('admin.properties.index', array_filter(['zona_id' => $filters['zona_id'], 'tipo' => $filters['tipo']])) }}" class="small">Ver catalogo</a>
+                            <a href="{{ route('admin.properties.index', array_filter(['zona_id' => $filters['zona_id'], 'tipo' => $filters['tipo']])) }}" class="small">Ver catálogo</a>
                         </div>
                         <div class="card-body pt-3">
                             @forelse ($topPropertiesByLeads as $property)
@@ -329,7 +329,7 @@
                                     <div>
                                         <div class="fw-semibold">{{ $zona->nombre }}</div>
                                         <div class="small text-muted">
-                                            {{ $zona->published_properties_count }} publicadas - {{ $zona->properties_count }} totales
+                                            {{ $zona->published_properties_count }} publicadas · {{ $zona->properties_count }} totales
                                         </div>
                                     </div>
 

@@ -332,34 +332,34 @@
         ]);
 
         $featurePills = collect([
-            $property->tiene_piscina ? ['icon' => 'fa-water-ladder', 'label' => 'Piscina'] : null,
-            $property->tiene_patio ? ['icon' => 'fa-seedling', 'label' => 'Jardin o patio'] : null,
-            $property->tiene_solar ? ['icon' => 'fa-vector-square', 'label' => 'Solar disponible'] : null,
-            $property->metros_solar ? ['icon' => 'fa-border-all', 'label' => number_format($property->metros_solar, 0, ',', '.') . ' m2 de parcela'] : null,
-            $property->has_air_conditioning ? ['icon' => 'fa-snowflake', 'label' => 'Aire acondicionado'] : null,
-            $property->has_garage ? ['icon' => 'fa-warehouse', 'label' => 'Garaje'] : null,
-            $property->has_lift ? ['icon' => 'fa-elevator', 'label' => 'Ascensor'] : null,
-            $property->has_parking ? ['icon' => 'fa-square-parking', 'label' => 'Parking'] : null,
-            $property->has_terrace ? ['icon' => 'fa-sun', 'label' => 'Terraza'] : null,
-            $property->has_garden ? ['icon' => 'fa-tree', 'label' => 'Jardin'] : null,
-            $property->has_solarium ? ['icon' => 'fa-sun-plant-wilt', 'label' => 'Solarium'] : null,
-            $property->has_storage_room ? ['icon' => 'fa-box-open', 'label' => 'Trastero'] : null,
-            $property->is_furnished ? ['icon' => 'fa-couch', 'label' => 'Amueblada'] : null,
-            $property->has_sea_views ? ['icon' => 'fa-water', 'label' => 'Vistas al mar'] : null,
-            $property->new_build ? ['icon' => 'fa-building-circle-check', 'label' => 'Obra nueva'] : null,
-            $property->is_featured ? ['icon' => 'fa-star', 'label' => 'Propiedad destacada'] : null,
+            $property->tiene_piscina ? ['icon' => 'fa-water-ladder', 'label' => __('frontend.properties.features.pool')] : null,
+            $property->tiene_patio ? ['icon' => 'fa-seedling', 'label' => __('frontend.properties.features.patio')] : null,
+            $property->tiene_solar ? ['icon' => 'fa-vector-square', 'label' => __('frontend.properties.features.plot_available')] : null,
+            $property->metros_solar ? ['icon' => 'fa-border-all', 'label' => __('frontend.properties.features.plot_area', ['area' => number_format($property->metros_solar, 0, ',', '.')])] : null,
+            $property->has_air_conditioning ? ['icon' => 'fa-snowflake', 'label' => __('frontend.properties.features.air_conditioning')] : null,
+            $property->has_garage ? ['icon' => 'fa-warehouse', 'label' => __('frontend.properties.features.garage')] : null,
+            $property->has_lift ? ['icon' => 'fa-elevator', 'label' => __('frontend.properties.features.lift')] : null,
+            $property->has_parking ? ['icon' => 'fa-square-parking', 'label' => __('frontend.properties.features.parking')] : null,
+            $property->has_terrace ? ['icon' => 'fa-sun', 'label' => __('frontend.properties.features.terrace')] : null,
+            $property->has_garden ? ['icon' => 'fa-tree', 'label' => __('frontend.properties.features.garden')] : null,
+            $property->has_solarium ? ['icon' => 'fa-sun-plant-wilt', 'label' => __('frontend.properties.features.solarium')] : null,
+            $property->has_storage_room ? ['icon' => 'fa-box-open', 'label' => __('frontend.properties.features.storage_room')] : null,
+            $property->is_furnished ? ['icon' => 'fa-couch', 'label' => __('frontend.properties.features.furnished')] : null,
+            $property->has_sea_views ? ['icon' => 'fa-water', 'label' => __('frontend.properties.features.sea_views')] : null,
+            $property->new_build ? ['icon' => 'fa-building-circle-check', 'label' => __('frontend.properties.features.new_build')] : null,
+            $property->is_featured ? ['icon' => 'fa-star', 'label' => __('frontend.properties.features.featured')] : null,
         ])->filter()->values();
         $propertyDetails = collect([
-            ['label' => 'Poblacion', 'value' => $property->town],
-            ['label' => 'Provincia', 'value' => $property->province],
-            ['label' => 'Pais', 'value' => $property->country],
-            ['label' => 'Zona detallada', 'value' => $property->location_detail],
-            ['label' => 'Precio', 'value' => $property->price ? number_format($property->price, 0, ',', '.') . ' ' . ($property->currency ?: 'EUR') : null],
-            ['label' => 'Operacion', 'value' => $property->price_freq],
-            ['label' => 'Consumo energetico', 'value' => $property->energy_consumption],
-            ['label' => 'Emisiones', 'value' => $property->energy_emissions],
-            ['label' => 'Referencia', 'value' => $property->ref],
-            ['label' => 'Fecha de origen', 'value' => $property->source_date?->format('d/m/Y H:i')],
+            ['label' => __('frontend.properties.details.town'), 'value' => $property->town],
+            ['label' => __('frontend.properties.details.province'), 'value' => $property->province],
+            ['label' => __('frontend.properties.details.country'), 'value' => $property->country],
+            ['label' => __('frontend.properties.details.location_detail'), 'value' => $property->location_detail],
+            ['label' => __('frontend.properties.details.price'), 'value' => $property->price ? number_format($property->price, 0, ',', '.') . ' ' . ($property->currency ?: 'EUR') : null],
+            ['label' => __('frontend.properties.details.operation'), 'value' => $property->price_freq],
+            ['label' => __('frontend.properties.details.energy_consumption'), 'value' => $property->energy_consumption],
+            ['label' => __('frontend.properties.details.emissions'), 'value' => $property->energy_emissions],
+            ['label' => __('frontend.properties.details.reference'), 'value' => $property->ref],
+            ['label' => __('frontend.properties.details.source_date'), 'value' => $property->source_date?->format('d/m/Y H:i')],
         ])->filter(fn (array $item) => filled($item['value']))->values();
         $featureList = collect($property->featuresList())->values();
     @endphp
@@ -381,7 +381,7 @@
                         <img id="property-main-image" src="{{ $mainImage }}" alt="{{ $property->translatedTitle() }}">
 
                         <div class="property-gallery-count">
-                            {{ max($galleryImages->count(), 1) }} foto{{ max($galleryImages->count(), 1) === 1 ? '' : 's' }}
+                            {{ trans_choice('frontend.common.photos', max($galleryImages->count(), 1), ['count' => max($galleryImages->count(), 1)]) }}
                         </div>
                     </a>
 
@@ -392,7 +392,7 @@
                                     $imageUrl = asset('storage/' . $imagePath);
                                 @endphp
                                 <button type="button" class="property-thumb {{ $loop->first ? 'is-active' : '' }}" data-property-thumb data-image-url="{{ $imageUrl }}">
-                                    <img src="{{ $imageUrl }}" alt="Imagen de {{ $property->translatedTitle() }}">
+                                    <img src="{{ $imageUrl }}" alt="{{ __('frontend.common.image_of', ['title' => $property->translatedTitle()]) }}">
                                 </button>
                                 <a href="{{ $imageUrl }}" class="glightbox d-none" data-gallery="property-gallery"></a>
                             @endforeach
@@ -406,10 +406,10 @@
                             <div>
                                 <span class="property-reference mb-3">
                                     <i class="fa-solid fa-hashtag"></i>
-                                    Ref. {{ $property->ref ?: 'Pendiente' }}
+                                    {{ __('frontend.common.reference_short') }} {{ $property->ref ?: __('frontend.common.pending') }}
                                 </span>
                                 <h1 class="display-6 mt-3 mb-2">{{ $property->translatedTitle() }}</h1>
-                                <p class="text-muted mb-0">{{ $propertyType }} en {{ $locationLabel }}</p>
+                                <p class="text-muted mb-0">{{ __('frontend.properties.type_in_location', ['type' => $propertyType, 'location' => $locationLabel]) }}</p>
                             </div>
 
                             <form action="{{ route('guest.property.favorite', $property->slug) }}" method="POST" class="property-favorite-form" data-favorite-toggle-form data-property-slug="{{ $property->slug }}">
@@ -436,7 +436,7 @@
                             <div class="property-stat">
                                 <span class="property-stat-label">{{ __('ui.properties.surface') }}</span>
                                 <div class="property-stat-value">
-                                    {{ $property->area ? number_format($property->area, 0, ',', '.') . ' m2' : __('ui.properties.featured_space') }}
+                                    {{ $property->area ? number_format($property->area, 0, ',', '.') . ' m²' : __('ui.properties.featured_space') }}
                                 </div>
                             </div>
                             <div class="property-stat">
@@ -460,10 +460,10 @@
                             <a href="#property-contact" class="btn btn-dark btn-lg">{{ __('ui.properties.request_information') }}</a>
                             <a href="{{ route('guest.properties.favorites') }}" class="btn btn-outline-secondary">{{ __('ui.common.view_favorites') }}</a>
                             @if ($property->video_url)
-                                <a href="{{ $property->video_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">Ver vídeo</a>
+                                <a href="{{ $property->video_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">{{ __('frontend.properties.video') }}</a>
                             @endif
                             @if ($property->virtual_tour_url)
-                                <a href="{{ $property->virtual_tour_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">Ver tour virtual</a>
+                                <a href="{{ $property->virtual_tour_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">{{ __('frontend.properties.virtual_tour') }}</a>
                             @endif
                         </div>
                     </aside>
@@ -509,7 +509,7 @@
 
                     @if ($propertyDetails->isNotEmpty())
                         <section class="property-content-card mb-4">
-                            <div class="property-section-title mb-3">Ficha técnica</div>
+                            <div class="property-section-title mb-3">{{ __('frontend.properties.technical_sheet') }}</div>
                             <div class="property-detail-grid">
                                 @foreach ($propertyDetails as $detail)
                                     <div class="property-detail-item">
@@ -523,7 +523,7 @@
 
                     @if ($featureList->isNotEmpty())
                         <section class="property-content-card mb-4">
-                            <div class="property-section-title mb-3">Características destacadas</div>
+                            <div class="property-section-title mb-3">{{ __('frontend.properties.highlighted_features') }}</div>
                             <div class="property-pills">
                                 @foreach ($featureList as $feature)
                                     <span class="property-pill">
@@ -537,7 +537,7 @@
 
                     @if ($property->hasCoordinates())
                         <section class="property-content-card mb-4">
-                            <div class="property-section-title mb-3">Ubicación en mapa</div>
+                            <div class="property-section-title mb-3">{{ __('frontend.properties.map_location') }}</div>
                             <div id="map" class="property-map" data-latitude="{{ $property->latitude }}" data-longitude="{{ $property->longitude }}" data-zoom="14" data-title="{{ $property->translatedTitle() }}"></div>
                         </section>
                     @endif
@@ -571,11 +571,11 @@
                         <form action="{{ route('contact.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="property_id" value="{{ $property->id }}">
-                            <input type="hidden" name="message" value="Solicitud de informacion sobre la propiedad {{ $property->translatedTitle() }} ({{ $property->ref }})">
+                            <input type="hidden" name="message" value="{{ __('frontend.properties.contact_default_message', ['title' => $property->translatedTitle(), 'reference' => $property->ref ?: __('frontend.common.pending')]) }}">
 
                             <div class="mb-3">
                                 <label class="form-label">{{ __('ui.properties.name') }} *</label>
-                                <input type="text" name="name" class="form-control" placeholder="Tu nombre" required>
+                                <input type="text" name="name" class="form-control" placeholder="{{ __('frontend.properties.name_placeholder') }}" required>
                             </div>
 
                             <div class="mb-3">

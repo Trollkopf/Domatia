@@ -1,0 +1,18 @@
+<?php
+
+return [
+    'common' => ['image_of' => 'Изображение: :title', 'reference_short' => 'Арт.', 'pending' => 'Ожидается', 'photos' => '{1} :count фотография|[2,4] :count фотографии|[5,*] :count фотографий'],
+    'contact' => ['map' => 'Карта', 'phone_prefix' => 'Телефон:', 'email_prefix' => 'Эл. почта:'],
+    'profile_page' => ['kicker'=>'Учётная запись','title'=>'Мой профиль','intro'=>'Обновляйте данные, повышайте безопасность и управляйте учётной записью в одном месте.','back_to_backoffice'=>'Вернуться в панель управления','back_home'=>'На главную','role'=>'Роль','email_status'=>'Статус эл. почты','verified'=>'Подтверждено','verification_pending'=>'Ожидает подтверждения','member_since'=>'Дата регистрации','no_date'=>'Нет даты','manage_account'=>'Управление учётной записью','go_to_settings'=>'Перейти к настройкам','verification_sent'=>'Мы отправили новую ссылку для подтверждения на вашу электронную почту.'],
+    'environment' => ['title' => 'Районы', 'intro' => 'Откройте для себя районы, где мы работаем, их образ жизни и окружение, а также доступную недвижимость.'],
+    'properties' => [
+        'filter_title' => 'Фильтр недвижимости', 'filter_intro' => 'Уточните параметры, чтобы быстро найти подходящую недвижимость.',
+        'favorites_kicker' => 'Сохранённая подборка', 'favorites_count' => '{1} :count сохранённый объект|[2,4] :count сохранённых объекта|[5,*] :count сохранённых объектов',
+        'type_in_location' => ':type в :location', 'video' => 'Смотреть видео', 'virtual_tour' => 'Виртуальный тур',
+        'technical_sheet' => 'Характеристики объекта', 'highlighted_features' => 'Основные особенности', 'map_location' => 'Расположение на карте',
+        'contact_default_message' => 'Запрос информации об объекте :title (:reference)', 'name_placeholder' => 'Ваше имя',
+        'features' => ['pool'=>'Бассейн','patio'=>'Сад или патио','plot_available'=>'Доступный участок','plot_area'=>'Участок :area м²','air_conditioning'=>'Кондиционер','garage'=>'Гараж','lift'=>'Лифт','parking'=>'Парковка','terrace'=>'Терраса','garden'=>'Сад','solarium'=>'Солярий','storage_room'=>'Кладовая','furnished'=>'С мебелью','sea_views'=>'Вид на море','new_build'=>'Новостройка','featured'=>'Рекомендуемый объект'],
+        'details' => ['town'=>'Населённый пункт','province'=>'Провинция','country'=>'Страна','location_detail'=>'Точный район','price'=>'Цена','operation'=>'Тип сделки','energy_consumption'=>'Энергопотребление','emissions'=>'Выбросы','reference'=>'Артикул','source_date'=>'Дата источника'],
+    ],
+    'profile' => ['access_title'=>'Данные для входа','access_intro'=>'Измените отображаемое имя и основной адрес электронной почты.','full_name'=>'Полное имя','email'=>'Электронная почта','email_unverified'=>'Адрес электронной почты не подтверждён.','email_verify_help'=>'Подтвердите адрес, чтобы защитить свою учётную запись.','resend_link'=>'Отправить ссылку повторно','save_changes'=>'Сохранить изменения','profile_updated'=>'Профиль успешно обновлён','security_title'=>'Безопасность учётной записи','security_intro'=>'Используйте надёжный пароль для защиты доступа.','current_password'=>'Текущий пароль','new_password'=>'Новый пароль','confirm_password'=>'Подтвердите новый пароль','update_password'=>'Обновить пароль','password_updated'=>'Пароль успешно обновлён','danger_title'=>'Удалить учётную запись','danger_intro'=>'Это навсегда удалит доступ. Продолжайте, только если вы полностью уверены.','delete_password'=>'Текущий пароль для подтверждения','password_placeholder'=>'Введите пароль','delete_warning'=>'Удаление необратимо и стирает связанные с учётной записью данные.','delete_account'=>'Удалить учётную запись'],
+];
