@@ -22,7 +22,7 @@ class Setting extends Model
         return static::$cachedSettings[$key] ?? $default;
     }
 
-    public static function getLocalizedValue(string $key, ?string $default = null, ?string $locale = null): ?string
+    public static function getLocalizedValue(string $key, ?string $default = null, ?string $locale = null, bool $fallbackToBase = true): ?string
     {
         $locale = $locale ?: app()->getLocale();
 
@@ -36,7 +36,7 @@ class Setting extends Model
             return $localizedValue;
         }
 
-        return static::getValue($key, $default);
+        return $fallbackToBase ? static::getValue($key, $default) : $default;
     }
 
     public static function setValue(string $key, ?string $value): void

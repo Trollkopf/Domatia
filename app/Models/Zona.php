@@ -19,6 +19,7 @@ class Zona extends Model
         'nombre_fr',
         'nombre_de',
         'nombre_ru',
+        'nombre_nl', 'nombre_pl', 'nombre_sv', 'nombre_da',
         'imagen_principal',
         'slug',
     ];
@@ -64,6 +65,10 @@ class Zona extends Model
             'fr' => $this->nombre_fr,
             'de' => $this->nombre_de,
             'ru' => $this->nombre_ru,
+            'nl' => $this->nombre_nl,
+            'pl' => $this->nombre_pl,
+            'sv' => $this->nombre_sv,
+            'da' => $this->nombre_da,
             default => $this->nombre,
         };
 

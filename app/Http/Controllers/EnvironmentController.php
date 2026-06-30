@@ -10,7 +10,7 @@ class EnvironmentController extends Controller
 {
     public function index()
     {
-        $zonas = Zona::select('id', 'nombre', 'nombre_en', 'nombre_fr', 'nombre_de', 'nombre_ru', 'imagen_principal', 'slug')
+        $zonas = Zona::select('id', 'nombre', 'nombre_en', 'nombre_fr', 'nombre_de', 'nombre_ru', 'nombre_nl', 'nombre_pl', 'nombre_sv', 'nombre_da', 'imagen_principal', 'slug')
             ->with(['representativePublishedProperty', 'representativeProperty'])
             ->orderBy('nombre')
             ->get();

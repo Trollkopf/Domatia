@@ -26,6 +26,6 @@ class ContactController extends Controller
             'property_id' => $request->property_id,
         ]);
 
-        return redirect()->back()->with('success', 'Gracias por tu mensaje. Nos pondremos en contacto pronto.');
+        return redirect()->back()->with('success', __('ui.contact.success'));
     }
 }

@@ -103,6 +103,10 @@ return [
         'fr' => 'Français',
         'de' => 'Deutsch',
         'ru' => 'Русский',
+        'nl' => 'Nederlands',
+        'pl' => 'Polski',
+        'sv' => 'Svenska',
+        'da' => 'Dansk',
     ],
 
     /*

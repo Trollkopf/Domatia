@@ -17,12 +17,14 @@ class ZonaSection extends Model
         'titulo_fr',
         'titulo_de',
         'titulo_ru',
+        'titulo_nl', 'titulo_pl', 'titulo_sv', 'titulo_da',
         'imagen',
         'descripcion',
         'descripcion_en',
         'descripcion_fr',
         'descripcion_de',
         'descripcion_ru',
+        'descripcion_nl', 'descripcion_pl', 'descripcion_sv', 'descripcion_da',
     ];
 
     public function zona()
@@ -39,6 +41,10 @@ class ZonaSection extends Model
             'fr' => $this->titulo_fr,
             'de' => $this->titulo_de,
             'ru' => $this->titulo_ru,
+            'nl' => $this->titulo_nl,
+            'pl' => $this->titulo_pl,
+            'sv' => $this->titulo_sv,
+            'da' => $this->titulo_da,
             default => $this->titulo,
         };
 
@@ -54,6 +60,10 @@ class ZonaSection extends Model
             'fr' => $this->descripcion_fr,
             'de' => $this->descripcion_de,
             'ru' => $this->descripcion_ru,
+            'nl' => $this->descripcion_nl,
+            'pl' => $this->descripcion_pl,
+            'sv' => $this->descripcion_sv,
+            'da' => $this->descripcion_da,
             default => $this->descripcion,
         };
 

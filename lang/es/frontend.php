@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'site_defaults' => ['footer_text'=>'Todos los derechos reservados.','contact_intro'=>'Estamos aquí para ayudarte a encontrar la propiedad adecuada y resolver tus dudas.','about_heading'=>'Nuestra filosofía','about_body'=>'En Domatia ofrecemos propiedades seleccionadas con un servicio cercano, claro y personalizado.','home_hero_badge'=>'Selección inmobiliaria de confianza','home_hero_title'=>'Descubre propiedades exclusivas','home_hero_subtitle'=>'En los destinos más deseados','home_search_button_text'=>'Buscar','home_value_1'=>'Selección cuidada de propiedades','home_value_2'=>'Acompañamiento cercano de principio a fin','home_value_3'=>'Proceso claro y orientado al cierre','home_featured_heading'=>'Propiedades destacadas','home_featured_subtitle'=>'Una selección cuidada para empezar con lo mejor del catálogo.','home_cta_heading'=>'Te acompañamos en cada paso de la compra','home_cta_body'=>'Desde la primera visita hasta la firma, trabajamos con un enfoque claro y cercano.','home_cta_primary_text'=>'Ver propiedades','home_cta_secondary_text'=>'Contactar','about_header_title'=>'Conócenos','contact_header_title'=>'Contáctanos','environment_header_title'=>'Conoce las zonas','register_header_title'=>'Crear cuenta'],
     'common' => [
         'image_of' => 'Imagen de :title',
         'reference_short' => 'Ref.',

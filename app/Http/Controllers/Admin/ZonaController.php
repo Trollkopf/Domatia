@@ -36,6 +36,9 @@ class ZonaController extends Controller
         $zona->nombre_fr = $validated['nombre_fr'] ?? null;
         $zona->nombre_de = $validated['nombre_de'] ?? null;
         $zona->nombre_ru = $validated['nombre_ru'] ?? null;
+        foreach (['nl', 'pl', 'sv', 'da'] as $locale) {
+            $zona->{"nombre_{$locale}"} = $validated["nombre_{$locale}"] ?? null;
+        }
 
         if ($request->hasFile('imagen_principal')) {
             $zona->imagen_principal = $request->file('imagen_principal')->store('zonas', 'public');
@@ -57,6 +60,9 @@ class ZonaController extends Controller
         $zona->nombre_fr = $validated['nombre_fr'] ?? null;
         $zona->nombre_de = $validated['nombre_de'] ?? null;
         $zona->nombre_ru = $validated['nombre_ru'] ?? null;
+        foreach (['nl', 'pl', 'sv', 'da'] as $locale) {
+            $zona->{"nombre_{$locale}"} = $validated["nombre_{$locale}"] ?? null;
+        }
 
         if ($request->hasFile('imagen_principal')) {
             if ($zona->imagen_principal) {
@@ -103,6 +109,7 @@ class ZonaController extends Controller
             'nombre_fr' => 'nullable|string|max:255',
             'nombre_de' => 'nullable|string|max:255',
             'nombre_ru' => 'nullable|string|max:255',
+            'nombre_nl' => 'nullable|string|max:255', 'nombre_pl' => 'nullable|string|max:255', 'nombre_sv' => 'nullable|string|max:255', 'nombre_da' => 'nullable|string|max:255',
             'imagen_principal' => 'nullable|image|max:5120',
             'secciones' => 'nullable|array',
             'secciones.*.id' => 'nullable|integer',
@@ -111,11 +118,13 @@ class ZonaController extends Controller
             'secciones.*.titulo_fr' => 'nullable|string|max:255',
             'secciones.*.titulo_de' => 'nullable|string|max:255',
             'secciones.*.titulo_ru' => 'nullable|string|max:255',
+            'secciones.*.titulo_nl' => 'nullable|string|max:255', 'secciones.*.titulo_pl' => 'nullable|string|max:255', 'secciones.*.titulo_sv' => 'nullable|string|max:255', 'secciones.*.titulo_da' => 'nullable|string|max:255',
             'secciones.*.descripcion' => 'nullable|string',
             'secciones.*.descripcion_en' => 'nullable|string',
             'secciones.*.descripcion_fr' => 'nullable|string',
             'secciones.*.descripcion_de' => 'nullable|string',
             'secciones.*.descripcion_ru' => 'nullable|string',
+            'secciones.*.descripcion_nl' => 'nullable|string', 'secciones.*.descripcion_pl' => 'nullable|string', 'secciones.*.descripcion_sv' => 'nullable|string', 'secciones.*.descripcion_da' => 'nullable|string',
             'secciones.*.imagen' => 'nullable|image|max:5120',
         ]);
     }
@@ -148,11 +157,19 @@ class ZonaController extends Controller
             $section->titulo_fr = $sectionData['titulo_fr'] ?? null;
             $section->titulo_de = $sectionData['titulo_de'] ?? null;
             $section->titulo_ru = $sectionData['titulo_ru'] ?? null;
+            $section->titulo_nl = $sectionData['titulo_nl'] ?? null;
+            $section->titulo_pl = $sectionData['titulo_pl'] ?? null;
+            $section->titulo_sv = $sectionData['titulo_sv'] ?? null;
+            $section->titulo_da = $sectionData['titulo_da'] ?? null;
             $section->descripcion = $sectionData['descripcion'] ?? null;
             $section->descripcion_en = $sectionData['descripcion_en'] ?? null;
             $section->descripcion_fr = $sectionData['descripcion_fr'] ?? null;
             $section->descripcion_de = $sectionData['descripcion_de'] ?? null;
             $section->descripcion_ru = $sectionData['descripcion_ru'] ?? null;
+            $section->descripcion_nl = $sectionData['descripcion_nl'] ?? null;
+            $section->descripcion_pl = $sectionData['descripcion_pl'] ?? null;
+            $section->descripcion_sv = $sectionData['descripcion_sv'] ?? null;
+            $section->descripcion_da = $sectionData['descripcion_da'] ?? null;
 
             if ($request->hasFile("secciones.$index.imagen")) {
                 if ($section->imagen) {

@@ -1,0 +1,1 @@
+<?php return ['reset'=>'Ditt lösenord har återställts.','sent'=>'Vi har skickat länken för att återställa lösenordet.','throttled'=>'Vänta innan du försöker igen.','token'=>'Länken för återställning är ogiltig.','user'=>'Ingen användare hittades med denna e-postadress.'];

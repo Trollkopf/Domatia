@@ -145,6 +145,7 @@ return [
         'email_placeholder' => 'Enter your email',
         'message_placeholder' => 'Write your message',
         'accept_terms' => 'I accept the terms and conditions',
+        'success' => 'Thank you for your message. We will contact you shortly.',
     ],
     'environment' => [
         'title' => 'Zones',

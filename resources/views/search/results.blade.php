@@ -10,9 +10,9 @@
             @forelse($results as $property)
                 <div class="col-md-4 mb-4">
                     <div class="card border-0 shadow-sm">
-                        <img src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}" class="card-img-top" alt="{{ $property->title }}">
+                        <img src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}" class="card-img-top" alt="{{ __('frontend.common.image_of', ['title' => $property->translatedTitle()]) }}">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $property->title }}</h5>
+                            <h5 class="card-title">{{ $property->translatedTitle() }}</h5>
                             <p class="card-text">
                                 EUR {{ number_format($property->price, 0, ',', '.') }} ·
                                 {{ $property->bedrooms }} {{ __('ui.properties.stats.bedrooms_short') }} ·

@@ -361,7 +361,7 @@
             ['label' => __('frontend.properties.details.reference'), 'value' => $property->ref],
             ['label' => __('frontend.properties.details.source_date'), 'value' => $property->source_date?->format('d/m/Y H:i')],
         ])->filter(fn (array $item) => filled($item['value']))->values();
-        $featureList = collect($property->featuresList())->values();
+        $featureList = collect($property->translatedFeaturesList())->values();
     @endphp
 
     <div class="property-show-shell py-5">

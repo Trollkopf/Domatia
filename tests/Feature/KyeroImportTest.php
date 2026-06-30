@@ -268,6 +268,14 @@ XML;
 
         $this->assertNotNull($property);
         $this->assertSame('Villa en Playa Flamenca', $property->title);
+        $this->assertSame('Villa in Playa Flamenca', $property->title_en);
+        $this->assertSame('Villa à Playa Flamenca', $property->title_fr);
+        $this->assertSame('Villa in Playa Flamenca', $property->title_de);
+        $this->assertSame('Вилла в Playa Flamenca', $property->title_ru);
+        $this->assertSame('Villa in Playa Flamenca', $property->title_nl);
+        $this->assertSame('Willa w Playa Flamenca', $property->title_pl);
+        $this->assertSame('Villa i Playa Flamenca', $property->title_sv);
+        $this->assertSame('Villa i Playa Flamenca', $property->title_da);
         $this->assertNotSame('Propiedad importada', $property->title);
     }
 }

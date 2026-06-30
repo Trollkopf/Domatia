@@ -310,7 +310,7 @@
                                         src="{{ $property->thumbnail ? asset('storage/' . $property->thumbnail) : asset('images/our-company.jpg') }}"
                                         class="w-100 h-100"
                                         style="object-fit: cover;"
-                                        alt="{{ $property->title }}"
+                                        alt="{{ __('frontend.common.image_of', ['title' => $property->translatedTitle()]) }}"
                                     >
                                     <div class="position-absolute bottom-0 start-0 end-0 p-2 text-white" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);">
                                         <div class="fw-semibold small">{{ $property->translatedTitle() }}</div>

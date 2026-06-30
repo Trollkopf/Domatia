@@ -44,11 +44,19 @@ class Property extends Model
         'title_fr',
         'title_de',
         'title_ru',
+        'title_nl',
+        'title_pl',
+        'title_sv',
+        'title_da',
         'location',
         'location_en',
         'location_fr',
         'location_de',
         'location_ru',
+        'location_nl',
+        'location_pl',
+        'location_sv',
+        'location_da',
         'price',
         'tipo',
         'is_featured',
@@ -58,6 +66,10 @@ class Property extends Model
         'description_fr',
         'description_de',
         'description_ru',
+        'description_nl',
+        'description_pl',
+        'description_sv',
+        'description_da',
         'thumbnail',
         'zona_id',
         'propietario_id',
@@ -73,16 +85,19 @@ class Property extends Model
         'quick_summary_1_fr',
         'quick_summary_1_de',
         'quick_summary_1_ru',
+        'quick_summary_1_nl', 'quick_summary_1_pl', 'quick_summary_1_sv', 'quick_summary_1_da',
         'quick_summary_2',
         'quick_summary_2_en',
         'quick_summary_2_fr',
         'quick_summary_2_de',
         'quick_summary_2_ru',
+        'quick_summary_2_nl', 'quick_summary_2_pl', 'quick_summary_2_sv', 'quick_summary_2_da',
         'quick_summary_3',
         'quick_summary_3_en',
         'quick_summary_3_fr',
         'quick_summary_3_de',
         'quick_summary_3_ru',
+        'quick_summary_3_nl', 'quick_summary_3_pl', 'quick_summary_3_sv', 'quick_summary_3_da',
         'source_name',
         'source_listing_id',
         'source_payload_hash',
@@ -189,6 +204,10 @@ class Property extends Model
             'fr' => $this->description_fr,
             'de' => $this->description_de,
             'ru' => $this->description_ru,
+            'nl' => $this->description_nl,
+            'pl' => $this->description_pl,
+            'sv' => $this->description_sv,
+            'da' => $this->description_da,
             default => $this->description,
         };
 
@@ -206,6 +225,10 @@ class Property extends Model
             'fr' => $this->title_fr,
             'de' => $this->title_de,
             'ru' => $this->title_ru,
+            'nl' => $this->title_nl,
+            'pl' => $this->title_pl,
+            'sv' => $this->title_sv,
+            'da' => $this->title_da,
             default => $this->title,
         };
 
@@ -221,6 +244,10 @@ class Property extends Model
             'fr' => $this->location_fr,
             'de' => $this->location_de,
             'ru' => $this->location_ru,
+            'nl' => $this->location_nl,
+            'pl' => $this->location_pl,
+            'sv' => $this->location_sv,
+            'da' => $this->location_da,
             default => $this->location,
         };
 
@@ -232,6 +259,41 @@ class Property extends Model
         return collect((array) ($this->features_json ?? []))
             ->map(fn ($feature) => trim((string) $feature))
             ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function translatedFeaturesList(?string $locale = null): array
+    {
+        $translationKeys = [
+            'pool' => 'pool',
+            'swimming-pool' => 'pool',
+            'private-pool' => 'pool',
+            'air-conditioning' => 'air_conditioning',
+            'air-conditioner' => 'air_conditioning',
+            'garage' => 'garage',
+            'lift' => 'lift',
+            'elevator' => 'lift',
+            'parking' => 'parking',
+            'terrace' => 'terrace',
+            'garden' => 'garden',
+            'solarium' => 'solarium',
+            'storage-room' => 'storage_room',
+            'furnished' => 'furnished',
+            'sea-views' => 'sea_views',
+            'sea-view' => 'sea_views',
+            'new-build' => 'new_build',
+        ];
+
+        return collect($this->featuresList())
+            ->map(function (string $feature) use ($locale, $translationKeys) {
+                $key = $translationKeys[Str::slug($feature)] ?? null;
+
+                return $key
+                    ? __('frontend.properties.features.' . $key, locale: $locale ?: App::currentLocale())
+                    : $feature;
+            })
             ->unique()
             ->values()
             ->all();
@@ -291,6 +353,10 @@ class Property extends Model
             'fr' => $field . '_fr',
             'de' => $field . '_de',
             'ru' => $field . '_ru',
+            'nl' => $field . '_nl',
+            'pl' => $field . '_pl',
+            'sv' => $field . '_sv',
+            'da' => $field . '_da',
             default => $field,
         };
 
@@ -309,6 +375,7 @@ class Property extends Model
             'fr' => $this->buildFrenchTypeSummary($translatedType, $location),
             'de' => $this->buildGermanTypeSummary($translatedType, $location),
             'ru' => $this->buildRussianTypeSummary($translatedType, $location),
+            'nl', 'pl', 'sv', 'da' => $this->buildAdditionalLocaleTypeSummary($locale, $translatedType, $location),
             default => $this->buildSpanishTypeSummary($type, $location),
         };
     }
@@ -318,11 +385,11 @@ class Property extends Model
         $parts = [];
 
         if ($this->area) {
-            $parts[] = number_format($this->area, 0, ',', '.') . ' m2';
+            $parts[] = number_format($this->area, 0, ',', '.') . ' m²';
         }
 
         if ($this->tiene_solar && $this->metros_solar) {
-            $parts[] = number_format($this->metros_solar, 0, ',', '.') . ' m2';
+            $parts[] = number_format($this->metros_solar, 0, ',', '.') . ' m²';
         }
 
         return match ($locale) {
@@ -330,6 +397,7 @@ class Property extends Model
             'fr' => $this->buildFrenchSpaceSummary($parts),
             'de' => $this->buildGermanSpaceSummary($parts),
             'ru' => $this->buildRussianSpaceSummary($parts),
+            'nl', 'pl', 'sv', 'da' => $this->buildAdditionalLocaleSpaceSummary($locale),
             default => $this->buildSpanishSpaceSummary($parts),
         };
     }
@@ -356,6 +424,26 @@ class Property extends Model
                 'reserved' => 'Сейчас зарезервировано. Уточните доступность или попросите подобрать похожие варианты.',
                 'sold' => 'Этот объект продан. Мы поможем подобрать похожие предложения.',
                 default => 'Доступно. Запросите подробности или договоритесь о просмотре без обязательств.',
+            },
+            'nl' => match ($this->status) {
+                'reserved' => 'Momenteel gereserveerd. Vraag ons naar de beschikbaarheid of vergelijkbare woningen.',
+                'sold' => 'Deze woning is verkocht. Wij helpen u graag vergelijkbare opties te vinden.',
+                default => 'Beschikbaar. Vraag meer informatie aan of plan vrijblijvend een bezichtiging.',
+            },
+            'pl' => match ($this->status) {
+                'reserved' => 'Obecnie zarezerwowana. Zapytaj o dostępność lub podobne nieruchomości.',
+                'sold' => 'Ta nieruchomość została sprzedana. Pomożemy znaleźć podobne oferty.',
+                default => 'Dostępna. Poproś o więcej informacji lub umów niezobowiązującą wizytę.',
+            },
+            'sv' => match ($this->status) {
+                'reserved' => 'För närvarande reserverad. Fråga oss om tillgänglighet eller liknande bostäder.',
+                'sold' => 'Bostaden är såld. Vi hjälper dig gärna att hitta liknande alternativ.',
+                default => 'Tillgänglig. Begär mer information eller boka en förutsättningslös visning.',
+            },
+            'da' => match ($this->status) {
+                'reserved' => 'Reserveret i øjeblikket. Spørg os om tilgængelighed eller lignende boliger.',
+                'sold' => 'Boligen er solgt. Vi hjælper dig gerne med at finde lignende muligheder.',
+                default => 'Tilgængelig. Bed om flere oplysninger eller aftal en uforpligtende fremvisning.',
             },
             default => match ($this->status) {
                 'reserved' => 'Actualmente reservada. Consúltanos su disponibilidad o descubre alternativas similares.',
@@ -404,10 +492,10 @@ class Property extends Model
         ])->filter()->values();
 
         if ($extras->isNotEmpty()) {
-            return 'Un bien de type ' . $type . ' avec ' . $extras->join(', ', ' et ') . ($location ? ' a ' . $location : '') . '.';
+            return 'Un bien de type ' . $type . ' avec ' . $extras->join(', ', ' et ') . ($location ? ' à ' . $location : '') . '.';
         }
 
-        return 'Un bien de type ' . $type . ($location ? ' situe a ' . $location : '') . ' pret a etre etudie sereinement.';
+        return 'Un bien de type ' . $type . ($location ? ' situé à ' . $location : '') . ' prêt à être étudié sereinement.';
     }
 
     protected function buildGermanTypeSummary(string $type, ?string $location): string
@@ -422,7 +510,7 @@ class Property extends Model
             return 'Eine ' . $type . ' mit ' . $extras->join(', ', ' und ') . ($location ? ' in ' . $location : '') . '.';
         }
 
-        return 'Eine ' . $type . ($location ? ' in ' . $location : '') . ' fur eine ruhige Bewertung vorbereitet.';
+        return 'Eine ' . $type . ($location ? ' in ' . $location : '') . ' für eine ruhige Bewertung vorbereitet.';
     }
 
     protected function buildRussianTypeSummary(string $type, ?string $location): string
@@ -445,10 +533,10 @@ class Property extends Model
         $details = [];
 
         if ($this->area) {
-            $details[] = number_format($this->area, 0, ',', '.') . ' m2 construidos';
+            $details[] = number_format($this->area, 0, ',', '.') . ' m² construidos';
         }
         if ($this->tiene_solar && $this->metros_solar) {
-            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m2 de parcela';
+            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m² de parcela';
         }
         if ($this->tiene_patio) {
             $details[] = 'patio exterior';
@@ -493,23 +581,23 @@ class Property extends Model
         $details = [];
 
         if ($this->area) {
-            $details[] = number_format($this->area, 0, ',', '.') . ' m2 habitables';
+            $details[] = number_format($this->area, 0, ',', '.') . ' m² habitables';
         }
         if ($this->tiene_solar && $this->metros_solar) {
-            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m2 de terrain';
+            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m² de terrain';
         }
         if ($this->tiene_patio) {
-            $details[] = 'patio exterieur';
+            $details[] = 'patio extérieur';
         }
         if ($this->tiene_solar && ! $this->metros_solar) {
             $details[] = 'terrain disponible';
         }
 
         if ($details !== []) {
-            return 'Espaces a retenir: ' . collect($details)->join(', ', ' et ') . '.';
+            return 'Espaces à retenir : ' . collect($details)->join(', ', ' et ') . '.';
         }
 
-        return 'Une distribution fonctionnelle qui s adapte a differents usages.';
+        return 'Une distribution fonctionnelle qui s’adapte à différents usages.';
     }
 
     protected function buildGermanSpaceSummary(array $parts): string
@@ -517,23 +605,23 @@ class Property extends Model
         $details = [];
 
         if ($this->area) {
-            $details[] = number_format($this->area, 0, ',', '.') . ' m2 Wohnflache';
+            $details[] = number_format($this->area, 0, ',', '.') . ' m² Wohnfläche';
         }
         if ($this->tiene_solar && $this->metros_solar) {
-            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m2 Grundstuck';
+            $details[] = number_format($this->metros_solar, 0, ',', '.') . ' m² Grundstück';
         }
         if ($this->tiene_patio) {
-            $details[] = 'AuBenpatio';
+            $details[] = 'Außenbereich';
         }
         if ($this->tiene_solar && ! $this->metros_solar) {
-            $details[] = 'Grundstuck vorhanden';
+            $details[] = 'Grundstück vorhanden';
         }
 
         if ($details !== []) {
-            return 'Wichtige Flachen: ' . collect($details)->join(', ', ' und ') . '.';
+            return 'Wichtige Flächen: ' . collect($details)->join(', ', ' und ') . '.';
         }
 
-        return 'Praktischer Grundriss mit flexibler Nutzbarkeit fur verschiedene Lebensstile.';
+        return 'Praktischer Grundriss mit flexibler Nutzbarkeit für verschiedene Lebensstile.';
     }
 
     protected function buildRussianSpaceSummary(array $parts): string
@@ -558,5 +646,44 @@ class Property extends Model
         }
 
         return 'Практичная планировка и пространство, которое легко адаптировать под разные сценарии жизни.';
+    }
+
+    protected function buildAdditionalLocaleTypeSummary(string $locale, string $type, ?string $location): string
+    {
+        $copy = match ($locale) {
+            'nl' => ['bedroom' => 'slaapkamer', 'bedrooms' => 'slaapkamers', 'bathroom' => 'badkamer', 'bathrooms' => 'badkamers', 'pool' => 'zwembad', 'prefix' => 'Een', 'with' => 'met', 'in' => 'in', 'fallback' => 'klaar om rustig te ontdekken'],
+            'pl' => ['bedroom' => 'sypialnia', 'bedrooms' => 'sypialnie', 'bathroom' => 'łazienka', 'bathrooms' => 'łazienki', 'pool' => 'basen', 'prefix' => 'Nieruchomość typu', 'with' => 'z', 'in' => 'w', 'fallback' => 'gotowa do dokładnego obejrzenia'],
+            'sv' => ['bedroom' => 'sovrum', 'bedrooms' => 'sovrum', 'bathroom' => 'badrum', 'bathrooms' => 'badrum', 'pool' => 'pool', 'prefix' => 'En', 'with' => 'med', 'in' => 'i', 'fallback' => 'redo att upptäckas i lugn och ro'],
+            default => ['bedroom' => 'soveværelse', 'bedrooms' => 'soveværelser', 'bathroom' => 'badeværelse', 'bathrooms' => 'badeværelser', 'pool' => 'pool', 'prefix' => 'En', 'with' => 'med', 'in' => 'i', 'fallback' => 'klar til at blive udforsket nærmere'],
+        };
+        $extras = collect([
+            $this->bedrooms ? $this->bedrooms . ' ' . ($this->bedrooms === 1 ? $copy['bedroom'] : $copy['bedrooms']) : null,
+            $this->bathrooms ? $this->bathrooms . ' ' . ($this->bathrooms === 1 ? $copy['bathroom'] : $copy['bathrooms']) : null,
+            $this->tiene_piscina ? $copy['pool'] : null,
+        ])->filter()->values();
+        $locationText = $location ? ' ' . $copy['in'] . ' ' . $location : '';
+        $conjunction = match ($locale) { 'pl' => 'i', 'nl' => 'en', 'sv' => 'och', default => 'og' };
+
+        return $copy['prefix'] . ' ' . $type
+            . ($extras->isNotEmpty() ? ' ' . $copy['with'] . ' ' . $extras->join(', ', ' ' . $conjunction . ' ') : '')
+            . $locationText . ($extras->isEmpty() ? ' ' . $copy['fallback'] : '') . '.';
+    }
+
+    protected function buildAdditionalLocaleSpaceSummary(string $locale): string
+    {
+        $copy = match ($locale) {
+            'nl' => ['built' => 'm² woonoppervlakte', 'plot' => 'm² perceel', 'patio' => 'buitenpatio', 'available' => 'perceel beschikbaar', 'prefix' => 'Belangrijkste ruimtes:', 'fallback' => 'Een praktische indeling die zich aan verschillende woonwensen aanpast.', 'and' => 'en'],
+            'pl' => ['built' => 'm² powierzchni', 'plot' => 'm² działki', 'patio' => 'zewnętrzne patio', 'available' => 'dostępna działka', 'prefix' => 'Najważniejsze przestrzenie:', 'fallback' => 'Praktyczny układ, który można dopasować do różnych potrzeb.', 'and' => 'i'],
+            'sv' => ['built' => 'm² boyta', 'plot' => 'm² tomt', 'patio' => 'uteplats', 'available' => 'tomt tillgänglig', 'prefix' => 'Viktiga ytor:', 'fallback' => 'En praktisk planlösning som kan anpassas till olika behov.', 'and' => 'och'],
+            default => ['built' => 'm² boligareal', 'plot' => 'm² grund', 'patio' => 'gårdhave', 'available' => 'grund tilgængelig', 'prefix' => 'Vigtige arealer:', 'fallback' => 'En praktisk planløsning, der kan tilpasses forskellige behov.', 'and' => 'og'],
+        };
+        $details = collect([
+            $this->area ? number_format($this->area, 0, ',', '.') . ' ' . $copy['built'] : null,
+            $this->tiene_solar && $this->metros_solar ? number_format($this->metros_solar, 0, ',', '.') . ' ' . $copy['plot'] : null,
+            $this->tiene_patio ? $copy['patio'] : null,
+            $this->tiene_solar && ! $this->metros_solar ? $copy['available'] : null,
+        ])->filter()->values();
+
+        return $details->isNotEmpty() ? $copy['prefix'] . ' ' . $details->join(', ', ' ' . $copy['and'] . ' ') . '.' : $copy['fallback'];
     }
 }

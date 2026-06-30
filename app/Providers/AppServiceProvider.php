@@ -57,7 +57,14 @@ class AppServiceProvider extends ServiceProvider
                 ->all();
             $setting = function (string $key, string $default = '') {
                 if (in_array($key, $this->translatableSettingKeys, true)) {
-                    return Setting::getLocalizedValue($key, $default);
+                    $translationKey = 'frontend.site_defaults.' . $key;
+                    $localizedDefault = __($translationKey);
+
+                    return Setting::getLocalizedValue(
+                        $key,
+                        $localizedDefault !== $translationKey ? $localizedDefault : $default,
+                        fallbackToBase: false,
+                    );
                 }
 
                 return Setting::getValue($key, $default);

@@ -1,0 +1,1 @@
+<?php return ['reset'=>'Din adgangskode er nulstillet.','sent'=>'Vi har sendt linket til nulstilling af adgangskoden.','throttled'=>'Vent, før du prøver igen.','token'=>'Linket til nulstilling er ugyldigt.','user'=>'Ingen bruger blev fundet med denne e-mailadresse.'];

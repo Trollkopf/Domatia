@@ -233,6 +233,11 @@ class KyeroImportService
         $normalizedType = $this->normalizeType($this->firstValue($node, ['type', 'property_type']));
         $title = $this->firstValue($node, ['title', 'headline', 'name'])
             ?: $this->buildImportedTitle($normalizedType, $town, $zonaName, $province, $country);
+        $localizedTitles = collect(['en', 'fr', 'de', 'ru', 'nl', 'pl', 'sv', 'da'])
+            ->mapWithKeys(fn (string $locale) => [
+                $locale => $this->buildImportedTitle($normalizedType, $town, $zonaName, $province, $country, $locale),
+            ])
+            ->all();
         $location = collect([$town, $province ?: $region])->filter()->implode(', ');
         $features = $this->flattenXPathValues($node, ['features/feature', 'feature']);
         $features = PropertyFeatureSupport::normalizeList($features);
@@ -248,11 +253,11 @@ class KyeroImportService
         $hasPatio = ($derivedFlags['tiene_patio'] ?? false)
             || $this->toBoolean($this->firstValue($node, ['patio', 'terrace']));
         $description = $descriptionByLocale['es'] ?? $descriptionByLocale['en'] ?? reset($descriptionByLocale) ?: null;
-        $standardDescriptionLocales = collect(['en', 'fr', 'de', 'ru'])
+        $standardDescriptionLocales = collect(['en', 'fr', 'de', 'ru', 'nl', 'pl', 'sv', 'da'])
             ->mapWithKeys(fn (string $locale) => [$locale => $descriptionByLocale[$locale] ?? null])
             ->all();
         $extraDescriptions = collect($descriptionByLocale)
-            ->except(['es', 'en', 'fr', 'de', 'ru'])
+            ->except(['es', 'en', 'fr', 'de', 'ru', 'nl', 'pl', 'sv', 'da'])
             ->filter()
             ->all();
         $latitude = $this->toCoordinate($this->firstValue($node, ['location/latitude', 'latitude']));
@@ -263,11 +268,23 @@ class KyeroImportService
             'ref' => $this->firstValue($node, ['reference', 'ref']),
             'source_date' => $this->firstValue($node, ['date']),
             'title' => $title,
+            'title_en' => $localizedTitles['en'],
+            'title_fr' => $localizedTitles['fr'],
+            'title_de' => $localizedTitles['de'],
+            'title_ru' => $localizedTitles['ru'],
+            'title_nl' => $localizedTitles['nl'],
+            'title_pl' => $localizedTitles['pl'],
+            'title_sv' => $localizedTitles['sv'],
+            'title_da' => $localizedTitles['da'],
             'description' => $description,
             'description_en' => $standardDescriptionLocales['en'],
             'description_fr' => $standardDescriptionLocales['fr'],
             'description_de' => $standardDescriptionLocales['de'],
             'description_ru' => $standardDescriptionLocales['ru'],
+            'description_nl' => $standardDescriptionLocales['nl'],
+            'description_pl' => $standardDescriptionLocales['pl'],
+            'description_sv' => $standardDescriptionLocales['sv'],
+            'description_da' => $standardDescriptionLocales['da'],
             'description_extra' => $extraDescriptions,
             'location' => $location !== '' ? $location : ($zonaName ?: null),
             'zona_name' => $zonaName,
@@ -376,11 +393,23 @@ class KyeroImportService
 
             $attributes = [
                 'title' => $mapped['title'],
+                'title_en' => $mapped['title_en'],
+                'title_fr' => $mapped['title_fr'],
+                'title_de' => $mapped['title_de'],
+                'title_ru' => $mapped['title_ru'],
+                'title_nl' => $mapped['title_nl'],
+                'title_pl' => $mapped['title_pl'],
+                'title_sv' => $mapped['title_sv'],
+                'title_da' => $mapped['title_da'],
                 'description' => $mapped['description'],
                 'description_en' => $mapped['description_en'],
                 'description_fr' => $mapped['description_fr'],
                 'description_de' => $mapped['description_de'],
                 'description_ru' => $mapped['description_ru'],
+                'description_nl' => $mapped['description_nl'],
+                'description_pl' => $mapped['description_pl'],
+                'description_sv' => $mapped['description_sv'],
+                'description_da' => $mapped['description_da'],
                 'description_extra' => $mapped['description_extra'] !== [] ? $mapped['description_extra'] : null,
                 'location' => $mapped['location'],
                 'town' => $mapped['town'],
@@ -619,15 +648,55 @@ class KyeroImportService
         ?string $town,
         ?string $zonaName,
         ?string $province,
-        ?string $country
+        ?string $country,
+        string $locale = 'es',
     ): string {
-        $typeLabel = $type ?: 'propiedad';
+        $typeLabel = $this->localizedImportedType($type, $locale);
         $place = collect([$town, $zonaName, $province, $country])
             ->map(fn ($value) => trim((string) $value))
             ->filter()
             ->first();
 
-        return $place ? sprintf('%s en %s', $typeLabel, $place) : $typeLabel;
+        $preposition = match ($locale) {
+            'en', 'de', 'nl' => 'in',
+            'fr' => 'à',
+            'ru' => 'в',
+            'pl' => 'w',
+            'sv', 'da' => 'i',
+            default => 'en',
+        };
+
+        return $place ? sprintf('%s %s %s', $typeLabel, $preposition, $place) : $typeLabel;
+    }
+
+    protected function localizedImportedType(?string $type, string $locale): string
+    {
+        $normalized = Str::lower(trim((string) $type));
+        $typeKey = match ($normalized) {
+            'piso', 'apartment', 'flat' => 'piso',
+            'casa', 'house', 'townhouse' => 'casa',
+            'villa', 'detached villa' => 'villa',
+            'solar', 'plot', 'land' => 'solar',
+            default => null,
+        };
+        $labels = [
+            'es' => ['piso'=>'Piso','casa'=>'Casa','villa'=>'Villa','solar'=>'Solar','property'=>'Propiedad'],
+            'en' => ['piso'=>'Apartment','casa'=>'House','villa'=>'Villa','solar'=>'Plot','property'=>'Property'],
+            'fr' => ['piso'=>'Appartement','casa'=>'Maison','villa'=>'Villa','solar'=>'Terrain','property'=>'Bien'],
+            'de' => ['piso'=>'Wohnung','casa'=>'Haus','villa'=>'Villa','solar'=>'Grundstück','property'=>'Immobilie'],
+            'ru' => ['piso'=>'Квартира','casa'=>'Дом','villa'=>'Вилла','solar'=>'Участок','property'=>'Недвижимость'],
+            'nl' => ['piso'=>'Appartement','casa'=>'Huis','villa'=>'Villa','solar'=>'Bouwgrond','property'=>'Woning'],
+            'pl' => ['piso'=>'Apartament','casa'=>'Dom','villa'=>'Willa','solar'=>'Działka','property'=>'Nieruchomość'],
+            'sv' => ['piso'=>'Lägenhet','casa'=>'Hus','villa'=>'Villa','solar'=>'Tomt','property'=>'Bostad'],
+            'da' => ['piso'=>'Lejlighed','casa'=>'Hus','villa'=>'Villa','solar'=>'Grund','property'=>'Bolig'],
+        ];
+        $localeLabels = $labels[$locale] ?? $labels['es'];
+
+        if ($typeKey) {
+            return $localeLabels[$typeKey];
+        }
+
+        return filled($type) ? (string) $type : $localeLabels['property'];
     }
 
     protected function normalizeStatus(?string $status): string

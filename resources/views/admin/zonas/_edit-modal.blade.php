@@ -14,22 +14,12 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre EN</label>
-                        <input type="text" name="nombre_en" class="form-control" value="{{ $zona->nombre_en }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre FR</label>
-                        <input type="text" name="nombre_fr" class="form-control" value="{{ $zona->nombre_fr }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre DE</label>
-                        <input type="text" name="nombre_de" class="form-control" value="{{ $zona->nombre_de }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre RU</label>
-                        <input type="text" name="nombre_ru" class="form-control" value="{{ $zona->nombre_ru }}">
-                    </div>
+                    @foreach ($zonaTranslationLocales as $locale => $label)
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre {{ $label }}</label>
+                            <input type="text" name="nombre_{{ $locale }}" class="form-control" value="{{ $zona->{'nombre_' . $locale} }}">
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="mb-3">
@@ -57,22 +47,12 @@
                                 <input type="text" name="secciones[{{ $index }}][titulo]" class="form-control" value="{{ $seccion->titulo }}">
                             </div>
                             <div class="row g-2 mb-2">
-                                <div class="col-md-6">
-                                    <label class="form-label">Título EN</label>
-                                    <input type="text" name="secciones[{{ $index }}][titulo_en]" class="form-control" value="{{ $seccion->titulo_en }}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Título FR</label>
-                                    <input type="text" name="secciones[{{ $index }}][titulo_fr]" class="form-control" value="{{ $seccion->titulo_fr }}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Título DE</label>
-                                    <input type="text" name="secciones[{{ $index }}][titulo_de]" class="form-control" value="{{ $seccion->titulo_de }}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Título RU</label>
-                                    <input type="text" name="secciones[{{ $index }}][titulo_ru]" class="form-control" value="{{ $seccion->titulo_ru }}">
-                                </div>
+                                @foreach ($zonaTranslationLocales as $locale => $label)
+                                    <div class="col-md-6">
+                                        <label class="form-label">Título {{ $label }}</label>
+                                        <input type="text" name="secciones[{{ $index }}][titulo_{{ $locale }}]" class="form-control" value="{{ $seccion->{'titulo_' . $locale} }}">
+                                    </div>
+                                @endforeach
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">Imagen</label><br>
@@ -86,22 +66,12 @@
                                 <textarea name="secciones[{{ $index }}][descripcion]" class="form-control">{{ $seccion->descripcion }}</textarea>
                             </div>
                             <div class="row g-2">
-                                <div class="col-md-6">
-                                    <label class="form-label">Descripción EN</label>
-                                    <textarea name="secciones[{{ $index }}][descripcion_en]" class="form-control">{{ $seccion->descripcion_en }}</textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Descripción FR</label>
-                                    <textarea name="secciones[{{ $index }}][descripcion_fr]" class="form-control">{{ $seccion->descripcion_fr }}</textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Descripción DE</label>
-                                    <textarea name="secciones[{{ $index }}][descripcion_de]" class="form-control">{{ $seccion->descripcion_de }}</textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Descripción RU</label>
-                                    <textarea name="secciones[{{ $index }}][descripcion_ru]" class="form-control">{{ $seccion->descripcion_ru }}</textarea>
-                                </div>
+                                @foreach ($zonaTranslationLocales as $locale => $label)
+                                    <div class="col-md-6">
+                                        <label class="form-label">Descripción {{ $label }}</label>
+                                        <textarea name="secciones[{{ $index }}][descripcion_{{ $locale }}]" class="form-control">{{ $seccion->{'descripcion_' . $locale} }}</textarea>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     @endforeach

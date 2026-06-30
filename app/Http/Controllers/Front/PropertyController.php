@@ -28,11 +28,19 @@ class PropertyController extends Controller
                     ->orWhere('title_fr', 'like', '%' . $search . '%')
                     ->orWhere('title_de', 'like', '%' . $search . '%')
                     ->orWhere('title_ru', 'like', '%' . $search . '%')
+                    ->orWhere('title_nl', 'like', '%' . $search . '%')
+                    ->orWhere('title_pl', 'like', '%' . $search . '%')
+                    ->orWhere('title_sv', 'like', '%' . $search . '%')
+                    ->orWhere('title_da', 'like', '%' . $search . '%')
                     ->orWhere('location', 'like', '%' . $search . '%')
                     ->orWhere('location_en', 'like', '%' . $search . '%')
                     ->orWhere('location_fr', 'like', '%' . $search . '%')
                     ->orWhere('location_de', 'like', '%' . $search . '%')
                     ->orWhere('location_ru', 'like', '%' . $search . '%')
+                    ->orWhere('location_nl', 'like', '%' . $search . '%')
+                    ->orWhere('location_pl', 'like', '%' . $search . '%')
+                    ->orWhere('location_sv', 'like', '%' . $search . '%')
+                    ->orWhere('location_da', 'like', '%' . $search . '%')
                     ->orWhere('ref', 'like', '%' . $search . '%')
                     ->orWhereHas('zona', function ($zonaQuery) use ($search) {
                         $zonaQuery
@@ -40,7 +48,11 @@ class PropertyController extends Controller
                             ->orWhere('nombre_en', 'like', '%' . $search . '%')
                             ->orWhere('nombre_fr', 'like', '%' . $search . '%')
                             ->orWhere('nombre_de', 'like', '%' . $search . '%')
-                            ->orWhere('nombre_ru', 'like', '%' . $search . '%');
+                            ->orWhere('nombre_ru', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_nl', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_pl', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_sv', 'like', '%' . $search . '%')
+                            ->orWhere('nombre_da', 'like', '%' . $search . '%');
                     });
             });
         }

@@ -1,0 +1,1 @@
+<?php return ['reset'=>'Hasło zostało zmienione.','sent'=>'Wysłaliśmy link do zmiany hasła.','throttled'=>'Odczekaj chwilę przed kolejną próbą.','token'=>'Ten link do zmiany hasła jest nieprawidłowy.','user'=>'Nie znaleziono użytkownika z tym adresem e-mail.'];

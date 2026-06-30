@@ -10,12 +10,7 @@
         'sold' => 'Vendida',
         'hidden' => 'Oculta',
     ];
-    $extraDescriptionLocales = [
-        'nl' => 'Holandés',
-        'pl' => 'Polaco',
-        'sv' => 'Sueco',
-        'da' => 'Danés',
-    ];
+    $propertyTranslationLocales = collect(config('app.supported_locales'))->except(config('app.locale'))->all();
     $featureTextareaValue = old('features_text', isset($property) ? implode("\n", $property->featuresList()) : '');
 @endphp
 
@@ -297,7 +292,7 @@
         <div class="card-body">
             <h5 class="mb-3">Títulos y ubicaciones por idioma</h5>
             <div class="row g-3">
-                @foreach (['en' => 'EN', 'fr' => 'FR', 'de' => 'DE', 'ru' => 'RU'] as $locale => $label)
+                @foreach ($propertyTranslationLocales as $locale => $label)
                     <div class="col-md-6">
                         <label class="form-label">Título {{ $label }}</label>
                         <input type="text" name="title_{{ $locale }}" class="form-control" value="{{ old('title_' . $locale, $property->{'title_' . $locale} ?? '') }}">
@@ -315,19 +310,13 @@
         <div class="card-body">
             <h5 class="mb-3">Descripciones por idioma</h5>
             <div class="row g-3">
-                @foreach (['en' => 'EN', 'fr' => 'FR', 'de' => 'DE', 'ru' => 'RU'] as $locale => $label)
+                @foreach ($propertyTranslationLocales as $locale => $label)
                     <div class="col-md-6">
                         <label class="form-label">Descripción {{ $label }}</label>
                         <textarea name="description_{{ $locale }}" class="form-control" rows="6">{{ old('description_' . $locale, $property->{'description_' . $locale} ?? '') }}</textarea>
                     </div>
                 @endforeach
 
-                @foreach ($extraDescriptionLocales as $locale => $label)
-                    <div class="col-md-6">
-                        <label class="form-label">Descripción {{ $label }}</label>
-                        <textarea name="description_extra[{{ $locale }}]" class="form-control" rows="6">{{ old('description_extra.' . $locale, $property->description_extra[$locale] ?? '') }}</textarea>
-                    </div>
-                @endforeach
             </div>
         </div>
     </div>
@@ -340,7 +329,7 @@
             </p>
 
             <div class="row g-3">
-                @foreach (['' => 'ES', '_en' => 'EN', '_fr' => 'FR', '_de' => 'DE', '_ru' => 'RU'] as $suffix => $label)
+                @foreach (['' => config('app.supported_locales.' . config('app.locale'))] + collect($propertyTranslationLocales)->mapWithKeys(fn ($label, $locale) => ['_' . $locale => $label])->all() as $suffix => $label)
                     @for ($i = 1; $i <= 3; $i++)
                         <div class="col-md-4">
                             <label class="form-label">Resumen {{ $i }} {{ $label }}</label>

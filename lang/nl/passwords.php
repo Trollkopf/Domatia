@@ -1,0 +1,1 @@
+<?php return ['reset'=>'Uw wachtwoord is opnieuw ingesteld.','sent'=>'We hebben de link voor het herstellen van uw wachtwoord verzonden.','throttled'=>'Wacht even voordat u het opnieuw probeert.','token'=>'Deze herstellink is ongeldig.','user'=>'Er is geen gebruiker met dit e-mailadres gevonden.'];
