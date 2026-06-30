@@ -29,6 +29,13 @@ return [
     ],
     'home' => [
         'title' => 'Home',
+        'quick_search_title' => 'Find your next home',
+        'search_placeholder' => 'Area, town, reference…',
+        'any_zone' => 'All areas',
+        'any_type' => 'All property types',
+        'max_budget' => 'Maximum budget',
+        'any_budget' => 'Any price',
+        'properties_count' => ':count properties',
         'location_placeholder' => 'Location',
         'property_type' => 'Property type',
         'min_price' => 'From EUR',
@@ -47,7 +54,7 @@ return [
         'summary_labels' => [
             'type' => 'Type',
             'space' => 'Space',
-            'operation' => 'Status',
+            'operation' => 'Availability',
             'default' => 'Summary',
         ],
         'description_title' => 'Property description',

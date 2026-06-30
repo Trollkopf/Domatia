@@ -15,7 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('kyero:import-feeds')
+            ->dailyAt(config('kyero.schedule_time'))
+            ->timezone(config('kyero.schedule_timezone'))
+            ->withoutOverlapping(360);
     }
 
     /**

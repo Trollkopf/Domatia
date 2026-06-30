@@ -18,10 +18,6 @@
             background-color: #e3e3e3;
         }
 
-        .card-body {
-            overflow-y: auto;
-            max-height: 100vh;
-        }
     </style>
 @endsection
 
@@ -31,47 +27,10 @@
             <h1 class="m-0 fs-4">Editar Propiedad</h1>
         </div>
 
-        <div class="card-body overflow-auto" style="max-height: 80vh;">
+        <div class="card-body">
             <form action="{{ route('admin.properties.update', $property) }}" method="POST" enctype="multipart/form-data">
                 @method('PUT')
                 @include('admin.properties._form')
-
-                @if ($property->thumbnail)
-                    <div class="mb-4">
-                        <h5 class="mt-4">Imagen principal actual</h5>
-                        <div class="border rounded p-3 bg-light d-inline-block">
-                            <img src="{{ asset('storage/' . $property->thumbnail) }}" class="img-fluid rounded" style="max-width: 240px; object-fit: cover;">
-                        </div>
-                    </div>
-                @endif
-
-                @if ($property->images->count() > 0)
-                    <h5 class="mt-4">Imágenes actuales</h5>
-                    <div class="row g-2">
-                        @foreach ($property->images as $image)
-                            <div class="col-3 position-relative">
-                                <img src="{{ asset('storage/' . $image->path) }}" class="img-fluid rounded" style="object-fit: cover; aspect-ratio: 1/1;">
-                                <form action="{{ route('admin.properties.images.set-thumbnail', [$property, $image]) }}" method="POST" class="position-absolute bottom-0 start-0 m-1">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-sm btn-light border">Hacer principal</button>
-                                </form>
-                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="deleteImage({{ $image->id }})">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-
-                <div class="mb-4">
-                    <label class="form-label">Añadir nuevas imágenes</label>
-                    <div class="dropzone" id="dropzone">
-                        Arrastra las imágenes aquí o haz clic para seleccionar
-                        <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
-                    </div>
-                    <div class="form-text mt-2">Las nuevas imágenes se añadirán al final.</div>
-                </div>
             </form>
         </div>
     </div>
@@ -137,6 +96,32 @@
             }
         }
 
+        document.querySelectorAll('[data-set-thumbnail]').forEach(button => {
+            button.addEventListener('click', () => setThumbnail(button.dataset.setThumbnail));
+        });
+
+        document.querySelectorAll('[data-delete-image]').forEach(button => {
+            button.addEventListener('click', () => deleteImage(button.dataset.deleteImage));
+        });
+
+        function setThumbnail(id) {
+            fetch("{{ url('/admin/properties/' . $property->id . '/images') }}/" + id + "/set-thumbnail", {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No se pudo cambiar la imagen principal.');
+                    }
+
+                    location.reload();
+                })
+                .catch(() => alert('No se pudo cambiar la imagen principal'));
+        }
+
         function deleteImage(id) {
             if (!confirm('¿Seguro que quieres eliminar esta imagen?')) {
                 return;
@@ -149,14 +134,21 @@
                     'Accept': 'application/json',
                 }
             })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('No se pudo eliminar la imagen.');
+                    }
+
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         location.reload();
                     } else {
                         alert('No se pudo eliminar la imagen');
                     }
-                });
+                })
+                .catch(() => alert('No se pudo eliminar la imagen'));
         }
     </script>
 @endpush

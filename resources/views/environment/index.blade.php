@@ -40,7 +40,7 @@
         @foreach ($zonas as $zona)
             <div class="col">
                 <div class="card position-relative border-0 shadow-sm">
-                    <img src="{{ asset('storage/' . $zona->imagen_principal) }}" class="card-img-top w-100"
+                    <img src="{{ $zona->imageUrl() }}" class="card-img-top w-100"
                         style="height: 240px; object-fit: cover;" alt="{{ $zona->translatedName() }}">
                     <div class="card-img-overlay d-flex justify-content-center align-items-center">
                         <h4 class="text-white fw-semibold text-center"

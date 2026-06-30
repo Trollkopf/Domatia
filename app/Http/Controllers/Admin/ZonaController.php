@@ -12,7 +12,11 @@ class ZonaController extends Controller
 {
     public function index()
     {
-        $zonas = Zona::with('secciones')->orderBy('nombre')->get();
+        $zonas = Zona::with([
+            'secciones',
+            'representativePublishedProperty',
+            'representativeProperty',
+        ])->orderBy('nombre')->get();
 
         return view('admin.zonas.index', compact('zonas'));
     }

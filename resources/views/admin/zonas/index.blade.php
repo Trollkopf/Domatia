@@ -31,6 +31,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
+                        <th>Imagen</th>
                         <th>Nombre</th>
                         <th class="text-end">Acciones</th>
                     </tr>
@@ -84,7 +85,7 @@
                     <div class="mb-3">
                         <label class="form-label">Imagen principal</label>
                         <input type="file" name="imagen_principal" class="form-control" accept="image/*">
-                        <div class="form-text">Formatos admitidos: JPG, PNG, WEBP. Tamaño recomendado: hasta 10 MB.</div>
+                        <div class="form-text">Si no subes ninguna, se utilizará automáticamente una foto de las propiedades de la zona.</div>
                     </div>
 
                     <hr>

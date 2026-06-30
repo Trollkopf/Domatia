@@ -28,6 +28,13 @@ return [
         'featured' => 'Rekomenduem',
     ],
     'home' => [
+        'quick_search_title' => 'Найдите свой будущий дом',
+        'search_placeholder' => 'Район, город, номер…',
+        'any_zone' => 'Все районы',
+        'any_type' => 'Все типы',
+        'max_budget' => 'Максимальный бюджет',
+        'any_budget' => 'Любая цена',
+        'properties_count' => ':count объектов',
         'title' => 'Glavnaya',
         'location_placeholder' => 'Lokaciya',
         'property_type' => 'Tip nedvizhimosti',
@@ -47,7 +54,7 @@ return [
         'summary_labels' => [
             'type' => 'Tip',
             'space' => 'Ploshad',
-            'operation' => 'Status',
+            'operation' => 'Доступность',
             'default' => 'Svodka',
         ],
         'description_title' => 'Opisanie obekta',

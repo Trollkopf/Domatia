@@ -12,7 +12,7 @@
         trim($zonaSectionDescription) ?: __('ui.environment.properties_in', ['name' => $zona->translatedName()]),
         160
     );
-    $zonaSeoImage = $zona->imagen_principal ? asset('storage/' . $zona->imagen_principal) : asset('images/our-company.jpg');
+    $zonaSeoImage = $zona->imageUrl();
 @endphp
 
 @section('meta_title', $zonaSeoTitle)
@@ -23,7 +23,7 @@
 
 @section('content')
     <section class="page-hero" style="min-height: 400px;">
-        <img src="{{ asset('storage/' . $zona->imagen_principal) }}" alt="{{ $zona->translatedName() }}" class="page-hero-media">
+        <img src="{{ $zona->imageUrl() }}" alt="{{ $zona->translatedName() }}" class="page-hero-media">
         <div class="page-hero-overlay"></div>
         <div class="container page-hero-content">
             <div class="page-hero-copy text-center mx-auto">

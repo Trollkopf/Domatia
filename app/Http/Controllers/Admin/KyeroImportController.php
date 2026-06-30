@@ -3,21 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\KyeroFeed;
 use App\Models\PropertyImportRun;
+use App\Services\KyeroFeedService;
 use App\Services\KyeroImportService;
 use Illuminate\Http\Request;
 use Throwable;
 
 class KyeroImportController extends Controller
 {
-    public function __construct(protected KyeroImportService $kyeroImportService)
+    public function __construct(
+        protected KyeroImportService $kyeroImportService,
+        protected KyeroFeedService $kyeroFeedService
+    )
     {
     }
 
     public function index()
     {
         $latestRuns = PropertyImportRun::query()
-            ->with('user')
+            ->with(['user', 'kyeroFeed'])
             ->latest()
             ->take(10)
             ->get();
@@ -29,7 +34,53 @@ class KyeroImportController extends Controller
             $activeRun = PropertyImportRun::query()->find($runId);
         }
 
-        return view('admin.kyero.index', compact('latestRuns', 'activeRun'));
+        $feeds = KyeroFeed::query()->with('lastRun')->orderBy('name')->get();
+
+        return view('admin.kyero.index', compact('latestRuns', 'activeRun', 'feeds'));
+    }
+
+    public function storeFeed(Request $request)
+    {
+        $validated = $request->validate($this->feedRules());
+
+        KyeroFeed::create(array_merge($validated, [
+            'is_active' => $request->boolean('is_active'),
+        ]));
+
+        return redirect()->route('admin.kyero.index')->with('success', 'Fuente Kyero guardada.');
+    }
+
+    public function updateFeed(Request $request, KyeroFeed $feed)
+    {
+        $validated = $request->validate($this->feedRules());
+        $feed->update(array_merge($validated, [
+            'is_active' => $request->boolean('is_active'),
+        ]));
+
+        return redirect()->route('admin.kyero.index')->with('success', 'Fuente Kyero actualizada.');
+    }
+
+    public function destroyFeed(KyeroFeed $feed)
+    {
+        $feed->delete();
+
+        return redirect()->route('admin.kyero.index')->with('success', 'Fuente Kyero eliminada.');
+    }
+
+    public function runFeed(Request $request, KyeroFeed $feed)
+    {
+        try {
+            $run = $this->kyeroFeedService->prepare($feed, $request->user());
+            $backgroundStarted = $this->kyeroImportService->startBackgroundProcessing($run, 5);
+        } catch (Throwable $exception) {
+            return redirect()->route('admin.kyero.index')
+                ->withErrors(['feed_url' => $exception->getMessage()]);
+        }
+
+        return redirect()->route('admin.kyero.index', ['run' => $run->id])
+            ->with('success', $backgroundStarted
+                ? 'Feed descargado. La importación se está procesando en segundo plano.'
+                : 'Feed descargado y preparado. Puedes procesarlo manualmente desde esta pantalla.');
     }
 
     public function store(Request $request)
@@ -81,7 +132,11 @@ class KyeroImportController extends Controller
     {
         try {
             $run = $this->kyeroImportService->processNextChunk($run, 1);
+            $this->kyeroFeedService->syncFeedStatus($run);
         } catch (Throwable $exception) {
+            $run->refresh();
+            $this->kyeroFeedService->syncFeedStatus($run);
+
             return response()->json([
                 'ok' => false,
                 'message' => $exception->getMessage(),
@@ -118,6 +173,16 @@ class KyeroImportController extends Controller
                 'max_images_per_property' => $run->max_images_per_property,
                 'progress' => min(100, $progress),
             ],
+        ];
+    }
+
+    protected function feedRules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'url' => 'required|url:http,https|max:2048',
+            'is_active' => 'nullable|boolean',
+            'max_images_per_property' => 'required|integer|min:1|max:30',
         ];
     }
 }

@@ -14,46 +14,8 @@ class PropertyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Property::query()->with('zona');
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($subQuery) use ($search) {
-                $subQuery->where('title', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%")
-                    ->orWhere('ref', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('zona_id')) {
-            $query->where('zona_id', $request->input('zona_id'));
-        }
-
-        if ($request->filled('tipo')) {
-            $query->where('tipo', $request->input('tipo'));
-        }
-
-        if ($request->filled('featured')) {
-            $query->where('is_featured', $request->boolean('featured'));
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->input('price_min'));
-        }
-
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->input('price_max'));
-        }
-
-        if ($request->boolean('missing_thumbnail')) {
-            $query->where(function ($subQuery) {
-                $subQuery->whereNull('thumbnail')->orWhere('thumbnail', '');
-            });
-        }
+        $query = $this->applyPropertyFilters(Property::query()->with('zona'), $request->all());
+        $matchingDraftCount = (clone $query)->where('status', 'draft')->count();
 
         $properties = $query->latest()->paginate(10)->withQueryString();
         $zonas = Zona::orderBy('nombre')->get(['id', 'nombre']);
@@ -71,15 +33,17 @@ class PropertyController extends Controller
             'hidden' => 'Oculta',
         ]);
 
-        return view('admin.properties.index', compact('properties', 'zonas', 'tipos', 'statuses'));
+        return view('admin.properties.index', compact('properties', 'zonas', 'tipos', 'statuses', 'matchingDraftCount'));
     }
 
     public function create()
     {
-        $zonas = Zona::all();
-        $propietarios = Propietario::all();
+        $zonas = Zona::query()->orderBy('nombre')->get();
+        $selectedPropietario = old('propietario_id')
+            ? Propietario::query()->find(old('propietario_id'))
+            : null;
 
-        return view('admin.properties.create', compact('zonas', 'propietarios'));
+        return view('admin.properties.create', compact('zonas', 'selectedPropietario'));
     }
 
     public function store(Request $request)
@@ -122,11 +86,14 @@ class PropertyController extends Controller
 
     public function edit($id)
     {
-        $zonas = Zona::all();
-        $propietarios = Propietario::all();
+        $zonas = Zona::query()->orderBy('nombre')->get();
         $property = Property::with('images')->findOrFail($id);
+        $selectedPropietarioId = old('propietario_id', $property->propietario_id);
+        $selectedPropietario = $selectedPropietarioId
+            ? Propietario::query()->find($selectedPropietarioId)
+            : null;
 
-        return view('admin.properties.edit', compact('property', 'zonas', 'propietarios'));
+        return view('admin.properties.edit', compact('property', 'zonas', 'selectedPropietario'));
     }
 
     public function update(Request $request, $id)
@@ -182,8 +149,71 @@ class PropertyController extends Controller
 
         $property->save();
 
+        if ($request->expectsJson()) {
+            $statusLabels = [
+                'draft' => 'Borrador',
+                'published' => 'Publicada',
+                'reserved' => 'Reservada',
+                'sold' => 'Vendida',
+                'hidden' => 'Oculta',
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Propiedad actualizada.',
+                'property_id' => $property->id,
+                'status' => $property->status,
+                'status_label' => $statusLabels[$property->status] ?? ucfirst($property->status),
+                'is_featured' => $property->is_featured,
+            ]);
+        }
+
         return redirect()->route('admin.properties.index', $request->except(['status', 'toggle_featured']))
             ->with('success', 'Propiedad actualizada.');
+    }
+
+    public function bulkPublish(Request $request)
+    {
+        $validated = $request->validate([
+            'scope' => 'required|in:selected,filtered',
+            'property_ids' => 'required_if:scope,selected|array|max:500',
+            'property_ids.*' => 'integer|exists:properties,id',
+            'filters' => 'nullable|array',
+            'filters.search' => 'nullable|string|max:255',
+            'filters.zona_id' => 'nullable|integer',
+            'filters.tipo' => 'nullable|string|max:100',
+            'filters.status' => 'nullable|in:draft,published,reserved,sold,hidden',
+            'filters.featured' => 'nullable|in:0,1',
+            'filters.price_min' => 'nullable|numeric',
+            'filters.price_max' => 'nullable|numeric',
+            'filters.missing_thumbnail' => 'nullable|in:0,1',
+        ]);
+
+        $query = Property::query();
+
+        if ($validated['scope'] === 'selected') {
+            $query->whereIn('id', $validated['property_ids'] ?? []);
+        } else {
+            $query = $this->applyPropertyFilters($query, $validated['filters'] ?? []);
+        }
+
+        $propertyIds = $query->where('status', 'draft')->pluck('id');
+        $updatedCount = Property::query()->whereIn('id', $propertyIds)->update(['status' => 'published']);
+        $message = $updatedCount === 1
+            ? 'Se ha publicado 1 propiedad.'
+            : "Se han publicado {$updatedCount} propiedades.";
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'updated_count' => $updatedCount,
+                'property_ids' => $propertyIds->values(),
+            ]);
+        }
+
+        return redirect()->route('admin.properties.index', $request->input('filters', []))
+            ->with('success', $message);
     }
 
     public function destroy($id)
@@ -193,6 +223,50 @@ class PropertyController extends Controller
 
         return redirect()->route('admin.properties.index')
             ->with('success', 'Propiedad eliminada exitosamente.');
+    }
+
+    private function applyPropertyFilters($query, array $filters)
+    {
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($subQuery) use ($search) {
+                $subQuery->where('title', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('ref', 'like', "%{$search}%");
+            });
+        }
+
+        if (! empty($filters['zona_id'])) {
+            $query->where('zona_id', $filters['zona_id']);
+        }
+
+        if (! empty($filters['tipo'])) {
+            $query->where('tipo', $filters['tipo']);
+        }
+
+        if (array_key_exists('featured', $filters) && $filters['featured'] !== '') {
+            $query->where('is_featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if ($filters['price_min'] ?? null) {
+            $query->where('price', '>=', $filters['price_min']);
+        }
+
+        if ($filters['price_max'] ?? null) {
+            $query->where('price', '<=', $filters['price_max']);
+        }
+
+        if (filter_var($filters['missing_thumbnail'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            $query->where(function ($subQuery) {
+                $subQuery->whereNull('thumbnail')->orWhere('thumbnail', '');
+            });
+        }
+
+        return $query;
     }
 
     private function resolvePublicationState(Request $request, ?Property $property = null): array

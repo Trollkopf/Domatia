@@ -293,6 +293,84 @@
     </script>
 @endpush
 
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sectionTabs = document.getElementById('settingsSectionTabs');
+            const settingsForm = sectionTabs?.closest('form');
+
+            if (!sectionTabs || !settingsForm) {
+                return;
+            }
+
+            const storageKey = 'settings-section-tab';
+            const validationErrors = @json($errors->messages());
+            let firstInvalidField = null;
+
+            function activateFieldSection(field) {
+                const sectionPane = field.closest('.settings-section-pane');
+
+                if (sectionPane) {
+                    sectionTabs.querySelector('[data-bs-target="#' + CSS.escape(sectionPane.id) + '"]')?.click();
+                }
+
+                const localePane = field.closest('#settings-languages-pane .tab-pane');
+
+                if (localePane) {
+                    document.getElementById('settingsLocaleTabs')
+                        ?.querySelector('[data-bs-target="#' + CSS.escape(localePane.id) + '"]')
+                        ?.click();
+                }
+            }
+
+            Object.entries(validationErrors).forEach(function ([field, messages]) {
+                const input = settingsForm.querySelector('[name="' + CSS.escape(field) + '"]');
+
+                if (!input) {
+                    return;
+                }
+
+                input.classList.add('is-invalid');
+
+                const feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                feedback.textContent = messages[0];
+                input.insertAdjacentElement('afterend', feedback);
+                firstInvalidField ??= input;
+            });
+
+            if (firstInvalidField) {
+                activateFieldSection(firstInvalidField);
+            } else {
+                const rememberedTarget = sessionStorage.getItem(storageKey);
+                sectionTabs.querySelector('[data-bs-target="' + CSS.escape(rememberedTarget || '') + '"]')?.click();
+            }
+
+            let validationTabOpened = false;
+
+            settingsForm.addEventListener('invalid', function (event) {
+                if (validationTabOpened) {
+                    return;
+                }
+
+                validationTabOpened = true;
+                activateFieldSection(event.target);
+
+                window.setTimeout(function () {
+                    event.target.focus();
+                    validationTabOpened = false;
+                }, 200);
+            }, true);
+
+            sectionTabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function (tab) {
+                tab.addEventListener('shown.bs.tab', function (event) {
+                    sessionStorage.setItem(storageKey, event.target.dataset.bsTarget);
+                });
+            });
+        });
+    </script>
+@endpush
+
 @section('content')
     @php
         $localizedTextFields = [
@@ -337,6 +415,38 @@
                 @csrf
                 @method('PUT')
 
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <div class="fw-semibold mb-1">Revisa los campos indicados antes de guardar.</div>
+                        <div class="small">Se ha abierto automáticamente la sección con el primer error.</div>
+                    </div>
+                @endif
+
+                <ul class="nav admin-form-tabs mb-4" id="settingsSectionTabs" role="tablist" aria-label="Secciones de ajustes">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="settings-general-tab" data-bs-toggle="tab" data-bs-target="#settings-general-pane" type="button" role="tab" aria-controls="settings-general-pane" aria-selected="true">General</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-seo-tab" data-bs-toggle="tab" data-bs-target="#settings-seo-pane" type="button" role="tab" aria-controls="settings-seo-pane" aria-selected="false">SEO</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-home-tab" data-bs-toggle="tab" data-bs-target="#settings-home-pane" type="button" role="tab" aria-controls="settings-home-pane" aria-selected="false">Portada</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-content-tab" data-bs-toggle="tab" data-bs-target="#settings-content-pane" type="button" role="tab" aria-controls="settings-content-pane" aria-selected="false">Contenido</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-headers-tab" data-bs-toggle="tab" data-bs-target="#settings-headers-pane" type="button" role="tab" aria-controls="settings-headers-pane" aria-selected="false">Cabeceras</button>
+                    </li>
+                    @if (! empty($settingsLocales))
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="settings-languages-tab" data-bs-toggle="tab" data-bs-target="#settings-languages-pane" type="button" role="tab" aria-controls="settings-languages-pane" aria-selected="false">Idiomas</button>
+                        </li>
+                    @endif
+                </ul>
+
+                <div class="tab-content" id="settingsSectionTabContent">
+                <div class="tab-pane settings-section-pane fade show active" id="settings-general-pane" role="tabpanel" aria-labelledby="settings-general-tab" tabindex="0">
                 <div class="row g-3">
                     <div class="col-12">
                         <h2 class="h5 mb-1">Datos generales</h2>
@@ -363,7 +473,13 @@
                         <input type="text" name="company_address" class="form-control" value="{{ old('company_address', $settings['company_address']) }}">
                     </div>
 
-                    <div class="col-12 pt-3">
+                </div>
+                </div>
+
+                <div class="tab-pane settings-section-pane fade" id="settings-seo-pane" role="tabpanel" aria-labelledby="settings-seo-tab" tabindex="0">
+                <div class="row g-3">
+
+                    <div class="col-12">
                         <h2 class="h5 mb-1">SEO tecnico</h2>
                         <p class="text-muted small mb-0">Base global para titles, descripciones, verificaciones y robots.</p>
                     </div>
@@ -401,7 +517,13 @@
                         <input type="text" name="footer_text" class="form-control" value="{{ old('footer_text', $settings['footer_text']) }}">
                     </div>
 
-                    <div class="col-12 pt-3">
+                </div>
+                </div>
+
+                <div class="tab-pane settings-section-pane fade" id="settings-home-pane" role="tabpanel" aria-labelledby="settings-home-tab" tabindex="0">
+                <div class="row g-3">
+
+                    <div class="col-12">
                         <h2 class="h5 mb-1">Portada</h2>
                         <p class="text-muted small mb-0">Controla la propuesta de valor visible en la home.</p>
                     </div>
@@ -520,7 +642,13 @@
                         <input type="text" name="home_cta_secondary_url" class="form-control" value="{{ old('home_cta_secondary_url', $settings['home_cta_secondary_url']) }}">
                     </div>
 
-                    <div class="col-12 pt-3">
+                </div>
+                </div>
+
+                <div class="tab-pane settings-section-pane fade" id="settings-content-pane" role="tabpanel" aria-labelledby="settings-content-tab" tabindex="0">
+                <div class="row g-3">
+
+                    <div class="col-12">
                         <h2 class="h5 mb-1">Paginas de contenido</h2>
                         <p class="text-muted small mb-0">Textos reutilizados para contacto y sobre nosotros.</p>
                     </div>
@@ -540,7 +668,13 @@
                         <textarea name="about_body" class="form-control" rows="6">{{ old('about_body', $settings['about_body']) }}</textarea>
                     </div>
 
-                    <div class="col-12 pt-3">
+                </div>
+                </div>
+
+                <div class="tab-pane settings-section-pane fade" id="settings-headers-pane" role="tabpanel" aria-labelledby="settings-headers-tab" tabindex="0">
+                <div class="row g-3">
+
+                    <div class="col-12">
                         <h2 class="h5 mb-1">Headers de secciones</h2>
                         <p class="text-muted small mb-0">Controla el titulo y la imagen principal de cada portada publica.</p>
                     </div>
@@ -601,12 +735,14 @@
                         'recommendedHeight' => $headerTargetHeight,
                     ])
 
-                    @if (! empty($settingsLocales))
-                        <div class="col-12 pt-4">
-                            <hr class="my-0">
-                        </div>
+                </div>
+                </div>
 
-                        <div class="col-12 pt-3">
+                    @if (! empty($settingsLocales))
+                <div class="tab-pane settings-section-pane fade" id="settings-languages-pane" role="tabpanel" aria-labelledby="settings-languages-tab" tabindex="0">
+                <div class="row g-3">
+
+                        <div class="col-12">
                             <h2 class="h5 mb-1">Textos por idioma</h2>
                             <p class="text-muted small mb-0">
                                 El castellano se sigue editando en los bloques superiores. Aqui puedes cargar overrides para cada idioma y, si dejas un campo vacio, se usara el texto por defecto.
@@ -614,7 +750,7 @@
                         </div>
 
                         <div class="col-12">
-                            <ul class="nav nav-pills gap-2 mb-3" id="settingsLocaleTabs" role="tablist">
+                            <ul class="nav admin-form-tabs mb-3" id="settingsLocaleTabs" role="tablist" aria-label="Idioma de los ajustes">
                                 @foreach ($settingsLocales as $localeCode => $localeLabel)
                                     <li class="nav-item" role="presentation">
                                         <button
@@ -672,6 +808,8 @@
                                 @endforeach
                             </div>
                         </div>
+                </div>
+                </div>
                     @endif
                 </div>
 

@@ -11,6 +11,7 @@ class PropertyImportRun extends Model
 
     protected $fillable = [
         'user_id',
+        'kyero_feed_id',
         'source_name',
         'status',
         'input_name',
@@ -35,5 +36,10 @@ class PropertyImportRun extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function kyeroFeed()
+    {
+        return $this->belongsTo(KyeroFeed::class);
     }
 }

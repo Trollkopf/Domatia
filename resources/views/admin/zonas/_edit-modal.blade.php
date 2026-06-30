@@ -34,11 +34,14 @@
 
                 <div class="mb-3">
                     <label class="form-label">Imagen principal</label>
-                    @if ($zona->imagen_principal)
-                        <div class="mb-2">
-                            <img src="{{ asset('storage/' . $zona->imagen_principal) }}" class="img-thumbnail" style="max-width: 200px;">
-                        </div>
-                    @endif
+                    <div class="mb-2">
+                        <img src="{{ $zona->imageUrl() }}" alt="Imagen de {{ $zona->nombre }}" class="img-thumbnail" style="width: 200px; height: 110px; object-fit: cover;">
+                        @if (! $zona->hasCustomImage())
+                            <div class="form-text">
+                                {{ $zona->usesPropertyImage() ? 'Se está utilizando automáticamente una foto de una propiedad de esta zona.' : 'No hay fotos disponibles; se está utilizando la imagen global.' }}
+                            </div>
+                        @endif
+                    </div>
                     <input type="file" name="imagen_principal" class="form-control">
                     <div class="form-text">Formatos admitidos: JPG, PNG, WEBP. Tamaño recomendado: hasta 10 MB.</div>
                 </div>

@@ -21,11 +21,6 @@
             gap: 1.5rem;
         }
 
-        .kyero-side-column .kyero-stack {
-            position: sticky;
-            top: 6.75rem;
-        }
-
         .kyero-card {
             border: 0;
             border-radius: 1.5rem;
@@ -57,14 +52,28 @@
             gap: 1rem;
         }
 
+        .kyero-feed-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .kyero-feed-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 1.25rem;
+            padding: 1rem;
+            background: #f8fafc;
+        }
+
         @media (max-width: 1199.98px) {
             .kyero-page {
                 grid-template-columns: 1fr;
             }
 
-            .kyero-side-column .kyero-stack {
-                position: static;
+            .kyero-feed-grid {
+                grid-template-columns: 1fr;
             }
+
         }
 
         @media (max-width: 575.98px) {
@@ -76,25 +85,150 @@
 @endsection
 
 @section('content')
-    <div class="kyero-page">
-        <div class="kyero-main-column">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">Importaciones Kyero</h1>
+            <p class="text-muted mb-0">Guarda feeds automáticos, ejecútalos cuando quieras y revisa su historial.</p>
+        </div>
+        <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-dark">Volver al catálogo</a>
+    </div>
+
+    @if (session('success'))
+        <div class="alert alert-success rounded-4">{{ session('success') }}</div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger rounded-4">{{ $errors->first() }}</div>
+    @endif
+
+    @php
+        $kyeroInitialTab = $activeRun
+            ? 'runs'
+            : (($errors->has('xml_file') || $errors->has('xml_content')) ? 'manual' : 'feeds');
+    @endphp
+
+    <ul class="nav admin-form-tabs mb-4" id="kyeroSectionTabs" role="tablist" aria-label="Secciones de importación Kyero">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {{ $kyeroInitialTab === 'feeds' ? 'active' : '' }}" id="kyero-feeds-tab" data-bs-toggle="tab" data-bs-target="#kyero-feeds-pane" type="button" role="tab" aria-controls="kyero-feeds-pane" aria-selected="{{ $kyeroInitialTab === 'feeds' ? 'true' : 'false' }}">Fuentes automáticas</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {{ $kyeroInitialTab === 'manual' ? 'active' : '' }}" id="kyero-manual-tab" data-bs-toggle="tab" data-bs-target="#kyero-manual-pane" type="button" role="tab" aria-controls="kyero-manual-pane" aria-selected="{{ $kyeroInitialTab === 'manual' ? 'true' : 'false' }}">Importación manual</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {{ $kyeroInitialTab === 'runs' ? 'active' : '' }}" id="kyero-runs-tab" data-bs-toggle="tab" data-bs-target="#kyero-runs-pane" type="button" role="tab" aria-controls="kyero-runs-pane" aria-selected="{{ $kyeroInitialTab === 'runs' ? 'true' : 'false' }}">Ejecuciones</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="kyeroSectionTabContent">
+    <div class="tab-pane fade {{ $kyeroInitialTab === 'feeds' ? 'show active' : '' }}" id="kyero-feeds-pane" role="tabpanel" aria-labelledby="kyero-feeds-tab" tabindex="0">
+
+    <div class="card kyero-card mb-4">
+        <div class="card-body p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                <div>
+                    <span class="badge rounded-pill px-3 py-2 mb-2" style="background:#d4a52d;color:#111827;">Automatización</span>
+                    <h2 class="h4 mb-1">Fuentes Kyero automáticas</h2>
+                    <p class="text-muted mb-0">Las fuentes activas se descargan cada noche a las {{ config('kyero.schedule_time') }} ({{ config('kyero.schedule_timezone') }}).</p>
+                </div>
+                <div class="small text-muted align-self-lg-end">El servidor debe ejecutar <code>php artisan schedule:run</code> cada minuto.</div>
+            </div>
+
+            <form action="{{ route('admin.kyero.feeds.store') }}" method="POST" class="row g-3 align-items-end mb-4">
+                @csrf
+                <div class="col-lg-3">
+                    <label for="feed_name" class="form-label">Nombre</label>
+                    <input type="text" id="feed_name" name="name" class="form-control" value="{{ old('name') }}" placeholder="Feed principal" required>
+                </div>
+                <div class="col-lg-5">
+                    <label for="feed_url" class="form-label">URL del XML</label>
+                    <input type="url" id="feed_url" name="url" class="form-control" value="{{ old('url') }}" placeholder="https://proveedor.example/feed.xml" required>
+                </div>
+                <div class="col-sm-5 col-lg-2">
+                    <label for="feed_max_images" class="form-label">Máx. imágenes</label>
+                    <input type="number" id="feed_max_images" name="max_images_per_property" class="form-control" min="1" max="30" value="{{ old('max_images_per_property', 12) }}" required>
+                </div>
+                <div class="col-sm-3 col-lg-1">
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="feed_active" name="is_active" class="form-check-input" value="1" @checked(old('is_active', true))>
+                        <label for="feed_active" class="form-check-label">Activa</label>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-lg-1 d-grid">
+                    <button type="submit" class="btn btn-main">Añadir</button>
+                </div>
+            </form>
+
+            <div class="kyero-feed-grid">
+                @forelse ($feeds as $feed)
+                    <div class="kyero-feed-item">
+                        <form action="{{ route('admin.kyero.feeds.update', $feed) }}" method="POST" class="row g-3">
+                            @csrf
+                            @method('PUT')
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" name="name" class="form-control" value="{{ $feed->name }}" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Máx. imágenes</label>
+                                <input type="number" name="max_images_per_property" class="form-control" min="1" max="30" value="{{ $feed->max_images_per_property }}" required>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" id="feed-active-{{ $feed->id }}" name="is_active" class="form-check-input" value="1" @checked($feed->is_active)>
+                                    <label for="feed-active-{{ $feed->id }}" class="form-check-label">Activa</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">URL</label>
+                                <input type="url" name="url" class="form-control" value="{{ $feed->url }}" required>
+                            </div>
+                            <div class="col-12 d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                                <div class="small text-muted">
+                                    Estado:
+                                    <span class="badge {{ $feed->last_status === 'completed' ? 'bg-success' : ($feed->last_status === 'failed' ? 'bg-danger' : 'bg-secondary') }}">
+                                        {{ $feed->last_status ?: 'Sin ejecutar' }}
+                                    </span>
+                                    @if ($feed->last_run_at)
+                                        · {{ $feed->last_run_at->format('d/m/Y H:i') }}
+                                    @endif
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-outline-dark">Guardar cambios</button>
+                            </div>
+                        </form>
+
+                        @if ($feed->last_error)
+                            <div class="small text-danger mt-2">{{ $feed->last_error }}</div>
+                        @endif
+
+                        <div class="d-flex gap-2 mt-3">
+                            <form action="{{ route('admin.kyero.feeds.run', $feed) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-main" onclick="return confirm('¿Ejecutar esta fuente ahora?')">Ejecutar ahora</button>
+                            </form>
+                            <form action="{{ route('admin.kyero.feeds.destroy', $feed) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta fuente automática?')">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-muted">Todavía no hay fuentes guardadas. Añade la URL que te proporciona Kyero para automatizarla.</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <div class="tab-pane fade {{ $kyeroInitialTab === 'manual' ? 'show active' : '' }}" id="kyero-manual-pane" role="tabpanel" aria-labelledby="kyero-manual-tab" tabindex="0">
             <div class="card kyero-card">
                 <div class="card-body p-4 p-lg-5">
                     <span class="badge text-bg-dark rounded-pill px-3 py-2 mb-3">Importacion manual</span>
-                    <h1 class="h3 mb-2">Lanzar importacion de Kyero</h1>
+                    <h2 class="h3 mb-2">Lanzar importacion de Kyero</h2>
                     <p class="text-muted mb-4">
                         Sube el XML del feed o pega su contenido para actualizar el catalogo desde el backoffice cuando quieras.
                     </p>
-
-                    @if (session('success'))
-                        <div class="alert alert-success rounded-4">{{ session('success') }}</div>
-                    @endif
-
-                    @if ($errors->any())
-                        <div class="alert alert-danger rounded-4">
-                            {{ $errors->first() }}
-                        </div>
-                    @endif
 
                     @if ($activeRun && in_array($activeRun->status, ['queued', 'running']))
                         <div class="alert alert-info rounded-4 mb-4">
@@ -144,8 +278,9 @@
                     </form>
                 </div>
             </div>
-        </div>
+    </div>
 
+    <div class="tab-pane fade {{ $kyeroInitialTab === 'runs' ? 'show active' : '' }}" id="kyero-runs-pane" role="tabpanel" aria-labelledby="kyero-runs-tab" tabindex="0">
         <div class="kyero-side-column">
             <div class="kyero-stack">
                 <div class="card kyero-card">
@@ -236,6 +371,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection
 

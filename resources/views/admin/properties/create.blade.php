@@ -18,19 +18,6 @@
             background-color: #e3e3e3;
         }
 
-        .card-body {
-            overflow-y: auto;
-            max-height: 100vh;
-        }
-
-        .sticky-footer {
-            position: sticky;
-            bottom: 0;
-            background: #fff;
-            padding: 12px 20px;
-            border-top: 1px solid #ddd;
-            text-align: end;
-        }
     </style>
 @endsection
 
@@ -40,7 +27,7 @@
             <h1 class="m-0 fs-4">Nueva Propiedad</h1>
         </div>
 
-        <div class="card-body overflow-auto" style="max-height: 80vh;">
+        <div class="card-body">
             <form action="{{ route('admin.properties.store') }}" method="POST" enctype="multipart/form-data">
                 @include('admin.properties._form')
             </form>

@@ -241,6 +241,13 @@
             ],
             [
                 'visible' => $adminUser?->canManageProperties(),
+                'url' => route('admin.propietarios.index'),
+                'icon' => 'fas fa-user-tie',
+                'label' => 'Propietarios',
+                'active' => str_starts_with($currentRoute ?? '', 'admin.propietarios.'),
+            ],
+            [
+                'visible' => $adminUser?->canManageProperties(),
                 'url' => route('admin.kyero.index'),
                 'icon' => 'fas fa-file-import',
                 'label' => 'Importar Kyero',
@@ -293,9 +300,8 @@
             ],
         ];
     @endphp
-    @once
-        @php
-            function renderAdminSidebarGroup(string $label, array $links): string {
+    @php
+            $renderAdminSidebarGroup = static function (string $label, array $links): string {
                 $visibleLinks = array_filter($links, fn ($link) => $link['visible']);
 
                 if ($visibleLinks === []) {
@@ -315,9 +321,8 @@
                 $html .= '</div>';
 
                 return $html;
-            }
-        @endphp
-    @endonce
+            };
+    @endphp
 
     <div class="admin-shell">
         <aside class="admin-sidebar admin-sidebar-desktop d-none d-lg-flex">
@@ -328,11 +333,11 @@
                 <div class="small text-center text-white-50 mt-3">Centro de control</div>
             </div>
 
-            {!! renderAdminSidebarGroup('General', $generalLinks) !!}
+            {!! $renderAdminSidebarGroup('General', $generalLinks) !!}
             @if ($hasCommercialAccess)
-                {!! renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
+                {!! $renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
             @endif
-            {!! renderAdminSidebarGroup('Administracion', $adminLinks) !!}
+            {!! $renderAdminSidebarGroup('Administracion', $adminLinks) !!}
 
             <div class="sidebar-footer">
                 <div class="sidebar-footer-inner">
@@ -365,11 +370,11 @@
                 </div>
             </div>
 
-            {!! renderAdminSidebarGroup('General', $generalLinks) !!}
+            {!! $renderAdminSidebarGroup('General', $generalLinks) !!}
             @if ($hasCommercialAccess)
-                {!! renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
+                {!! $renderAdminSidebarGroup('Comercial', $commercialLinks) !!}
             @endif
-            {!! renderAdminSidebarGroup('Administracion', $adminLinks) !!}
+            {!! $renderAdminSidebarGroup('Administracion', $adminLinks) !!}
 
             <div class="sidebar-footer">
                 <div class="sidebar-footer-inner">

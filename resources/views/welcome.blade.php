@@ -65,6 +65,43 @@
     .hero-search {
         border-radius: 22px;
         box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+        text-align: left;
+    }
+
+    .hero-search-title {
+        color: #111827;
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .hero-search .form-label {
+        margin-bottom: 0.35rem;
+        color: #4b5563;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+    }
+
+    .hero-search .form-control,
+    .hero-search .form-select,
+    .hero-search .btn {
+        min-height: 48px;
+    }
+
+    .hero-search .btn-main {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        width: 100%;
+        color: #111827;
+        background: #d4a52d;
+    }
+
+    .hero-search .btn-main:hover {
+        color: #111827;
+        background: #b78d22;
     }
 
     .hero-value-card {
@@ -120,6 +157,10 @@
         .hero-copy {
             padding: 1.25rem;
         }
+
+        .hero-values {
+            display: none;
+        }
     }
 </style>
 @endsection
@@ -147,6 +188,20 @@
             $siteSettings['home_value_2'],
             $siteSettings['home_value_3'],
         ])->filter()->values();
+
+        $homePriceOptions = [
+            100000,
+            150000,
+            200000,
+            250000,
+            300000,
+            400000,
+            500000,
+            750000,
+            1000000,
+            1500000,
+            2000000,
+        ];
     @endphp
 
     <section class="swiper heroSwiper">
@@ -165,37 +220,60 @@
                             <h1 class="display-4 fw-light">{{ $siteSettings['home_hero_title'] }}</h1>
                             <p class="lead">{{ $siteSettings['home_hero_subtitle'] }}</p>
 
-                            <form action="{{ route('search') }}" method="GET" class="hero-search row g-2 mt-4 bg-white p-3 text-dark">
-                                <div class="col-md-3">
-                                    <input type="text" name="location" class="form-control" placeholder="{{ __('ui.home.location_placeholder') }}">
+                            <form action="{{ route('guest.properties.index') }}" method="GET" class="hero-search row g-2 mt-4 bg-white p-3 text-dark">
+                                <div class="col-12">
+                                    <div class="hero-search-title">{{ __('ui.home.quick_search_title') }}</div>
                                 </div>
 
-                                <div class="col-md-3">
-                                    <select name="type" class="form-select">
-                                        <option value="">{{ __('ui.home.property_type') }}</option>
-                                        <option value="Piso">{{ __('ui.property_types.piso') }}</option>
-                                        <option value="Casa">{{ __('ui.property_types.casa') }}</option>
-                                        <option value="Villa">{{ __('ui.property_types.villa') }}</option>
+                                <div class="col-md-6 col-lg-4">
+                                    <label for="home-search-text" class="form-label">{{ __('ui.common.search') }}</label>
+                                    <input type="search" id="home-search-text" name="search" class="form-control" placeholder="{{ __('ui.home.search_placeholder') }}" autocomplete="off">
+                                </div>
+
+                                <div class="col-md-6 col-lg-2">
+                                    <label for="home-search-zone" class="form-label">{{ __('ui.properties.filters.zone') }}</label>
+                                    <select id="home-search-zone" name="zona[]" class="form-select">
+                                        <option value="">{{ __('ui.home.any_zone') }}</option>
+                                        @foreach ($homeZones as $zona)
+                                            <option value="{{ $zona->id }}">{{ $zona->translatedName() }} ({{ $zona->published_properties_count }})</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <input type="number" name="min_price" class="form-control" placeholder="{{ __('ui.home.min_price') }}">
+                                <div class="col-md-4 col-lg-2">
+                                    <label for="home-search-type" class="form-label">{{ __('ui.properties.filters.type') }}</label>
+                                    <select id="home-search-type" name="tipo[]" class="form-select">
+                                        <option value="">{{ __('ui.home.any_type') }}</option>
+                                        @foreach ($homePropertyTypes as $type)
+                                            @php
+                                                $typeTranslationKey = 'ui.property_types.' . \Illuminate\Support\Str::slug(mb_strtolower($type));
+                                                $typeLabel = __($typeTranslationKey);
+                                            @endphp
+                                            <option value="{{ $type }}">{{ $typeLabel === $typeTranslationKey ? $type : $typeLabel }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <input type="number" name="max_price" class="form-control" placeholder="{{ __('ui.home.max_price') }}">
+                                <div class="col-md-4 col-lg-2">
+                                    <label for="home-search-budget" class="form-label">{{ __('ui.home.max_budget') }}</label>
+                                    <select id="home-search-budget" name="precio_max" class="form-select">
+                                        <option value="">{{ __('ui.home.any_budget') }}</option>
+                                        @foreach ($homePriceOptions as $price)
+                                            <option value="{{ $price }}">{{ number_format($price, 0, ',', '.') }} €</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-dark w-100">
-                                        {{ $siteSettings['home_search_button_text'] }}
+                                <div class="col-md-4 col-lg-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-main">
+                                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                        <span>{{ $siteSettings['home_search_button_text'] }}</span>
                                     </button>
                                 </div>
                             </form>
 
                             @if ($valueProps->isNotEmpty())
-                                <div class="row g-2 mt-3 text-start">
+                                <div class="hero-values row g-2 mt-3 text-start">
                                     @foreach ($valueProps as $value)
                                         <div class="col-md-4">
                                             <div class="hero-value-card rounded-3 px-3 py-2 h-100">

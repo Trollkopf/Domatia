@@ -29,6 +29,13 @@ return [
     ],
     'home' => [
         'title' => 'Start',
+        'quick_search_title' => 'Finden Sie Ihr nächstes Zuhause',
+        'search_placeholder' => 'Region, Ort, Referenz…',
+        'any_zone' => 'Alle Regionen',
+        'any_type' => 'Alle Immobilientypen',
+        'max_budget' => 'Maximales Budget',
+        'any_budget' => 'Jeder Preis',
+        'properties_count' => ':count Immobilien',
         'location_placeholder' => 'Ort',
         'property_type' => 'Immobilientyp',
         'min_price' => 'Ab EUR',
@@ -47,7 +54,7 @@ return [
         'summary_labels' => [
             'type' => 'Typ',
             'space' => 'Flache',
-            'operation' => 'Status',
+            'operation' => 'Verfügbarkeit',
             'default' => 'Zusammenfassung',
         ],
         'description_title' => 'Objektbeschreibung',

@@ -336,50 +336,32 @@ class Property extends Model
 
     protected function buildAutomaticSummaryOperation(string $locale): string
     {
-        $statusText = match ($locale) {
+        return match ($locale) {
             'en' => match ($this->status) {
-                'reserved' => 'Currently reserved',
-                'sold' => 'Recently sold',
-                'hidden' => 'Internal review listing',
-                'draft' => 'Listing in preparation',
-                default => 'Available for enquiries',
+                'reserved' => 'Currently reserved. Ask us about availability or similar homes nearby.',
+                'sold' => 'This home has been sold. We can help you find similar opportunities.',
+                default => 'Available. Request more information or arrange a viewing with no obligation.',
             },
             'fr' => match ($this->status) {
-                'reserved' => 'Actuellement reservee',
-                'sold' => 'Operation finalisee recemment',
-                'hidden' => 'Fiche en revision interne',
-                'draft' => 'Fiche en preparation',
-                default => 'Disponible pour information',
+                'reserved' => 'Actuellement réservé. Consultez-nous sur sa disponibilité ou sur des biens similaires.',
+                'sold' => 'Ce bien a été vendu. Nous pouvons vous proposer des alternatives similaires.',
+                default => 'Disponible. Demandez plus d’informations ou organisez une visite sans engagement.',
             },
             'de' => match ($this->status) {
-                'reserved' => 'Derzeit reserviert',
-                'sold' => 'Vor Kurzem verkauft',
-                'hidden' => 'Interne Prufung',
-                'draft' => 'Expose in Vorbereitung',
-                default => 'Fur Anfragen verfugbar',
+                'reserved' => 'Derzeit reserviert. Fragen Sie uns nach der Verfügbarkeit oder ähnlichen Immobilien.',
+                'sold' => 'Diese Immobilie wurde verkauft. Wir helfen Ihnen gerne bei ähnlichen Angeboten.',
+                default => 'Verfügbar. Fordern Sie weitere Informationen an oder vereinbaren Sie unverbindlich einen Besichtigungstermin.',
             },
             'ru' => match ($this->status) {
-                'reserved' => 'Сейчас в резерве',
-                'sold' => 'Недавно продано',
-                'hidden' => 'Объект на внутренней проверке',
-                'draft' => 'Карточка готовится',
-                default => 'Доступно для запроса',
+                'reserved' => 'Сейчас зарезервировано. Уточните доступность или попросите подобрать похожие варианты.',
+                'sold' => 'Этот объект продан. Мы поможем подобрать похожие предложения.',
+                default => 'Доступно. Запросите подробности или договоритесь о просмотре без обязательств.',
             },
             default => match ($this->status) {
-                'reserved' => 'Actualmente reservada',
-                'sold' => 'Operación cerrada recientemente',
-                'hidden' => 'Ficha en revisión interna',
-                'draft' => 'Ficha en preparación',
-                default => 'Disponible para su consulta',
+                'reserved' => 'Actualmente reservada. Consúltanos su disponibilidad o descubre alternativas similares.',
+                'sold' => 'Esta vivienda ya se ha vendido. Podemos ayudarte a encontrar opciones similares.',
+                default => 'Disponible. Solicita más información o concierta una visita sin compromiso.',
             },
-        };
-
-        return match ($locale) {
-            'en' => $statusText . ($this->ref ? ' with reference ' . $this->ref : '') . ' for quick follow-up.',
-            'fr' => $statusText . ($this->ref ? ' avec la reference ' . $this->ref : '') . ' pour un suivi rapide.',
-            'de' => $statusText . ($this->ref ? ' mit Referenz ' . $this->ref : '') . ' fur eine schnelle Bearbeitung.',
-            'ru' => $statusText . ($this->ref ? ' с номером ' . $this->ref : '') . ' для быстрого сопровождения.',
-            default => $statusText . ($this->ref ? ' con referencia ' . $this->ref : '') . ' para gestionarla de forma ágil desde el backoffice.',
         };
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\Zona;
 
 class HomeController extends Controller
 {
@@ -22,6 +23,20 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('welcome', compact('featured', 'latestProperties'));
+        $homePropertyTypes = Property::query()
+            ->where('status', 'published')
+            ->whereNotNull('tipo')
+            ->where('tipo', '!=', '')
+            ->distinct()
+            ->orderBy('tipo')
+            ->pluck('tipo');
+
+        $homeZones = Zona::query()
+            ->whereHas('publishedProperties')
+            ->withCount('publishedProperties')
+            ->orderBy('nombre')
+            ->get();
+
+        return view('welcome', compact('featured', 'latestProperties', 'homePropertyTypes', 'homeZones'));
     }
 }

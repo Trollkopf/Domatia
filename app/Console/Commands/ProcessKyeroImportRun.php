@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\PropertyImportRun;
 use App\Services\KyeroImportService;
+use App\Services\KyeroFeedService;
 use Illuminate\Console\Command;
 
 class ProcessKyeroImportRun extends Command
@@ -12,7 +13,7 @@ class ProcessKyeroImportRun extends Command
 
     protected $description = 'Procesa una importacion de Kyero pendiente o en curso';
 
-    public function handle(KyeroImportService $kyeroImportService): int
+    public function handle(KyeroImportService $kyeroImportService, KyeroFeedService $kyeroFeedService): int
     {
         $run = PropertyImportRun::query()->find($this->argument('run'));
 
@@ -24,8 +25,13 @@ class ProcessKyeroImportRun extends Command
 
         $chunk = max(1, (int) $this->option('chunk'));
 
-        while (! in_array($run->status, ['completed', 'failed'], true)) {
-            $run = $kyeroImportService->processNextChunk($run, $chunk);
+        try {
+            while (! in_array($run->status, ['completed', 'failed'], true)) {
+                $run = $kyeroImportService->processNextChunk($run, $chunk);
+            }
+        } finally {
+            $run->refresh();
+            $kyeroFeedService->syncFeedStatus($run);
         }
 
         $this->info('Importacion finalizada con estado: ' . $run->status);

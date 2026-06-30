@@ -11,6 +11,8 @@ class Zona extends Model
 {
     use HasFactory;
 
+    public const DEFAULT_IMAGE = 'images/our-company.jpg';
+
     protected $fillable = [
         'nombre',
         'nombre_en',
@@ -31,6 +33,23 @@ class Zona extends Model
         return $this->hasMany(Property::class)->where('status', 'published');
     }
 
+    public function representativePublishedProperty()
+    {
+        return $this->hasOne(Property::class)
+            ->where('status', 'published')
+            ->whereNotNull('thumbnail')
+            ->where('thumbnail', '!=', '')
+            ->latestOfMany();
+    }
+
+    public function representativeProperty()
+    {
+        return $this->hasOne(Property::class)
+            ->whereNotNull('thumbnail')
+            ->where('thumbnail', '!=', '')
+            ->latestOfMany();
+    }
+
     public function secciones()
     {
         return $this->hasMany(ZonaSection::class);
@@ -49,6 +68,33 @@ class Zona extends Model
         };
 
         return filled($localizedValue) ? $localizedValue : (string) $this->nombre;
+    }
+
+    public function imageUrl(): string
+    {
+        if ($this->imagen_principal) {
+            return asset('storage/' . $this->imagen_principal);
+        }
+
+        $propertyThumbnail = $this->representativePublishedProperty?->thumbnail
+            ?: $this->representativeProperty?->thumbnail;
+
+        return $propertyThumbnail
+            ? asset('storage/' . $propertyThumbnail)
+            : asset(self::DEFAULT_IMAGE);
+    }
+
+    public function hasCustomImage(): bool
+    {
+        return filled($this->imagen_principal);
+    }
+
+    public function usesPropertyImage(): bool
+    {
+        return ! $this->hasCustomImage() && filled(
+            $this->representativePublishedProperty?->thumbnail
+                ?: $this->representativeProperty?->thumbnail
+        );
     }
 
     protected static function boot()

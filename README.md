@@ -21,6 +21,18 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Importaciones Kyero programadas
+
+Las fuentes Kyero activas se procesan cada noche. La hora y zona horaria se configuran con `KYERO_IMPORT_TIME` y `KYERO_IMPORT_TIMEZONE`.
+
+En producción, el servidor debe invocar el scheduler de Laravel cada minuto:
+
+```cron
+* * * * * cd /ruta/al/proyecto && php artisan schedule:run >> /dev/null 2>&1
+```
+
+También se pueden ejecutar todas las fuentes activas manualmente con `php artisan kyero:import-feeds`.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.

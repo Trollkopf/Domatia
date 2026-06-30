@@ -19,6 +19,36 @@
     $featureTextareaValue = old('features_text', isset($property) ? implode("\n", $property->featuresList()) : '');
 @endphp
 
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        <div class="fw-semibold mb-1">Revisa los campos indicados antes de guardar.</div>
+        <div class="small">La pestaña con el primer error se ha abierto automáticamente.</div>
+    </div>
+@endif
+
+<ul class="nav admin-form-tabs mb-4" id="propertyFormTabs" role="tablist" aria-label="Secciones de la propiedad">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active text-nowrap" id="main-tab" data-bs-toggle="tab" data-bs-target="#property-main" type="button" role="tab" aria-controls="property-main" aria-selected="true">Principal</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link text-nowrap" id="location-tab" data-bs-toggle="tab" data-bs-target="#property-location" type="button" role="tab" aria-controls="property-location" aria-selected="false">Ubicación</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link text-nowrap" id="features-tab" data-bs-toggle="tab" data-bs-target="#property-features" type="button" role="tab" aria-controls="property-features" aria-selected="false">Características</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link text-nowrap" id="media-tab" data-bs-toggle="tab" data-bs-target="#property-media" type="button" role="tab" aria-controls="property-media" aria-selected="false">Multimedia</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link text-nowrap" id="languages-tab" data-bs-toggle="tab" data-bs-target="#property-languages" type="button" role="tab" aria-controls="property-languages" aria-selected="false">Idiomas</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link text-nowrap" id="images-tab" data-bs-toggle="tab" data-bs-target="#property-images" type="button" role="tab" aria-controls="property-images" aria-selected="false">Imágenes</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="propertyFormTabContent">
+<div class="tab-pane fade show active" id="property-main" role="tabpanel" aria-labelledby="main-tab" tabindex="0">
 <div class="d-grid gap-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
@@ -78,13 +108,26 @@
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Propietario</label>
-                    <select name="propietario_id" class="form-select">
-                        <option value="">-- Selecciona un propietario --</option>
-                        @foreach ($propietarios as $p)
-                            <option value="{{ $p->id }}" @selected(old('propietario_id', $property->propietario_id ?? '') == $p->id)>{{ $p->nombre }}</option>
-                        @endforeach
-                    </select>
+                    <label for="owner-search" class="form-label">Propietario</label>
+                    <div class="owner-combobox" data-owner-combobox data-search-url="{{ route('admin.propietarios.search') }}">
+                        <input type="hidden" name="propietario_id" value="{{ $selectedPropietario?->id }}" data-owner-id>
+                        <input
+                            type="search"
+                            id="owner-search"
+                            class="form-control @error('propietario_id') is-invalid @enderror"
+                            value="{{ $selectedPropietario?->nombre }}"
+                            placeholder="Buscar por nombre, teléfono o email"
+                            autocomplete="off"
+                            role="combobox"
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-controls="owner-search-results"
+                            data-owner-search
+                        >
+                        <button type="button" class="owner-combobox-clear {{ $selectedPropietario ? '' : 'd-none' }}" aria-label="Quitar propietario" data-owner-clear>×</button>
+                        <div id="owner-search-results" class="owner-combobox-results d-none" role="listbox" data-owner-results></div>
+                    </div>
+                    <div class="form-text"><a href="{{ route('admin.propietarios.index') }}" target="_blank" rel="noopener">Gestionar propietarios</a></div>
                 </div>
 
                 <div class="col-12">
@@ -94,7 +137,11 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 
+<div class="tab-pane fade" id="property-location" role="tabpanel" aria-labelledby="location-tab" tabindex="0">
+<div class="d-grid gap-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Ubicación y mapa</h5>
@@ -127,7 +174,11 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 
+<div class="tab-pane fade" id="property-features" role="tabpanel" aria-labelledby="features-tab" tabindex="0">
+<div class="d-grid gap-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Características y estado del inmueble</h5>
@@ -217,7 +268,11 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 
+<div class="tab-pane fade" id="property-media" role="tabpanel" aria-labelledby="media-tab" tabindex="0">
+<div class="d-grid gap-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Enlaces multimedia</h5>
@@ -233,7 +288,11 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 
+<div class="tab-pane fade" id="property-languages" role="tabpanel" aria-labelledby="languages-tab" tabindex="0">
+<div class="d-grid gap-4">
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Títulos y ubicaciones por idioma</h5>
@@ -293,20 +352,287 @@
         </div>
     </div>
 
-    @if (!isset($property))
+</div>
+</div>
+
+<div class="tab-pane fade" id="property-images" role="tabpanel" aria-labelledby="images-tab" tabindex="0">
+    <div class="d-grid gap-4">
+        @if (isset($property) && $property->thumbnail)
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Imagen principal actual</h5>
+                    <div class="border rounded p-3 bg-light d-inline-block">
+                        <img src="{{ asset('storage/' . $property->thumbnail) }}" alt="Imagen principal de {{ $property->title }}" class="img-fluid rounded" style="max-width: 240px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if (isset($property) && $property->images->count() > 0)
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Imágenes actuales</h5>
+                    <div class="row g-3">
+                        @foreach ($property->images as $image)
+                            <div class="col-6 col-md-4 col-xl-3 position-relative" data-property-image="{{ $image->id }}">
+                                <img src="{{ asset('storage/' . $image->path) }}" alt="Imagen de {{ $property->title }}" class="img-fluid rounded w-100" style="object-fit: cover; aspect-ratio: 1/1;">
+                                <button type="button" class="btn btn-sm btn-light border position-absolute bottom-0 start-0 m-2" data-set-thumbnail="{{ $image->id }}">
+                                    Hacer principal
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" data-delete-image="{{ $image->id }}" aria-label="Eliminar imagen">
+                                    <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <label class="form-label">Imágenes de la propiedad</label>
+                <label class="form-label">{{ isset($property) ? 'Añadir nuevas imágenes' : 'Imágenes de la propiedad' }}</label>
                 <div class="dropzone" id="dropzone">
                     Arrastra las imágenes aquí o haz clic para seleccionar
-                    <input type="file" name="images[]" id="images" class="form-control d-none" multiple>
+                    <input type="file" name="images[]" id="images" class="form-control d-none" accept="image/*" multiple>
                 </div>
-                <div class="form-text mt-2">La primera imagen se usará como miniatura principal.</div>
+                <div class="form-text mt-2">
+                    {{ isset($property) ? 'Las nuevas imágenes se añadirán al final.' : 'La primera imagen se usará como miniatura principal.' }}
+                </div>
             </div>
         </div>
-    @endif
-
-    <div class="text-end">
-        <button type="submit" class="btn btn-main">Guardar</button>
     </div>
 </div>
+</div>
+
+<div class="d-flex justify-content-end border-top pt-3 mt-4">
+    <button type="submit" class="btn btn-main px-4">Guardar propiedad</button>
+</div>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.getElementById('propertyFormTabs');
+
+            if (!tabs) {
+                return;
+            }
+
+            const storageKey = 'property-form-tab:' + window.location.pathname;
+            const validationErrors = @json($errors->messages());
+            let firstInvalidField = null;
+
+            Object.entries(validationErrors).forEach(function ([field, messages]) {
+                let inputName = field.replace(/^description_extra\.([^.]*)$/, 'description_extra[$1]');
+
+                if (/^images\.\d+$/.test(field)) {
+                    inputName = 'images[]';
+                }
+
+                const input = field === 'propietario_id'
+                    ? document.querySelector('[data-owner-search]')
+                    : document.querySelector('[name="' + CSS.escape(inputName) + '"]');
+
+                if (!input) {
+                    return;
+                }
+
+                input.classList.add('is-invalid');
+
+                const feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                feedback.textContent = messages[0];
+                input.insertAdjacentElement('afterend', feedback);
+                firstInvalidField ??= input;
+            });
+
+            let validationTabOpened = false;
+            const propertyForm = tabs.closest('form');
+
+            propertyForm?.addEventListener('invalid', function (event) {
+                if (validationTabOpened) {
+                    return;
+                }
+
+                const invalidPane = event.target.closest('.tab-pane');
+
+                if (!invalidPane || invalidPane.classList.contains('active')) {
+                    return;
+                }
+
+                const invalidTab = tabs.querySelector('[data-bs-target="#' + CSS.escape(invalidPane.id) + '"]');
+
+                if (invalidTab) {
+                    validationTabOpened = true;
+                    invalidTab.click();
+                    window.setTimeout(function () {
+                        event.target.focus();
+                        validationTabOpened = false;
+                    }, 200);
+                }
+            }, true);
+
+            const targetPane = firstInvalidField?.closest('.tab-pane');
+            const rememberedTarget = sessionStorage.getItem(storageKey);
+            const targetSelector = targetPane ? '#' + targetPane.id : rememberedTarget;
+            const targetTab = targetSelector
+                ? tabs.querySelector('[data-bs-target="' + CSS.escape(targetSelector) + '"]')
+                : null;
+
+            if (targetTab) {
+                targetTab.click();
+            }
+
+            tabs.querySelectorAll('[data-bs-toggle="tab"]').forEach(function (tab) {
+                tab.addEventListener('shown.bs.tab', function (event) {
+                    sessionStorage.setItem(storageKey, event.target.dataset.bsTarget);
+                });
+            });
+
+            const ownerCombobox = document.querySelector('[data-owner-combobox]');
+
+            if (ownerCombobox) {
+                const searchInput = ownerCombobox.querySelector('[data-owner-search]');
+                const ownerIdInput = ownerCombobox.querySelector('[data-owner-id]');
+                const resultsPanel = ownerCombobox.querySelector('[data-owner-results]');
+                const clearButton = ownerCombobox.querySelector('[data-owner-clear]');
+                let results = [];
+                let activeIndex = -1;
+                let debounceTimer = null;
+                let requestController = null;
+
+                function closeResults() {
+                    resultsPanel.classList.add('d-none');
+                    searchInput.setAttribute('aria-expanded', 'false');
+                    activeIndex = -1;
+                }
+
+                function chooseOwner(owner) {
+                    ownerIdInput.value = owner.id;
+                    searchInput.value = owner.label;
+                    clearButton.classList.remove('d-none');
+                    closeResults();
+                }
+
+                function renderResults() {
+                    resultsPanel.innerHTML = '';
+
+                    if (results.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'small text-muted p-2';
+                        empty.textContent = 'No se han encontrado propietarios.';
+                        resultsPanel.appendChild(empty);
+                    } else {
+                        results.forEach(function (owner, index) {
+                            const option = document.createElement('button');
+                            option.type = 'button';
+                            option.className = 'owner-combobox-option';
+                            option.setAttribute('role', 'option');
+
+                            const name = document.createElement('span');
+                            name.className = 'd-block fw-semibold';
+                            name.textContent = owner.label;
+                            option.appendChild(name);
+
+                            if (owner.contact) {
+                                const contact = document.createElement('span');
+                                contact.className = 'd-block small text-muted';
+                                contact.textContent = owner.contact;
+                                option.appendChild(contact);
+                            }
+
+                            option.addEventListener('mousedown', event => event.preventDefault());
+                            option.addEventListener('click', () => chooseOwner(owner));
+                            resultsPanel.appendChild(option);
+                        });
+                    }
+
+                    resultsPanel.classList.remove('d-none');
+                    searchInput.setAttribute('aria-expanded', 'true');
+                }
+
+                function syncActiveOption() {
+                    resultsPanel.querySelectorAll('.owner-combobox-option').forEach(function (option, index) {
+                        option.classList.toggle('is-active', index === activeIndex);
+                        option.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
+                    });
+                }
+
+                async function searchOwners() {
+                    requestController?.abort();
+                    requestController = new AbortController();
+                    const url = new URL(ownerCombobox.dataset.searchUrl, window.location.origin);
+                    url.searchParams.set('q', searchInput.value.trim());
+
+                    try {
+                        const response = await fetch(url, {
+                            headers: { 'Accept': 'application/json' },
+                            credentials: 'same-origin',
+                            signal: requestController.signal,
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('No se pudo buscar propietarios.');
+                        }
+
+                        const payload = await response.json();
+                        results = payload.results || [];
+                        activeIndex = -1;
+                        renderResults();
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            results = [];
+                            renderResults();
+                        }
+                    }
+                }
+
+                searchInput.addEventListener('focus', searchOwners);
+                searchInput.addEventListener('input', function () {
+                    ownerIdInput.value = '';
+                    clearButton.classList.toggle('d-none', searchInput.value === '');
+                    window.clearTimeout(debounceTimer);
+                    debounceTimer = window.setTimeout(searchOwners, 180);
+                });
+
+                searchInput.addEventListener('keydown', function (event) {
+                    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                        event.preventDefault();
+
+                        if (resultsPanel.classList.contains('d-none')) {
+                            searchOwners();
+                            return;
+                        }
+
+                        const direction = event.key === 'ArrowDown' ? 1 : -1;
+                        activeIndex = Math.max(0, Math.min(results.length - 1, activeIndex + direction));
+                        syncActiveOption();
+                    } else if (event.key === 'Enter' && results.length > 0) {
+                        event.preventDefault();
+                        chooseOwner(results[activeIndex >= 0 ? activeIndex : 0]);
+                    } else if (event.key === 'Escape') {
+                        closeResults();
+                    }
+                });
+
+                searchInput.addEventListener('blur', function () {
+                    window.setTimeout(function () {
+                        if (!ownerIdInput.value) {
+                            searchInput.value = '';
+                            clearButton.classList.add('d-none');
+                        }
+
+                        closeResults();
+                    }, 120);
+                });
+
+                clearButton.addEventListener('click', function () {
+                    ownerIdInput.value = '';
+                    searchInput.value = '';
+                    clearButton.classList.add('d-none');
+                    searchInput.focus();
+                });
+            }
+        });
+    </script>
+@endpush

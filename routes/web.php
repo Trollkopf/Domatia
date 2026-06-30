@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ContactoController as AdminContactoController;
 use App\Http\Controllers\Admin\KyeroImportController;
 use App\Http\Controllers\Admin\PropertyImageController;
+use App\Http\Controllers\Admin\PropietarioController;
 use App\Http\Controllers\Admin\ZonaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
@@ -56,8 +57,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::middleware('backoffice_permission:properties')->group(function () {
         Route::resource('properties', AdminPropertyController::class);
+        Route::get('propietarios/search', [PropietarioController::class, 'search'])->name('propietarios.search');
+        Route::resource('propietarios', PropietarioController::class)->except(['create', 'show']);
         Route::get('kyero', [KyeroImportController::class, 'index'])->name('kyero.index');
         Route::post('kyero', [KyeroImportController::class, 'store'])->name('kyero.store');
+        Route::post('kyero/feeds', [KyeroImportController::class, 'storeFeed'])->name('kyero.feeds.store');
+        Route::put('kyero/feeds/{feed}', [KyeroImportController::class, 'updateFeed'])->name('kyero.feeds.update');
+        Route::delete('kyero/feeds/{feed}', [KyeroImportController::class, 'destroyFeed'])->name('kyero.feeds.destroy');
+        Route::post('kyero/feeds/{feed}/run', [KyeroImportController::class, 'runFeed'])->name('kyero.feeds.run');
         Route::get('kyero/{run}', [KyeroImportController::class, 'show'])->name('kyero.show');
         Route::post('kyero/{run}/process', [KyeroImportController::class, 'process'])->name('kyero.process');
         Route::patch('properties/{property}/images/{image}/set-thumbnail', [PropertyImageController::class, 'setThumbnail'])
@@ -67,6 +74,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     });
 
     Route::middleware('backoffice_permission:publish_properties')->group(function () {
+        Route::patch('property-actions/bulk-publish', [AdminPropertyController::class, 'bulkPublish'])
+            ->name('properties.bulk-publish');
         Route::patch('properties/{property}/quick-update', [AdminPropertyController::class, 'quickUpdate'])
             ->name('properties.quick-update');
     });

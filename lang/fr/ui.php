@@ -29,6 +29,13 @@ return [
     ],
     'home' => [
         'title' => 'Accueil',
+        'quick_search_title' => 'Trouvez votre prochain logement',
+        'search_placeholder' => 'Zone, ville, référence…',
+        'any_zone' => 'Toutes les zones',
+        'any_type' => 'Tous les types',
+        'max_budget' => 'Budget maximum',
+        'any_budget' => 'Tous les prix',
+        'properties_count' => ':count biens',
         'location_placeholder' => 'Localisation',
         'property_type' => 'Type de bien',
         'min_price' => 'A partir de EUR',
@@ -47,7 +54,7 @@ return [
         'summary_labels' => [
             'type' => 'Typologie',
             'space' => 'Espaces',
-            'operation' => 'Statut',
+            'operation' => 'Disponibilité',
             'default' => 'Resume',
         ],
         'description_title' => 'Description du bien',
